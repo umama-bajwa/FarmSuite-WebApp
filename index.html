@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmSuite</title>
+    <link rel="icon" type="image/png" href="imgs/logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url('imgs/index.png') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            position: relative;
+            left: 10px; /* Move left */
+            top: -30px; /* Move UP */
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            font-weight: 600;
+            position: relative;
+            top: -35px; /* Move UP */
+        }
+
+
+.subtitle span {
+    display: block; /* Forces it to be on a new line */
+}
+
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 120px; /* Adjust this value to move buttons down */
+        }
+
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 30px; /* Reduced padding */
+            font-size: 16px; /* Reduced font size */
+            font-weight: bold;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            background-color: #a97949;
+            color: white;
+            transition: 0.3s ease-in-out;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+            width: 180px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #775128;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container">
+        <h1>FarmSuite.</h1>
+        <p class="subtitle">
+            Your All-in-One Smart <br> 
+            <span>Farm Management Solution!</span>
+        </p>
+                <div class="buttons">
+            <a href="login.html" class="btn">Log in</a>
+            <a href="signup.html" class="btn">Sign Up</a>
+        </div>
+    </div>
+</body>
+</html>

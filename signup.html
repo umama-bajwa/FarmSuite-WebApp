@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmSuite - Sign Up</title>
+    <link rel="icon" type="image/png" href="imgs/logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side - Signup Form -->
+        <div class="left">
+            <div class="signup-box">
+                <h1>FarmSuite.</h1>
+                <h2>Sign Up</h2>
+                
+                <form id="signupForm">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                
+                    <div class="buttons">
+                        <button type="submit" class="btn signup-btn">Sign Up</button>
+                        <a href="login.html" class="btn login-btn">Login</a>
+                    </div>
+                </form>
+
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+
+        <!-- Right Side - Image -->
+        <div class="right">
+            <img src="imgs/login.png" alt="Farm Image">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (!name || !username || !password) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, username, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert("User registered successfully!");
+                    window.location.href = "login.html"; // Redirect after signup
+                } else {
+                    alert(data.error || "Signup failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error connecting to the server. Please try again later.");
+            }
+        });
+    </script>
+</body>
+</html>

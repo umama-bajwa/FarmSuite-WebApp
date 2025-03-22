@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vet Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="vet.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fas fa-clinic-medical"></i>
+      <span>Vet Dashboard</span>
+    </div>
+    <div class="navbar-links">
+      <a href="#notifications"><i class="fas fa-bell"></i> Notifications</a>
+      <a href="#checked"><i class="fas fa-check-circle"></i> Checked Cows</a>
+      <a href="#medical-records"><i class="fas fa-file-medical"></i> Medical Records</a>
+      <a href="#" onclick="confirmLogout()" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard">
+    <!-- Notifications Section -->
+    <section id="notifications" class="section">
+      <h2><i class="fas fa-bell"></i> Notifications</h2>
+      <div class="card">
+        <div class="notifications-container" id="notifications-container">
+          <!-- Notifications will be dynamically added here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Checked Cows Section -->
+    <section id="checked" class="section">
+      <h2><i class="fas fa-check-circle"></i> Checked Cows</h2>
+      <div class="card">
+        <div class="cows-grid" id="checked-cows-container">
+          <!-- Checked cows will be dynamically added here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Medical Records Section -->
+    <section id="medical-records" class="section">
+      <h2><i class="fas fa-file-medical"></i> Medical Records</h2>
+      <div class="card">
+        <div class="medical-records-container" id="medical-records-container">
+          <!-- Medical records will be dynamically added here -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Popup Form for Adding Medical Records -->
+<div id="medicalRecordFormPopup" class="popup-form-overlay">
+  <div class="popup-form">
+    <div class="popup-header">
+      <h3>Add Medical Record</h3>
+      <button onclick="closeMedicalRecordForm()" class="close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <form id="medicalRecordForm" onsubmit="submitMedicalRecord(event)">
+      <div class="form-group">
+        <label for="healthStatus">Health Status</label>
+        <select id="healthStatus" required>
+          <option value="Healthy">Healthy</option>
+          <option value="Recovering">Recovering</option>
+          <option value="Sick">Sick</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="medication">Medication</label>
+        <input type="text" id="medication" placeholder="Enter medication (if any)">
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" placeholder="Enter notes" required></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" onclick="closeMedicalRecordForm()" class="cancel-btn">Cancel</button>
+        <button type="submit" class="submit-btn">Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" class="scroll-to-top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // Sample Data
+    let notifications = [
+      { id: "001", lastChecked: "10 days ago" },
+      { id: "002", lastChecked: "15 days ago" },
+      { id: "003", lastChecked: "20 days ago" },
+    ];
+
+    let checkedCows = [];
+    let medicalRecords = [];
+
+    // Render Notifications
+    function renderNotifications() {
+      const notificationsContainer = document.getElementById("notifications-container");
+      notificationsContainer.innerHTML = notifications
+        .map(
+          (cow) => `
+          <div class="notification-item">
+            <i class="fas fa-exclamation-circle"></i>
+            <span><strong>Cow ID: ${cow.id}</strong> needs to be checked. Last checked ${cow.lastChecked}.</span>
+            <button onclick="markAsChecked('${cow.id}')"><i class="fas fa-check"></i> Mark as Checked</button>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    // Mark as Checked Functionality
+    function markAsChecked(cowId) {
+      const cow = notifications.find((cow) => cow.id === cowId);
+      if (cow) {
+        checkedCows.push(cow); // Add to checked cows
+        notifications = notifications.filter((cow) => cow.id !== cowId); // Remove from notifications
+        renderNotifications();
+        renderCheckedCows();
+        alert(`Cow ${cowId} marked as checked!`);
+      }
+    }
+
+    // Render Checked Cows
+    function renderCheckedCows() {
+      const checkedCowsContainer = document.getElementById("checked-cows-container");
+      checkedCowsContainer.innerHTML = checkedCows
+        .map(
+          (cow) => `
+          <div class="cow-item">
+            <img src="https://via.placeholder.com/150" alt="Cow ${cow.id}">
+            <span>Cow ID: ${cow.id}</span>
+            <span>Last Checked: ${cow.lastChecked}</span>
+            <button onclick="addMedicalRecord('${cow.id}')"><i class="fas fa-file-medical"></i> Add Record</button>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    // Add Medical Record Functionality
+    function addMedicalRecord(cowId) {
+      const healthStatus = prompt("Enter health status (e.g., Healthy, Recovering):");
+      const medication = prompt("Enter medication (if any):");
+      const notes = prompt("Enter notes:");
+
+      if (healthStatus && notes) {
+        medicalRecords.push({
+          cowId,
+          healthStatus,
+          medication: medication || "None",
+          notes,
+          lastChecked: new Date().toLocaleDateString(),
+        });
+        renderMedicalRecords();
+        alert(`Medical record added for Cow ${cowId}!`);
+      } else {
+        alert("Health status and notes are required!");
+      }
+    }
+
+    let currentCowId = null;
+
+// Open Medical Record Form
+function addMedicalRecord(cowId) {
+  currentCowId = cowId;
+  document.getElementById("medicalRecordFormPopup").style.display = "flex";
+}
+
+// Close Medical Record Form
+function closeMedicalRecordForm() {
+  document.getElementById("medicalRecordFormPopup").style.display = "none";
+  document.getElementById("medicalRecordForm").reset();
+  currentCowId = null;
+}
+
+// Submit Medical Record Form
+function submitMedicalRecord(event) {
+  event.preventDefault();
+  const healthStatus = document.getElementById("healthStatus").value;
+  const medication = document.getElementById("medication").value || "None";
+  const notes = document.getElementById("notes").value;
+
+  if (healthStatus && notes && currentCowId) {
+    medicalRecords.push({
+      cowId: currentCowId,
+      healthStatus,
+      medication,
+      notes,
+      lastChecked: new Date().toLocaleDateString(),
+    });
+    renderMedicalRecords();
+    closeMedicalRecordForm();
+    alert(`Medical record added for Cow ${currentCowId}!`);
+  } else {
+    alert("Please fill in all required fields!");
+  }
+}
+
+    // Scroll to Top Button
+    const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 200) {
+        scrollToTopBtn.classList.add("show");
+      } else {
+        scrollToTopBtn.classList.remove("show");
+      }
+    });
+
+    scrollToTopBtn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    });
+
+    // Logout Confirmation
+    function confirmLogout() {
+      const confirmLogout = confirm("Are you sure you want to logout?");
+      if (confirmLogout) {
+        window.location.href = "index.html";
+      }
+    }
+
+    // Initial Render
+    renderNotifications();
+    renderCheckedCows();
+    renderMedicalRecords();
+  </script>
+</body>
+</html>

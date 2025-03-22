@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard.</title>
+  <link rel="icon" type="image/png" href="imgs/logo1.png">
+  <link rel="stylesheet" href="owner-dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard">
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="menu-icon" id="menuIcon">
+         
+        </div>
+        <i class="fas fa-tractor"></i>
+        <div class="logo">FarmSuite.</div>
+      
+      </nav>
+
+    <!-- Side Panel -->
+    <aside class="side-panel" id="sidePanel">
+        <ul>
+          <li><a href="#"><i class="fas fa-tasks"></i> <span class="menu-text">Task Management</span></a></li>
+          <li><a href="#"><i class="fas fa-cow"></i> <span class="menu-text">Livestock Monitoring</span></a></li>
+          <li><a href="#"><i class="fas fa-dollar-sign"></i> <span class="menu-text">Sales & Finance</span></a></li>
+          <li><a href="#"><i class="fas fa-heartbeat"></i> <span class="menu-text">Veterinary & Health</span></a></li>
+          <li><a href="#"><i class="fas fa-box"></i> <span class="menu-text">Inventory & Supplies</span></a></li>
+          <li><a href="#"><i class="fas fa-video"></i> <span class="menu-text">Surveillance</span></a></li>
+          <li><a href="#"><i class="fas fa-users"></i> <span class="menu-text">User Management</span></a></li>
+        </ul>
+        <div class="expand-arrow" id="expandArrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </aside>
+
+       <!-- Narrow Side Panel -->
+    <aside class="narrow-side-panel" id="narrowSidePanel">
+        <ul>
+          <li><a href="#"><i class="fas fa-tasks"></i></a></li>
+          <li><a href="#"><i class="fas fa-cow"></i></a></li>
+          <li><a href="#"><i class="fas fa-dollar-sign"></i></a></li>
+          <li><a href="#"><i class="fas fa-heartbeat"></i></a></li>
+          <li><a href="#"><i class="fas fa-box"></i></a></li>
+          <li><a href="#"><i class="fas fa-video"></i></a></li>
+          <li><a href="#"><i class="fas fa-users"></i></a></li>
+        </ul>
+        <div class="expand-arrow" id="expandArrowNarrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Task Management Widget -->
+      <div class="widget task-management">
+        <h2><i class="fas fa-tasks"></i> Task Management</h2>
+        <p>Total Tasks: <span>15</span></p>
+        <div class="chart-container">
+          <canvas id="taskPieChart"></canvas>
+        </div>
+        <button>Assign New Task</button>
+      </div>
+
+      <!-- Livestock Monitoring Widget -->
+      <div class="widget livestock-monitoring">
+        <h2><i class="fas fa-cow"></i> Livestock Monitoring</h2>
+        <p>Total Cows: <span>50</span></p>
+        <p>Milk Production Today: <span>200L</span></p>
+        <p>Cows with Health Issues: <span>3</span></p>
+        <button>View Health Records</button>
+      </div>
+
+      <!-- Financial Overview Widget -->
+      <div class="widget financial-overview">
+        <h2><i class="fas fa-dollar-sign"></i> Financial Overview</h2>
+        <div class="chart-container">
+          <canvas id="financialBarChart"></canvas>
+        </div>
+        <button>Generate Report</button>
+      </div>
+
+      <!-- Inventory Status Widget -->
+<div class="widget inventory-status">
+    <h2><i class="fas fa-box"></i> Inventory Status</h2>
+    <p>Fodder Stock: <span>80%</span></p>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress" style="width: 80%;"></div>
+    </div>
+    <p>Low Stock Alerts: <span>2</span></p>
+    <button>Order Fodder</button>
+  </div>
+
+      <!-- Veterinary Alerts Widget -->
+      <div class="widget veterinary-alerts">
+        <h2><i class="fas fa-bell"></i> Veterinary Alerts</h2>
+        <p>Upcoming Visits: <span>2</span></p>
+        <p>Pending Medication: <span>5</span></p>
+        <button>Schedule Visit</button>
+      </div>
+
+      <!-- Farm Surveillance Widget -->
+      <div class="widget farm-surveillance">
+        <h2><i class="fas fa-video"></i> Farm Surveillance</h2>
+        <div class="camera-feed">
+          <p>Live Camera Feed</p>
+          <video controls autoplay loop muted width="100%">
+            <source src="imgs/farmcam.mp4" type="video/mp4">
+          </video>
+        </div>
+        <button>View All Cameras</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript for Charts -->
+   <script>
+    // Task Assignment Pie Chart
+    const taskPieChart = new Chart(document.getElementById('taskPieChart'), {
+      type: 'pie',
+      data: {
+        labels: ['Completed', 'In Progress', 'Pending'],
+        datasets: [{
+          data: [10, 5, 0],
+          backgroundColor: ['#4CAF50', '#FFC107', '#F44336'],
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+
+    // Financial Overview Bar Chart
+    const financialBarChart = new Chart(document.getElementById('financialBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Sales', 'Expenses', 'Profit'],
+        datasets: [{
+          label: 'Amount ($)',
+          data: [5000, 3000, 2000],
+          backgroundColor: ['#4CAF50', '#F44336', '#2196F3'],
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+   // JavaScript for toggling side panels
+   const menuIcon = document.getElementById('menuIcon');
+    const sidePanel = document.getElementById('sidePanel');
+    const narrowSidePanel = document.getElementById('narrowSidePanel');
+    const expandArrow = document.getElementById('expandArrow');
+    const expandArrowNarrow = document.getElementById('expandArrowNarrow');
+
+    menuIcon.addEventListener('click', () => {
+      sidePanel.classList.toggle('active');
+      narrowSidePanel.classList.toggle('hidden');
+    });
+
+    expandArrow.addEventListener('click', () => {
+      sidePanel.classList.remove('active');
+      narrowSidePanel.classList.remove('hidden');
+    });
+
+    expandArrowNarrow.addEventListener('click', () => {
+      sidePanel.classList.add('active');
+      narrowSidePanel.classList.add('hidden');
+    });
+
+    // Example: Update progress bar dynamically
+    const progressElement = document.querySelector('.progress-bar .progress');
+    const updateProgressBar = (percentage) => {
+      progressElement.style.width = `${percentage}%`;
+    };
+
+    // Example: Update progress bar to 60%
+    updateProgressBar(60);
+  </script>
+</body>
+</html>

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FarmSuite Worker Dashboard</title>
+  <link rel="icon" type="image/png" href="imgs/logo1.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="worker-dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+
+ <!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <i class="fas fa-tractor"></i>
+    <span>FarmSuite.</span>
+  </div>
+  <div class="navbar-links">
+    <a href="#tasks">Tasks</a>
+    <a href="#livestock">Livestock</a>
+    <a href="#abnormal-milk">Abnormal Milk</a>
+    <a href="#breeding-cycles">Breeding Cycles</a>
+    <a href="#health-alerts">Health Alerts</a>
+    <a href="#inventory">Inventory</a>
+    <a href="#communication">Communication</a>
+    <!-- Logout Button -->
+    <a href="#" onclick="confirmLogout()" class="logout-button">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+</nav>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard">
+
+
+<!-- Worker Dashboard Banner -->
+<section class="dashboard-banner">
+  <div class="banner-content">
+    <i class="fa-solid fa-seedling"></i>
+    <h1>Worker Dashboard</h1>
+    <p>Efficiently manage tasks, monitor livestock, and stay updated with real-time insights.</p>
+  </div>
+</section>
+
+
+    <!-- Task List & Status Updates -->
+    <section id="tasks" class="section task-list">
+      <h2><i class="fas fa-tasks"></i> Task List</h2>
+      <div class="task-container">
+        <div class="task-list-container">
+          <ul id="task-list">
+            <li>
+              <span>Feed the cows (Deadline: 10:00 AM)</span>
+              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
+            </li>
+            <li>
+              <span>Milk the cows (Deadline: 11:00 AM)</span>
+              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
+            </li>
+            <li>
+              <span>Clean the barn (Deadline: 12:00 PM)</span>
+              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
+            </li>
+          </ul>
+          <button onclick="reportIssue()"><i class="fas fa-exclamation-circle"></i> Report Issue</button>
+        </div>
+        <div class="chart-container">
+          <canvas id="taskChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Livestock & Production Monitoring -->
+<section id="livestock" class="section livestock-monitoring">
+  <h2><i class="fas fa-cow"></i> Livestock Monitoring</h2>
+  <div class="livestock-container">
+    <!-- Milk Production Section -->
+    <div class="form-and-table-container">
+      <div class="livestock-form">
+        <h3><i class="fas fa-weight"></i> Milk Production</h3>
+        <div class="form-group">
+          <label for="cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
+          <input type="text" id="cow-id" placeholder="Enter Cow ID">
+        </div>
+        <div class="form-group">
+          <label for="milk-production"><i class="fas fa-weight"></i> Milk Production (Liters):</label>
+          <input type="number" id="milk-production" placeholder="Enter milk production">
+        </div>
+        <button onclick="recordMilkProduction()"><i class="fas fa-save"></i> Record</button>
+      </div>
+      <div class="milk-production-table">
+        <h3><i class="fas fa-table"></i> Milk Production Records</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Cow ID</th>
+              <th>Milk Production (Liters)</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="milk-records">
+            <!-- Records will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Feed Consumption Section -->
+    <div class="form-and-table-container">
+      <div class="livestock-form">
+        <h3><i class="fas fa-utensils"></i> Feed Consumption</h3>
+        <div class="form-group">
+          <label for="feed-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
+          <input type="text" id="feed-cow-id" placeholder="Enter Cow ID">
+        </div>
+        <div class="form-group">
+          <label for="feed-amount"><i class="fas fa-weight"></i> Feed Amount (kg):</label>
+          <input type="number" id="feed-amount" placeholder="Enter feed amount">
+        </div>
+        <button onclick="recordFeedConsumption()"><i class="fas fa-save"></i> Record</button>
+      </div>
+      <div class="feed-consumption-table">
+        <h3><i class="fas fa-utensils"></i> Feed Consumption Records</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Cow ID</th>
+              <th>Feed Amount (kg)</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="feed-records">
+            <!-- Records will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Medication Administration Section -->
+    <div class="form-and-table-container">
+      <div class="livestock-form">
+        <h3><i class="fas fa-pills"></i> Medication Administration</h3>
+        <div class="form-group">
+          <label for="med-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
+          <input type="text" id="med-cow-id" placeholder="Enter Cow ID">
+        </div>
+        <div class="form-group">
+          <label for="medication"><i class="fas fa-prescription-bottle"></i> Medication:</label>
+          <input type="text" id="medication" placeholder="Enter medication">
+        </div>
+        <div class="form-group">
+          <label for="dosage"><i class="fas fa-syringe"></i> Dosage:</label>
+          <input type="text" id="dosage" placeholder="Enter dosage">
+        </div>
+        <button onclick="recordMedication()"><i class="fas fa-save"></i> Record</button>
+      </div>
+      <div class="medication-table">
+        <h3><i class="fas fa-pills"></i> Medication Records</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Cow ID</th>
+              <th>Medication</th>
+              <th>Dosage</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="medication-records">
+            <!-- Records will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Abnormal Milk Production Tracking -->
+<section id="abnormal-milk" class="section abnormal-milk">
+  <h2><i class="fas fa-chart-line"></i> Track Abnormal Milk Production</h2>
+  <div class="abnormal-milk-container">
+    <!-- Form to input Cow ID -->
+    <div class="abnormal-milk-form">
+      <div class="form-group">
+        <label for="abnormal-cow-id"><i class="fas fa-tag"></i> Enter Cow ID:</label>
+        <input type="text" id="abnormal-cow-id" placeholder="Enter Cow ID">
+      </div>
+      <button onclick="fetchAndPlotMilkProduction()"><i class="fas fa-chart-line"></i> Plot Milk Production</button>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="abnormal-milk-chart">
+      <canvas id="abnormalMilkChart"></canvas>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Breeding Cycles Monitoring -->
+<div class="breeding-cycles">
+  <h3><i class="fas fa-calendar-alt"></i> Track Breeding Cycles</h3>
+  <div class="breeding-container">
+    <!-- Form on the left -->
+    <div class="breeding-form">
+      <div class="form-group">
+        <label for="cow-id-breeding"><i class="fas fa-tag"></i> Cow ID:</label>
+        <input type="text" id="cow-id-breeding" placeholder="Enter Cow ID">
+      </div>
+      <div class="form-group">
+        <label for="breeding-date"><i class="fas fa-calendar"></i> Breeding Date:</label>
+        <input type="date" id="breeding-date">
+      </div>
+      <div class="form-group">
+        <label for="expected-calving-date"><i class="fas fa-calendar-check"></i> Expected Calving Date:</label>
+        <input type="date" id="expected-calving-date">
+      </div>
+      <button onclick="recordBreedingCycle()"><i class="fas fa-save"></i> Record</button>
+    </div>
+
+    <!-- Chart on the right -->
+    <div class="breeding-chart">
+      <canvas id="breedingChart"></canvas>
+    </div>
+  </div>
+</div>
+    </section>
+
+
+
+<!-- Health Alerts and Reports -->
+<section id="health-alerts" class="section health-alerts">
+  <h2><i class="fas fa-heartbeat"></i> Report Health Concern</h2>
+  <div class="health-alerts-container">
+    <!-- Health Concern Form -->
+    <div class="health-concern-form">
+      <div class="form-group">
+        <label for="health-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
+        <input type="text" id="health-cow-id" placeholder="Enter Cow ID" required>
+      </div>
+      <div class="form-group">
+        <label for="health-concern"><i class="fas fa-exclamation-triangle"></i> Health Concern:</label>
+        <textarea id="health-concern" placeholder="Describe the health concern..." rows="4" required></textarea>
+      </div>
+      <button onclick="reportHealthConcern()"><i class="fas fa-bell"></i> Report Concern</button>
+    </div>
+
+    <!-- Health Alerts List -->
+    <div class="health-alerts-list">
+      <h3><i class="fas fa-bell"></i> Recent Health Alerts</h3>
+      <ul id="health-alerts-list">
+        <!-- Alerts will be dynamically added here -->
+      </ul>
+    </div>
+  </div>
+</section>    
+
+
+
+    <!-- Inventory & Supplies -->
+<section id="inventory" class="section inventory">
+  <h2><i class="fas fa-boxes"></i> Inventory</h2>
+  <div class="inventory-container">
+    <!-- Fodder Progress Bar -->
+    <div class="inventory-item">
+      <div class="inventory-header">
+        <i class="fas fa-haykal"></i>
+        <span>Fodder</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress" id="fodder-progress" style="width: 60%;"></div>
+      </div>
+      <p class="inventory-count"><span id="fodder-count">60</span> kg available</p>
+      <button onclick="requestRefill('fodder')"><i class="fas fa-cart-plus"></i> Request Fodder Refill</button>
+    </div>
+
+    <!-- Medicine Progress Bar -->
+    <div class="inventory-item">
+      <div class="inventory-header">
+        <i class="fas fa-pills"></i>
+        <span>Medicine</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress" id="medicine-progress" style="width: 30%;"></div>
+      </div>
+      <p class="inventory-count"><span id="medicine-count">30</span> units available</p>
+      <button onclick="requestRefill('medicine')"><i class="fas fa-cart-plus"></i> Request Medicine Refill</button>
+    </div>
+  </div>
+</section>
+
+    <!-- Communication -->
+<section id="communication" class="section communication">
+  <h2><i class="fas fa-comments"></i> Communication</h2>
+  <div class="communication-container">
+    <!-- Message Input -->
+    <div class="message-input">
+      <label for="message"><i class="fas fa-envelope"></i> Message:</label>
+      <textarea id="message" placeholder="Type your message..."></textarea>
+      <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send to Manager</button>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notifications">
+      <h3><i class="fas fa-bell"></i> Notifications</h3>
+      <ul id="notification-list">
+        <!-- Notifications will be dynamically added here -->
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- Scroll to Top Button -->
+<button id="scrollToTopBtn" class="scroll-to-top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+  <!-- JavaScript at the bottom of the file -->
+  <script>
+    
+    // Task Status Data
+    let taskStatus = {
+      assigned: 3,
+      pending: 0,
+      completed: 0,
+      notDone: 0
+    };
+
+    // Initialize Chart
+    const ctx = document.getElementById('taskChart').getContext('2d');
+    const taskChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Assigned', 'Pending', 'Completed', 'Not Done'],
+        datasets: [{
+          label: 'Task Status',
+          data: [taskStatus.assigned, taskStatus.pending, taskStatus.completed, taskStatus.notDone],
+          backgroundColor: [
+            '#007bff',
+            '#ffc107',
+            '#28a745',
+            '#dc3545'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // Update Task Status
+    function updateTaskStatus(button, status) {
+      const taskItem = button.parentElement;
+      const taskText = taskItem.querySelector('span');
+      if (status === 'pending') {
+        button.innerHTML = '<i class="fas fa-check"></i> Mark as Completed';
+        button.setAttribute('onclick', "updateTaskStatus(this, 'completed')");
+        taskStatus.pending++;
+        taskStatus.assigned--;
+      } else if (status === 'completed') {
+        taskItem.remove();
+        taskStatus.completed++;
+        taskStatus.pending--;
+        addNotification(`Task completed: ${taskText.textContent}`);
+      }
+      updateChart();
+    }
+
+    // Update Chart Data
+    function updateChart() {
+      taskChart.data.datasets[0].data = [
+        taskStatus.assigned,
+        taskStatus.pending,
+        taskStatus.completed,
+        taskStatus.notDone
+      ];
+      taskChart.update();
+    }
+
+    // Report Issue
+    function reportIssue() {
+      const issue = prompt("Describe the issue:");
+      if (issue) {
+        addNotification(`Issue reported: ${issue}`);
+      }
+    }'/'
+
+
+
+    function recordMilkProduction() {
+    const cowId = document.getElementById('cow-id').value;
+    const milkProduction = document.getElementById('milk-production').value;
+
+    // Validate input
+    if (!cowId) {
+        alert("Please enter Cow ID");
+        return;
+    }
+
+    if (!milkProduction) {
+        alert("Please enter milk production amount");
+        return;
+    }
+
+    // Validate that milk production is a number
+    const milkAmount = parseFloat(milkProduction);
+    if (isNaN(milkAmount)) {
+        alert("Milk production must be a valid number");
+        return;
+    }
+
+    // Prepare data for API
+    const data = {
+        cow_id: cowId,
+        milk_liters: milkAmount
+    };
+
+    // Send data to API
+    fetch('http://localhost:5000/api/milk-production', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.error || 'Server error');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Add notification
+        addNotification(`Milk production recorded: ${milkAmount} liters for Cow ID: ${cowId}`);
+
+        // Clear input fields
+        document.getElementById('cow-id').value = '';
+        document.getElementById('milk-production').value = '';
+
+        // Refresh the milk production records table
+        fetchMilkProductionRecords();
+    })
+    .catch(error => {
+        console.error('Error recording milk production:', error);
+        alert('Failed to record milk production: ' + error.message);
+    });
+}
+
+function fetchMilkProductionRecords() {
+    fetch('http://localhost:5000/api/milk-production')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch records');
+            }
+            return response.json();
+        })
+        .then(records => {
+            const recordsTable = document.getElementById('milk-records');
+            recordsTable.innerHTML = ''; // Clear existing records
+
+            if (records.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="3">No records found</td>';
+                recordsTable.appendChild(row);
+                return;
+            }
+
+            records.forEach(record => {
+                const row = document.createElement('tr');
+
+                // Format the date
+                const recordDate = new Date(record.record_date);
+                const formattedDate = recordDate.toLocaleString();
+
+                row.innerHTML = `
+                    <td>${record.cow_id}</td>
+                    <td>${record.milk_liters}</td>
+                    <td>${formattedDate}</td>
+                `;
+
+                recordsTable.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching milk records:', error);
+            const recordsTable = document.getElementById('milk-records');
+            recordsTable.innerHTML = `<tr><td colspan="3">Error loading records: ${error.message}</td></tr>`;
+        });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchMilkProductionRecords();
+});
+
+
+
+
+
+
+ 
+  
+
+
+    function recordFeedConsumption() {
+      const cowId = document.getElementById('feed-cow-id').value;
+      const feedAmount = document.getElementById('feed-amount').value;
+
+      if (cowId && feedAmount) {
+        const record = {
+          cowId: cowId,
+          feedAmount: feedAmount,
+          date: new Date().toLocaleDateString()
+        };
+        feedRecords.push(record);
+        updateFeedConsumptionTable();
+        addNotification(`Feed consumption recorded: ${feedAmount} kg for Cow ${cowId}`);
+        document.getElementById('feed-cow-id').value = "";
+        document.getElementById('feed-amount').value = "";
+      } else {
+        alert("Please enter Cow ID and Feed Amount.");
+      }
+    }
+
+    function recordMedication() {
+      const cowId = document.getElementById('med-cow-id').value;
+      const medication = document.getElementById('medication').value;
+      const dosage = document.getElementById('dosage').value;
+
+      if (cowId && medication && dosage) {
+        const record = {
+          cowId: cowId,
+          medication: medication,
+          dosage: dosage,
+          date: new Date().toLocaleDateString()
+        };
+        medicationRecords.push(record);
+        updateMedicationTable();
+        addNotification(`Medication recorded: ${medication} (${dosage}) for Cow ${cowId}`);
+        document.getElementById('med-cow-id').value = "";
+        document.getElementById('medication').value = "";
+        document.getElementById('dosage').value = "";
+      } else {
+        alert("Please enter Cow ID, Medication, and Dosage.");
+      }
+    }
+
+    function updateMilkProductionTable() {
+      const tableBody = document.querySelector('#milk-records');
+      tableBody.innerHTML = ""; // Clear existing rows
+
+      milkRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.cowId}</td>
+          <td>${record.production} liters</td>
+          <td>${record.date}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function updateFeedConsumptionTable() {
+      const tableBody = document.querySelector('#feed-records');
+      tableBody.innerHTML = ""; // Clear existing rows
+
+      feedRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.cowId}</td>
+          <td>${record.feedAmount} kg</td>
+          <td>${record.date}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function updateMedicationTable() {
+      const tableBody = document.querySelector('#medication-records');
+      tableBody.innerHTML = ""; // Clear existing rows
+
+      medicationRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.cowId}</td>
+          <td>${record.medication}</td>
+          <td>${record.dosage}</td>
+          <td>${record.date}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Report Health Concern
+function reportHealthConcern() {
+  const cowId = document.getElementById('health-cow-id').value;
+  const concern = document.getElementById('health-concern').value;
+
+  if (!cowId || !concern) {
+    alert("Please enter Cow ID and describe the health concern.");
+    return;
+  }
+
+  // Create a new alert item
+  const alertItem = document.createElement('li');
+  alertItem.innerHTML = `
+    <i class="fas fa-exclamation-triangle"></i>
+    <span><strong>Cow ID: ${cowId}</strong> - ${concern}</span>
+  `;
+
+  // Add the alert to the list
+  document.getElementById('health-alerts-list').appendChild(alertItem);
+
+  // Clear the form
+  document.getElementById('health-cow-id').value = "";
+  document.getElementById('health-concern').value = "";
+
+  // Add notification
+  addNotification(`Health concern reported for Cow ID: ${cowId}`);
+}
+
+
+
+    // Inventory & Supplies
+    // Update Inventory Progress Bars
+function updateInventoryProgress() {
+  const fodderCount = parseInt(document.getElementById('fodder-count').textContent);
+  const medicineCount = parseInt(document.getElementById('medicine-count').textContent);
+
+  // Update Fodder Progress
+  const fodderProgress = document.getElementById('fodder-progress');
+  fodderProgress.style.width = `${fodderCount}%`;
+
+  // Update Medicine Progress
+  const medicineProgress = document.getElementById('medicine-progress');
+  medicineProgress.style.width = `${medicineCount}%`;
+}
+
+// Request Refill Function
+function requestRefill(item) {
+  const count = prompt(`How much ${item} do you need?`);
+  if (count) {
+    addNotification(`Requested ${item} refill: ${count}`);
+    // Update the inventory count (example logic)
+    if (item === 'fodder') {
+      document.getElementById('fodder-count').textContent = parseInt(document.getElementById('fodder-count').textContent) + parseInt(count);
+    } else if (item === 'medicine') {
+      document.getElementById('medicine-count').textContent = parseInt(document.getElementById('medicine-count').textContent) + parseInt(count);
+    }
+    updateInventoryProgress();
+  }
+}
+
+// Call updateInventoryProgress on page load
+document.addEventListener('DOMContentLoaded', function() {
+  updateInventoryProgress();
+});
+
+    // Send Message Function
+function sendMessage() {
+  const message = document.getElementById('message').value;
+  if (message) {
+    addNotification(`Message sent to manager: ${message}`);
+    document.getElementById('message').value = "";
+  }
+}
+
+// Add Notification Function
+function addNotification(message) {
+  const notificationList = document.getElementById('notification-list');
+  const notificationItem = document.createElement('li');
+  notificationItem.innerHTML = `
+    <i class="fas fa-bell"></i>
+    <span>${message}</span>
+  `;
+  notificationList.appendChild(notificationItem);
+}
+
+    // Smooth scrolling for navbar links
+    document.querySelectorAll('.navbar-links a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+
+        if (targetSection) {
+          targetSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start' // Ensures the section aligns at the top of the viewport
+          });
+        }
+      });
+    });
+
+    // Add animation on scroll
+    const sections = document.querySelectorAll('.section');
+    const options = {
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+
+
+// Breeding Cycles Data
+let breedingRecords = [];
+
+// Initialize Breeding Chart
+const breedingCtx = document.getElementById('breedingChart').getContext('2d');
+const breedingChart = new Chart(breedingCtx, {
+  type: 'line', // Use 'bar' for a bar chart
+  data: {
+    labels: [], // Dates will be added dynamically
+    datasets: [{
+      label: 'Breeding Cycles',
+      data: [], // Data will be added dynamically
+      backgroundColor: 'rgba(51, 95, 60, 0.2)',
+      borderColor: '#4B6043',
+      borderWidth: 2,
+      fill: true,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Number of Breeding Cycles',
+        },
+        beginAtZero: true,
+      },
+    },
+  },
+});
+
+// Record Breeding Cycle
+function recordBreedingCycle() {
+  const cowId = document.getElementById('cow-id-breeding').value;
+  const breedingDate = document.getElementById('breeding-date').value;
+  const expectedCalvingDate = document.getElementById('expected-calving-date').value;
+
+  if (!cowId || !breedingDate || !expectedCalvingDate) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  const record = {
+    cowId: cowId,
+    breedingDate: breedingDate,
+    expectedCalvingDate: expectedCalvingDate,
+  };
+  breedingRecords.push(record);
+  updateBreedingChart();
+  addNotification(`Breeding cycle recorded for Cow ID: ${cowId}`);
+  document.getElementById('cow-id-breeding').value = "";
+  document.getElementById('breeding-date').value = "";
+  document.getElementById('expected-calving-date').value = "";
+}
+
+// Update Breeding Chart
+function updateBreedingChart() {
+  const labels = breedingRecords.map(record => record.breedingDate);
+  const data = breedingRecords.map((record, index) => index + 1); // Incrementing count
+
+  breedingChart.data.labels = labels;
+  breedingChart.data.datasets[0].data = data;
+  breedingChart.update();
+}
+
+
+// Initialize Abnormal Milk Production Chart
+const abnormalMilkCtx = document.getElementById('abnormalMilkChart').getContext('2d');
+const abnormalMilkChart = new Chart(abnormalMilkCtx, {
+  type: 'line',
+  data: {
+    labels: [], // Dates will be added dynamically
+    datasets: [{
+      label: 'Milk Production (Liters)',
+      data: [], // Milk production data will be added dynamically
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: '#4B6043',
+      borderWidth: 2,
+      fill: true,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Date',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Milk Production (Liters)',
+        },
+        beginAtZero: true,
+      },
+    },
+  },
+});
+
+// Fetch and Plot Milk Production Data
+function fetchAndPlotMilkProduction() {
+  const cowId = document.getElementById('abnormal-cow-id').value;
+
+  if (!cowId) {
+    alert("Please enter a Cow ID.");
+    return;
+  }
+
+  // Fetch milk production data for all cows from the API
+  fetch(`http://localhost:5000/api/milk-production`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch milk production data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Filter data for the specific Cow ID
+      const filteredData = data.filter(record => record.cow_id === cowId);
+
+      if (filteredData.length === 0) {
+        alert(`No milk production records found for Cow ID: ${cowId}`);
+        return;
+      }
+
+      // Extract dates and milk production values for the specific cow
+      const labels = filteredData.map(record => new Date(record.record_date).toLocaleDateString());
+      const milkData = filteredData.map(record => record.milk_liters);
+
+      // Update the chart data
+      abnormalMilkChart.data.labels = labels;
+      abnormalMilkChart.data.datasets[0].data = milkData;
+      abnormalMilkChart.update();
+
+      // Add notification
+      addNotification(`Milk production data plotted for Cow ID: ${cowId}`);
+    })
+    .catch(error => {
+      console.error('Error fetching milk production data:', error);
+      alert('Failed to fetch milk production data: ' + error.message);
+    });
+}
+
+// Logout Confirmation
+function confirmLogout() {
+  const confirmLogout = confirm("Are you sure you want to logout?");
+  if (confirmLogout) {
+    window.location.href = "index.html"; // Redirect to index.html
+  }
+}
+
+
+
+// Scroll to Top Button Functionality
+const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+// Show the button when the user scrolls down 200px
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 200) {
+    scrollToTopBtn.classList.add("show");
+  } else {
+    scrollToTopBtn.classList.remove("show");
+  }
+});
+
+// Scroll to the top of the page when the button is clicked
+scrollToTopBtn.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth", // Smooth scroll
+  });
+});
+
+
+
+  </script>
+</body>
+</html>

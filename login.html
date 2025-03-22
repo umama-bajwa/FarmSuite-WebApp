@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmSuite - Login</title>
+    <link rel="icon" type="image/png" href="imgs/logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side - Image -->
+        <div class="left">
+            <img src="imgs/login.png" alt="Farm Image">
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="right">
+            <div class="login-box">
+                <h1>FarmSuite.</h1>
+                <h2>Login</h2>
+                
+                <form action="#" method="POST">
+                    <label for="username">USER NAME</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" name="password" required>
+
+                   
+
+                    <button type="submit" class="btn login-btn">Login</button>
+                    <a href="signup.html" class="btn signup-btn">Sign Up</a>
+                </form>
+                <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("form");
+
+    if (!form) {
+        console.error("Form not found. Ensure there is a <form> element in the HTML.");
+        return;
+    }
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault(); // Prevent page reload
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+            alert("Please enter both username and password.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:5000/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Correct role-based redirection
+                if (data.role === "worker" || username.toLowerCase() === "worker") {
+                    alert("Login Successful! Redirecting to Worker Dashboard...");
+                    window.location.href = "woker-dashboard.html"; // Corrected typo
+                } 
+                else if (data.role === "owner" || username.toLowerCase() === "owner") {
+                    alert("Login Successful! Redirecting to Owner Dashboard...");
+                    window.location.href = "owner-dashboard.html";
+                } 
+                else if (data.role === "shopkeeper" || username.toLowerCase() === "shopkeeper") {
+                    alert("Login Successful! Redirecting to shopkeeper Dashboard...");
+                    window.location.href = "shopkeeper-dashboard.html";
+                } 
+                else if (data.role === "vet" || username.toLowerCase() === "vet") {
+                    alert("Login Successful! Redirecting to vet Dashboard...");
+                    window.location.href = "vet.html";
+                } 
+                else {
+                    alert("Unauthorized access.");
+                }
+            } else {
+                alert(data.error || "Invalid login credentials.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Server error. Please try again later.");
+        }
+    });
+});
+
+        </script>
+        
+
+    
+</body>
+</html>

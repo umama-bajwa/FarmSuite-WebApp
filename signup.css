@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f8f8f8;
+}
+
+/* Container Layout */
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Left Side - Signup Form */
+.left {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+
+/* Signup Box */
+.signup-box {
+    width: 60%;
+    text-align: left;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #5c4225;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #5c4225;
+}
+
+/* Form Styling */
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #5c4225;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-bottom: 2px solid #a97949;
+    background: transparent;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 5px 35px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+}
+
+.signup-btn {
+    background-color: #a97949;
+    color: white;
+}
+
+.signup-btn:hover {
+    background-color: #775128;
+}
+
+.login-btn {
+    background-color: transparent;
+    padding: 8px 35px; /* Same as signup-btn */
+    border: 2px solid #a97949;
+    color: #a97949;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    border-radius: 25px; /* Same rounded style */
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #a97949;
+    color: white;
+}
+
+
+/* Right Side - Image */
+.right {
+    width: 50%;
+    position: relative;
+}
+
+.right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
