@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmSuite | Inventory Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="inventory.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <i class="fas fa-tractor"></i>                
+                <h1>FarmSuite.</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="manager-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li><a href="livestock.html"><i class="fas fa-cow"></i> Livestock</a></li>
+                    <li class="active"><a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                    <li><a href="orders.html"><i class="fas fa-truck"></i> Orders</a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+            <div class="logout-section">
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="main-header">
+                <h2><i class="fas fa-warehouse"></i> Inventory Management</h2>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="inventorySearch" placeholder="Search inventory...">
+                    </div>
+                    <button class="btn-primary" id="addItemBtn">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+            </header>
+
+            <!-- Inventory Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-icon bg-blue">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Items</h3>
+                        <span id="totalItems">0</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon bg-orange">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Low Stock</h3>
+                        <span id="lowStockItems">0</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon bg-red">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Out of Stock</h3>
+                        <span id="outOfStockItems">0</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon bg-green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>In Stock</h3>
+                        <span id="inStockItems">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="inventory-widget">
+                <div class="widget-header">
+                    <h3>Farm Supplies Inventory</h3>
+                    <div class="view-options">
+                        <button class="btn-icon active" data-filter="all">
+                            <i class="fas fa-list"></i> All Items
+                        </button>
+                        <button class="btn-icon" data-filter="low">
+                            <i class="fas fa-exclamation-triangle"></i> Low Stock
+                        </button>
+                        <button class="btn-icon" data-filter="out">
+                            <i class="fas fa-times-circle"></i> Out of Stock
+                        </button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="table-responsive">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Threshold</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTableBody">
+                                <!-- Inventory items will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="widget-footer">
+                    <div class="pagination">
+                        <button class="btn-outline" id="prevPage"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button class="btn-outline" id="nextPage">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Inventory Item</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="inventoryForm">
+                    <input type="hidden" id="itemId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" id="itemName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="itemCategory" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="Feed">Animal Feed</option>
+                                <option value="Seed">Seeds</option>
+                                <option value="Fertilizer">Fertilizer</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Medicine">Veterinary Medicine</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Current Stock</label>
+                            <input type="number" id="itemStock" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit of Measure</label>
+                            <select id="itemUnit" class="form-control" required>
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="g">Grams (g)</option>
+                                <option value="l">Liters (l)</option>
+                                <option value="ml">Milliliters (ml)</option>
+                                <option value="units">Units</option>
+                                <option value="bags">Bags</option>
+                                <option value="bales">Bales</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Low Stock Threshold</label>
+                            <input type="number" id="itemThreshold" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Supplier</label>
+                            <input type="text" id="itemSupplier" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea id="itemNotes" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline modal-close">Cancel</button>
+                <button type="button" id="saveItemBtn" class="btn-primary">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Supplies</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <input type="hidden" id="orderItemId">
+                    <div class="form-group">
+                        <label class="form-label">Item</label>
+                        <input type="text" id="orderItemName" class="form-control" readonly>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Current Stock</label>
+                            <input type="text" id="orderCurrentStock" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Order Quantity</label>
+                            <input type="number" id="orderQuantity" class="form-control" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" id="orderSupplier" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Urgency</label>
+                        <select id="orderUrgency" class="form-control">
+                            <option value="normal">Normal</option>
+                            <option value="high">High Priority</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea id="orderNotes" class="form-control" rows="3" placeholder="Any special instructions..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline modal-close">Cancel</button>
+                <button type="button" id="placeOrderBtn" class="btn-primary">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample inventory data (in a real app, this would come from an API)
+        let inventoryData = [
+            { id: 1, name: "Chicken Feed", category: "Feed", stock: 15, threshold: 20, unit: "kg", supplier: "FarmSupplies Co.", notes: "Layer feed for chickens", lastUpdated: "2023-06-15" },
+            { id: 2, name: "Corn Seeds", category: "Seed", stock: 8, threshold: 10, unit: "kg", supplier: "AgriSeed Inc.", notes: "Hybrid variety", lastUpdated: "2023-06-10" },
+            { id: 3, name: "NPK Fertilizer", category: "Fertilizer", stock: 25, threshold: 15, unit: "bags", supplier: "GrowRight", notes: "20kg bags", lastUpdated: "2023-06-12" },
+            { id: 4, name: "Antibiotics", category: "Medicine", stock: 0, threshold: 5, unit: "units", supplier: "VetCare", notes: "For cattle", lastUpdated: "2023-06-01" },
+            { id: 5, name: "Hay Bales", category: "Feed", stock: 42, threshold: 30, unit: "bales", supplier: "Local Farm", notes: "Timothy hay", lastUpdated: "2023-06-14" },
+            { id: 6, name: "Milking Machine Parts", category: "Equipment", stock: 3, threshold: 5, unit: "units", supplier: "DairyTech", notes: "Replacement seals", lastUpdated: "2023-05-28" },
+            { id: 7, name: "Pesticide", category: "Other", stock: 12, threshold: 10, unit: "l", supplier: "CropShield", notes: "Organic formula", lastUpdated: "2023-06-05" }
+        ];
+
+        // DOM Elements
+        const inventoryTableBody = document.getElementById('inventoryTableBody');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemModal = document.getElementById('itemModal');
+        const orderModal = document.getElementById('orderModal');
+        const modalCloseBtns = document.querySelectorAll('.modal-close');
+        const inventoryForm = document.getElementById('inventoryForm');
+        const orderForm = document.getElementById('orderForm');
+        const saveItemBtn = document.getElementById('saveItemBtn');
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const inventorySearch = document.getElementById('inventorySearch');
+        const filterButtons = document.querySelectorAll('.view-options button');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+
+        // Pagination variables
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let currentFilter = 'all';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderInventory();
+            updateSummaryCards();
+            setupEventListeners();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Modal controls
+            addItemBtn.addEventListener('click', openAddItemModal);
+            modalCloseBtns.forEach(btn => {
+                btn.addEventListener('click', closeModal);
+            });
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeModal();
+                }
+            });
+
+            // Form submissions
+            saveItemBtn.addEventListener('click', saveInventoryItem);
+            placeOrderBtn.addEventListener('click', placeOrder);
+
+            // Filter and search
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    currentPage = 1;
+                    renderInventory();
+                });
+            });
+            inventorySearch.addEventListener('input', () => {
+                currentPage = 1;
+                renderInventory();
+            });
+
+            // Pagination
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderInventory();
+                }
+            });
+            nextPageBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(getFilteredInventory().length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderInventory();
+                }
+            });
+        }
+
+        // Render inventory table
+        function renderInventory() {
+            const filteredData = getFilteredInventory();
+            const paginatedData = paginateData(filteredData);
+            
+            inventoryTableBody.innerHTML = '';
+            
+            if (paginatedData.length === 0) {
+                inventoryTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="no-results">
+                            <i class="fas fa-box-open"></i>
+                            <p>No inventory items found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            paginatedData.forEach(item => {
+                const status = getStockStatus(item.stock, item.threshold);
+                const statusClass = getStatusClass(status);
+                const lastUpdated = new Date(item.lastUpdated).toLocaleDateString();
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <strong>${item.name}</strong>
+                        ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+                    </td>
+                    <td>${item.category}</td>
+                    <td>${item.stock} ${item.unit}</td>
+                    <td>${item.threshold} ${item.unit}</td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td>${lastUpdated}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-icon edit-item" data-id="${item.id}" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${status !== 'In Stock' ? `
+                            <button class="btn-icon order-item" data-id="${item.id}" title="Order">
+                                <i class="fas fa-truck"></i>
+                            </button>
+                            ` : ''}
+                            <button class="btn-icon delete-item" data-id="${item.id}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                inventoryTableBody.appendChild(row);
+            });
+            
+            // Update pagination info
+            const totalItems = filteredData.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            // Disable/enable pagination buttons
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.edit-item').forEach(btn => {
+                btn.addEventListener('click', () => openEditItemModal(btn.dataset.id));
+            });
+            document.querySelectorAll('.order-item').forEach(btn => {
+                btn.addEventListener('click', () => openOrderModal(btn.dataset.id));
+            });
+            document.querySelectorAll('.delete-item').forEach(btn => {
+                btn.addEventListener('click', () => deleteItem(btn.dataset.id));
+            });
+        }
+
+        // Get filtered inventory based on search and filter
+        function getFilteredInventory() {
+            let filtered = [...inventoryData];
+            
+            // Apply search filter
+            const searchTerm = inventorySearch.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    item.category.toLowerCase().includes(searchTerm) ||
+                    (item.notes && item.notes.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply status filter
+            if (currentFilter === 'low') {
+                filtered = filtered.filter(item => item.stock > 0 && item.stock < item.threshold);
+            } else if (currentFilter === 'out') {
+                filtered = filtered.filter(item => item.stock === 0);
+            }
+            
+            return filtered;
+        }
+
+        // Paginate data
+        function paginateData(data) {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            return data.slice(startIndex, startIndex + itemsPerPage);
+        }
+
+        // Update summary cards
+        function updateSummaryCards() {
+            const totalItems = inventoryData.length;
+            const lowStockItems = inventoryData.filter(item => item.stock > 0 && item.stock < item.threshold).length;
+            const outOfStockItems = inventoryData.filter(item => item.stock === 0).length;
+            const inStockItems = inventoryData.filter(item => item.stock >= item.threshold).length;
+            
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('lowStockItems').textContent = lowStockItems;
+            document.getElementById('outOfStockItems').textContent = outOfStockItems;
+            document.getElementById('inStockItems').textContent = inStockItems;
+        }
+
+        // Get stock status
+        function getStockStatus(stock, threshold) {
+            if (stock === 0) return 'Out of Stock';
+            if (stock < threshold) return 'Low Stock';
+            return 'In Stock';
+        }
+
+        // Get status badge class
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Out of Stock': return 'badge-danger';
+                case 'Low Stock': return 'badge-warning';
+                default: return 'badge-success';
+            }
+        }
+
+        // Modal functions
+        function openAddItemModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Inventory Item';
+            inventoryForm.reset();
+            document.getElementById('itemId').value = '';
+            itemModal.classList.add('active');
+        }
+
+        function openEditItemModal(id) {
+            const item = inventoryData.find(item => item.id == id);
+            if (!item) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Inventory Item';
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemStock').value = item.stock;
+            document.getElementById('itemUnit').value = item.unit;
+            document.getElementById('itemThreshold').value = item.threshold;
+            document.getElementById('itemSupplier').value = item.supplier || '';
+            document.getElementById('itemNotes').value = item.notes || '';
+            
+            itemModal.classList.add('active');
+        }
+
+        function openOrderModal(id) {
+            const item = inventoryData.find(item => item.id == id);
+            if (!item) return;
+            
+            document.getElementById('orderItemId').value = item.id;
+            document.getElementById('orderItemName').value = item.name;
+            document.getElementById('orderCurrentStock').value = `${item.stock} ${item.unit}`;
+            document.getElementById('orderSupplier').value = item.supplier || '';
+            document.getElementById('orderNotes').value = '';
+            document.getElementById('orderQuantity').value = item.threshold - item.stock > 0 ? item.threshold - item.stock : 1;
+            
+            orderModal.classList.add('active');
+        }
+
+        function closeModal() {
+            itemModal.classList.remove('active');
+            orderModal.classList.remove('active');
+        }
+
+        // CRUD operations
+        function saveInventoryItem() {
+            const id = document.getElementById('itemId').value;
+            const itemData = {
+                name: document.getElementById('itemName').value.trim(),
+                category: document.getElementById('itemCategory').value,
+                stock: parseInt(document.getElementById('itemStock').value),
+                threshold: parseInt(document.getElementById('itemThreshold').value),
+                unit: document.getElementById('itemUnit').value,
+                supplier: document.getElementById('itemSupplier').value.trim(),
+                notes: document.getElementById('itemNotes').value.trim(),
+                lastUpdated: new Date().toISOString().split('T')[0]
+            };
+            
+            if (!validateItem(itemData)) return;
+            
+            if (id) {
+                // Update existing item
+                const index = inventoryData.findIndex(item => item.id == id);
+                if (index !== -1) {
+                    inventoryData[index] = { ...inventoryData[index], ...itemData };
+                }
+            } else {
+                // Add new item
+                const newId = inventoryData.length > 0 ? Math.max(...inventoryData.map(item => item.id)) + 1 : 1;
+                inventoryData.push({ id: newId, ...itemData });
+            }
+            
+            closeModal();
+            renderInventory();
+            updateSummaryCards();
+            showNotification('Inventory item saved successfully!', 'success');
+        }
+
+        function placeOrder() {
+            const itemId = document.getElementById('orderItemId').value;
+            const quantity = parseInt(document.getElementById('orderQuantity').value);
+            const supplier = document.getElementById('orderSupplier').value.trim();
+            const urgency = document.getElementById('orderUrgency').value;
+            const notes = document.getElementById('orderNotes').value.trim();
+            
+            if (!itemId || !quantity || !supplier) {
+                showNotification('Please fill all required fields', 'error');
+                return;
+            }
+            
+            // In a real app, this would send to your backend
+            const order = {
+                itemId: parseInt(itemId),
+                itemName: document.getElementById('orderItemName').value,
+                quantity,
+                supplier,
+                urgency,
+                notes,
+                date: new Date().toISOString(),
+                status: 'Pending'
+            };
+            
+            console.log('Order placed:', order);
+            closeModal();
+            showNotification(`Order placed for ${quantity} ${inventoryData.find(item => item.id == itemId).unit} of ${order.itemName}`, 'success');
+        }
+
+        function deleteItem(id) {
+            if (!confirm('Are you sure you want to delete this inventory item?')) return;
+            
+            inventoryData = inventoryData.filter(item => item.id != id);
+            renderInventory();
+            updateSummaryCards();
+            showNotification('Inventory item deleted', 'info');
+        }
+
+        // Helper functions
+        function validateItem(item) {
+            if (!item.name) {
+                showNotification('Item name is required', 'error');
+                return false;
+            }
+            if (!item.category) {
+                showNotification('Category is required', 'error');
+                return false;
+            }
+            if (isNaN(item.stock)) {
+                showNotification('Stock must be a number', 'error');
+                return false;
+            }
+            if (isNaN(item.threshold)) {
+                showNotification('Threshold must be a number', 'error');
+                return false;
+            }
+            if (item.threshold <= 0) {
+                showNotification('Threshold must be greater than 0', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+
+        
+    </script>
+</body>
+</html>

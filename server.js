@@ -1,124 +1,127 @@
 const express = require("express");
-const mysql = require("mysql");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { body, validationResult } = require("express-validator");
 
 const app = express();
+const PORT = 5000;
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-// MySQL Database Connection
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "airship@0000",
-    database: "FarmSuite"
+// Connect to local MongoDB
+mongoose.connect("mongodb://localhost:27017/farmsuite")
+  .then(() => {
+    console.log("Connected to MongoDB.");
+  })
+  .catch(err => {
+    console.error("MongoDB connection error:", err);
+  });
+
+// Define User Schema and Model
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    default: "worker",
+    enum: ['worker', 'manager', 'owner', 'vet', 'shopkeeper']
+  }
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error("Database connection failed:", err);
-    } else {
-        console.log("Connected to the FarmSuite database ✅");
-    }
-});
 
-// Signup Route (Without Hashing)
-app.post("/signup", (req, res) => {
-    const { name, username, password } = req.body;
+const User = mongoose.model("User", userSchema);
 
-    if (!name || !username || !password) {
-        return res.status(400).json({ error: "All fields are required" });
-    }
+// ✅ Login Route (restored)
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  console.log("Login request:", req.body);
 
-    const sql = "INSERT INTO users (name, username, password) VALUES (?, ?, ?)";
-    db.query(sql, [name, username, password], (err, result) => {
-        if (err) {
-            console.error("Error inserting user:", err);
-            return res.status(500).json({ error: "Database error" });
-        }
-        res.status(201).json({ message: "User registered successfully!" });
-    });
-});
-
-// Login Route
-app.post("/login", (req, res) => {
-    const { username, password } = req.body;
-
+  try {
     if (!username || !password) {
-        return res.status(400).json({ error: "Username and password are required" });
+      return res.status(400).json({ error: "Username and password are required." });
     }
 
-    const sql = "SELECT * FROM users WHERE username = ?";
-    db.query(sql, [username], (err, results) => {
-        if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ error: "Database error" });
-        }
+    const user = await User.findOne({ username, password });
 
-        if (results.length === 0) {
-            return res.status(401).json({ error: "Invalid username or password" });
-        }
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username or password." });
+    }
 
-        // Check if the password matches (No hashing, direct comparison)
-        const user = results[0];
-        if (user.password !== password) {
-            return res.status(401).json({ error: "Invalid username or password" });
-        }
-
-        res.status(200).json({ message: "Login successful!", user: { id: user.id, username: user.username } });
+    res.json({
+      message: "Login successful!",
+      role: user.role,
+      userId: user._id
     });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
+});
+
+
+// ✅ Signup Route with Validation
+app.post("/signup", [
+  body("name")
+    .trim()
+    .notEmpty().withMessage("Name is required")
+    .isAlpha('en-US', { ignore: ' ' }).withMessage("Name should only contain alphabets"),
+
+  body("username")
+    .trim()
+    .notEmpty().withMessage("Username is required")
+    .matches(/^[a-z0-9]+$/).withMessage("Username must only contain lowercase letters and digits"),
+
+  body("password")
+    .notEmpty().withMessage("Password is required")
+    .matches(/^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/)
+    .withMessage("Password contains invalid characters"),
+], async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ error: errors.array()[0].msg });
+  }
+
+  const { name, username, password } = req.body;
+
+  try {
+    // Check if username already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: "Username already taken." });
+    }
+
+    const newUser = new User({ name, username, password });
+    await newUser.save();
+
+    res.status(200).json({ message: "User registered successfully!" });
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
 });
 
 
 
 
-// Route to record milk production
-app.post("/api/milk-production", (req, res) => {
-    const { cow_id, milk_liters } = req.body;
-
-    // Validate input
-    if (!cow_id || !milk_liters) {
-        return res.status(400).json({ error: "Cow ID and milk production amount are required" });
-    }
-
-    // Ensure milk_liters is a valid number
-    const milkAmount = parseFloat(milk_liters);
-    if (isNaN(milkAmount)) {
-        return res.status(400).json({ error: "Milk production must be a valid number" });
-    }
-
-    // Insert into the MilkProduction table
-    const sql = "INSERT INTO MilkProduction (cow_id, milk_liters) VALUES (?, ?)";
-    db.query(sql, [cow_id, milkAmount], (err, result) => {
-        if (err) {
-            console.error("Database error when recording milk production:", err);
-            return res.status(500).json({ error: "Database error: " + err.message });
-        }
-        res.status(201).json({ message: "Milk production recorded successfully!", record_id: result.insertId });
-    });
-});
-
-
-// Route to fetch milk production records
-app.get("/api/milk-production", (req, res) => {
-    const sql = "SELECT * FROM MilkProduction ORDER BY record_date DESC";
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error("Database error when fetching milk records:", err);
-            return res.status(500).json({ error: "Database error: " + err.message });
-        }
-        res.status(200).json(results);
-    });
-});
 
 
 
-
-
-
-// Start Server
-app.listen(5000, () => {
-    console.log("Server running on port 5000 🚀");
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

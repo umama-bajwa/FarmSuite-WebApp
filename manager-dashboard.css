@@ -1,0 +1,2717 @@
+/* Base Styles */
+:root {
+    --primary-color: #1dd1a1;
+    --primary-dark: #10ac84;
+    --secondary-color: #2e86de;
+    --danger-color: #ee5253;
+    --warning-color: #feca57;
+    --dark-color: #222f3e;
+    --light-color: #f5f6fa;
+    --gray-color: #8395a7;
+    --white-color: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents double scrollbars */
+}
+
+body {
+    background-color: #f1f5f9;
+    color: #333;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--dark-color);
+    color: var(--white-color);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky; /* Makes the sidebar sticky */
+    top: 0; /* Stick to the top of the viewport */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Allows scrolling if content is too tall */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 15px; /* This adds space between the icon and the title */
+}
+
+.logo-container i {
+    font-size: 32px; /* Increased from default size */
+    color: var(--primary-color); /* Makes the tractor icon stand out */
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.sidebar h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0; /* Removes any default margin */
+}
+
+
+.sidebar nav ul {
+    list-style: none;
+    margin-top: 30px;
+}
+
+.sidebar nav li {
+    margin-bottom: 5px;
+}
+
+.sidebar nav a {
+    color: var(--white-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.sidebar nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar nav a.active {
+    background-color: var(--primary-color);
+    font-weight: 500;
+}
+
+.sidebar nav i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.user-profile {
+    margin-top: auto;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-profile img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--gray-color);
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Allows main content to scroll */
+    height: 100vh; /* Full viewport height */
+    margin-left: 10px; /* Matches sidebar width to prevent overlap */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.header-left h2 {
+    font-size: 24px;
+    color: var(--dark-color);
+}
+
+#current-date {
+    color: var(--gray-color);
+    font-size: 14px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    margin-right: 15px; /* Add some space between bell and weather widget */
+}
+
+.notification-bell i {
+    font-size: 24px;
+    color: var(--gray-color);
+}
+
+.notification-bell:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;  /* Position above the bell */
+    right: -5px; /* Position to the right of the bell */
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    border: 2px solid var(--white-color); /* White border for contrast */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Subtle shadow for depth */
+    z-index: 1; /* Ensure it appears above other elements */
+}
+
+
+/* Weather Widget */
+.weather-widget {
+    display: flex;
+    align-items: center;
+    background-color: var(--white-color);
+    padding: 8px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Remove any left margin that might be pushing it */
+}
+
+.weather-widget i {
+    color: var(--warning-color);
+    margin-right: 5px;
+}
+
+/* Widget Grid */
+.widgets-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    margin-bottom: 20px;
+}
+
+.widget {
+    background-color: var(--white-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.widget-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.widget-actions select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #e0e6ed;
+    background-color: var(--white-color);
+    font-size: 13px;
+}
+
+.btn-add, .btn-order {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.btn-add:hover, .btn-order:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-add i, .btn-order i {
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+/* Task Widget */
+.task-list {
+    padding: 0 20px;
+}
+
+.task-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-info h4 {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--dark-color);
+}
+
+.task-info p {
+    font-size: 12px;
+    color: var(--gray-color);
+    margin-bottom: 3px;
+}
+
+.task-due {
+    font-size: 11px;
+    color: var(--gray-color);
+    display: block;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 8px;
+    background-color: #e0e6ed;
+    color: #333;
+}
+
+.btn-report {
+    background: none;
+    border: none;
+    color: var(--gray-color);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.priority-high {
+    border-left: 3px solid var(--danger-color);
+    padding-left: 10px;
+}
+
+.priority-medium {
+    border-left: 3px solid var(--warning-color);
+    padding-left: 10px;
+}
+
+/* Health Widget */
+.health-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    text-align: center;
+}
+
+.health-stat {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--gray-color);
+    margin-top: 5px;
+}
+
+.health-stat.warning .stat-value {
+    color: var(--warning-color);
+}
+
+.health-stat.critical .stat-value {
+    color: var(--danger-color);
+}
+
+#healthChart {
+    padding: 0 20px 20px;
+    max-height: 200px;
+}
+
+/* Milk Widget */
+.milk-alert {
+    background-color: rgba(238, 82, 83, 0.1);
+    color: var(--danger-color);
+    padding: 10px 20px;
+    margin: 0 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+}
+
+.milk-alert i {
+    margin-right: 8px;
+}
+
+#milkChart {
+    padding: 10px 20px 20px;
+    max-height: 200px;
+}
+
+/* Inventory Widget */
+.inventory-items {
+    padding: 0 20px 20px;
+}
+
+.inventory-item {
+    margin-bottom: 15px;
+}
+
+.item-name {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--dark-color);
+}
+
+.item-stock {
+    height: 8px;
+    background-color: #e0e6ed;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.stock-bar {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.item-quantity {
+    font-size: 11px;
+    color: var(--gray-color);
+}
+
+/* Quick Actions Widget */
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    padding: 15px;
+}
+
+.action-btn {
+    background-color: var(--white-color);
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 10px rgba(29, 209, 161, 0.1);
+}
+
+.action-btn i {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.action-btn span {
+    font-size: 13px;
+    color: var(--dark-color);
+}
+
+/* Breeding Widget */
+.breeding-list {
+    padding: 0 20px 20px;
+}
+
+.breeding-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.breeding-item:last-child {
+    border-bottom: none;
+}
+
+.breeding-info h4 {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--dark-color);
+}
+
+.breeding-info p {
+    font-size: 12px;
+    color: var(--gray-color);
+    margin-bottom: 3px;
+}
+
+.breeding-due {
+    font-size: 11px;
+    color: var(--gray-color);
+    display: block;
+}
+
+.breeding-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+}
+
+.breeding-status i {
+    margin-bottom: 3px;
+}
+
+.breeding-status.pregnant {
+    color: var(--primary-color);
+}
+
+.breeding-status.pending {
+    color: var(--warning-color);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: var(--white-color);
+    margin: 5% auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: modalopen 0.3s;
+}
+
+@keyframes modalopen {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 22px;
+    color: var(--gray-color);
+    cursor: pointer;
+}
+
+.modal h3 {
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e6ed;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: var(--primary-dark);
+}
+
+
+
+/* Logout Button Styles */
+.logout-section {
+    padding: 20px;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-logout {
+    background-color: transparent;
+    color: var(--white-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 10px 15px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-logout i {
+    font-size: 14px;
+}
+
+.btn-logout span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Adjust user profile position */
+.user-profile {
+    border-top: none;
+    padding-bottom: 0;
+}
+
+
+/* Vet Schedule Modal Styles */
+.vet-modal {
+    max-width: 600px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.modal-icon {
+    font-size: 48px;
+    color: var(--primary-color);
+    background: rgba(29, 209, 161, 0.1);
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: block;
+}
+
+.vet-modal h3 {
+    font-size: 22px;
+    color: var(--dark-color);
+    margin-bottom: 5px;
+    margin-right:90px;
+}
+
+.vet-modal p {
+    color: black;;
+    font-size: 14px;
+}
+
+/* Form Styles */
+#vet-schedule-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.form-group input[type="datetime-local"],
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+    transition: all 0.3s;
+}
+
+.form-group input[type="datetime-local"]:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(29, 209, 161, 0.2);
+}
+
+/* Priority Selector */
+.priority-selector {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.priority-selector input[type="radio"] {
+    display: none;
+}
+
+.priority-label {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+    text-align: center;
+}
+
+.priority-label.low {
+    background-color: rgba(46, 134, 222, 0.1);
+    color: var(--secondary-color);
+    border: 1px solid rgba(46, 134, 222, 0.3);
+}
+
+.priority-label.medium {
+    background-color: rgba(254, 202, 87, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(254, 202, 87, 0.3);
+}
+
+.priority-label.high {
+    background-color: rgba(238, 82, 83, 0.1);
+    color: var(--danger-color);
+    border: 1px solid rgba(238, 82, 83, 0.3);
+}
+
+.priority-selector input[type="radio"]:checked + .priority-label.low {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.priority-selector input[type="radio"]:checked + .priority-label.medium {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.priority-selector input[type="radio"]:checked + .priority-label.high {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Contact Methods */
+.contact-methods {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.contact-methods input[type="checkbox"] {
+    display: none;
+}
+
+.method-label {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #e0e6ed;
+}
+
+.method-label i {
+    font-size: 14px;
+}
+
+.method-label.email {
+    color: #d44638;
+}
+
+.method-label.sms {
+    color: #25d366;
+}
+
+.method-label.call {
+    color: #2e86de;
+}
+
+.contact-methods input[type="checkbox"]:checked + .method-label {
+    background-color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+/* Textarea */
+#vet-notes {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e6ed;
+    border-radius: 8px;
+    font-size: 14px;
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Form Footer */
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: var(--gray-color);
+    border: 1px solid #e0e6ed;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Multiple Select Styling */
+select[multiple] {
+    height: auto;
+    min-height: 100px;
+    padding: 5px !important;
+}
+
+select[multiple] option {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+select[multiple] option:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+select[multiple] option:checked {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Waste Disposal Modal Styles */
+.waste-modal {
+    max-width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+  }
+  
+  .header-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header-text h3 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .header-text p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+  }
+  
+  .form-section {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .section-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #2e86de;
+    margin-bottom: 15px;
+  }
+  
+  .section-label i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
+  
+  .waste-type-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  
+  .waste-option {
+    padding: 15px 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+  }
+  
+  .waste-option i {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 8px;
+    color: #043362;
+  }
+  
+  .waste-option.selected {
+    background: #8fb9e3;
+    color: white;
+    border-color: #8fb9e3;
+  }
+  
+  .waste-option.selected i {
+    color: white;
+  }
+  
+  .urgency-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .urgency-option input {
+    display: none;
+  }
+  
+  .urgency-card {
+    padding: 15px 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+  }
+  
+  .urgency-card i {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .urgency-option input:checked + .urgency-card {
+    background: #8fb9e3;
+    color: white;
+    border-color: #8fb9e3;
+  }
+  
+  .urgency-card small {
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+  
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    background: #f9f9f9;
+  }
+  
+  .btn-cancel {
+    padding: 10px 15px;
+    margin-right: 10px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-cancel:hover {
+    background: #e1e1e1;
+  }
+  
+  .btn-submit {
+    padding: 10px 20px;
+    background: #4B6043;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-submit:hover {
+    background: #3a4d34;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .waste-type-options {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .urgency-options {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Success Popup Styles */
+.success-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: popIn 0.3s ease-out;
+  }
+  
+  .popup-icon {
+    font-size: 4rem;
+    color: #4CAF50;
+    margin-bottom: 15px;
+  }
+  
+  .popup-icon i {
+    animation: bounce 0.5s;
+  }
+  
+  .popup-content h3 {
+    margin: 0 0 10px;
+    color: #4B6043;
+  }
+  
+  .popup-content p {
+    margin: 0 0 20px;
+    color: #666;
+  }
+  
+  .popup-close-btn {
+    background: #4B6043;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+  }
+  
+  .popup-close-btn:hover {
+    background: #3a4d34;
+  }
+
+  /* Header Right Section */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Increased from 15px to create more space between bell and weather */
+}
+
+/* Notification Dropdown Styles */
+/* Notification Dropdown Styles */
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 400px; /* Increased from 350px to 400px */
+    max-height: 500px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+/* Notification Header - make it full width */
+.notification-header {
+    padding: 15px;
+    background: #222f3e;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure it spans full width */
+}
+
+.notification-header h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.clear-notifications {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+}
+
+.clear-notifications:hover {
+    opacity: 0.9;
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    transition: all 0.3s;
+    width: 100%; /* Ensure full width */
+}
+
+.notification-item:hover {
+    background-color: #f9f9f9;
+}
+
+.notification-icon {
+    font-size: 18px;
+    color: #222f3e;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0; /* Prevent text overflow */
+}
+
+/* Approval/Denial Popups */
+.success-popup .fa-times-circle {
+    color: #ff6b6b;
+  }
+  
+  .success-popup .fa-check-circle {
+    color: #1dd1a1;
+  }
+
+.notification-content h4 {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.notification-content p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.notification-content small {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #999;
+}
+
+/* Fodder Request Specific Styles */
+.notification-item.fodder-request {
+    background-color: rgba(75, 96, 67, 0.05);
+}
+
+.request-details {
+    margin-bottom: 5px !important;
+}
+
+.request-time {
+    font-size: 12px !important;
+    color: #999 !important;
+}
+
+.notification-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    margin-left: 15px; /* Increased from 10px */
+}
+
+.btn-approve, .btn-deny {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.btn-approve {
+    background: #10ac84;
+    color: white;
+}
+
+.btn-deny {
+    background: #ff6b6b;
+    color: white;
+}
+
+.status-approved, .status-denied {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-approved {
+    color: #4B6043;
+}
+
+.status-denied {
+    color: #ff6b6b;
+}
+
+
+
+/* Vet Schedule Success Popup Styles */
+#vet-schedule-success-popup .popup-content {
+    max-width: 500px;
+    text-align: left;
+  }
+  
+  #vet-schedule-success-popup .popup-icon {
+    color: #4CAF50;
+    font-size: 3rem;
+    margin-bottom: 15px;
+  }
+  
+  #vet-schedule-success-popup .appointment-details {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  #vet-schedule-success-popup .appointment-details p {
+    margin: 10px 0;
+    display: flex;
+  }
+  
+  #vet-schedule-success-popup .appointment-details strong {
+    min-width: 120px;
+    display: inline-block;
+    color: #555;
+  }
+  
+  #vet-schedule-success-popup .popup-close-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 15px;
+  }
+  
+  #vet-schedule-success-popup .popup-close-btn:hover {
+    background-color: #45a049;
+  }
+
+  .notification-item.empty {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.notification-item.empty i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+
+
+
+  /* Fodder Modal Styles */
+  .fodder-modal {
+    max-width: 700px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #6aa3e0 0%, #154f75 100%);
+    color: white;
+}
+
+.header-icon {
+    font-size: 2.5rem;
+    margin-right: 15px;
+    color: #f1c40f;
+}
+
+.header-text h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.header-text p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+#fodder-order-form {
+    padding: 20px;
+}
+
+.form-section {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.section-label i {
+    margin-right: 10px;
+    color: #3498db;
+}
+
+.fodder-type-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.fodder-option {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.fodder-option:hover {
+    border-color: #3498db;
+    transform: translateY(-3px);
+}
+
+.fodder-option.selected {
+    border-color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+}
+
+.fodder-option i {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+.fodder-option span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.fodder-option small {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+.quantity-input {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-input input {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.quantity-btn {
+    padding: 8px 12px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.quantity-btn:hover {
+    background: #2980b9;
+}
+
+.supplier-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.supplier-option input[type="radio"] {
+    display: none;
+}
+
+.supplier-option label {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+}
+
+.supplier-option input[type="radio"]:checked + label {
+    border-color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.supplier-option img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.supplier-option span {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.supplier-option small {
+    display: block;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-cancel {
+    padding: 12px 20px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancel:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.btn-submit {
+    padding: 12px 25px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.btn-submit:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Success Popup Styles */
+#fodder-success-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+#fodder-success-popup .popup-content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.4s ease-out;
+}
+
+.popup-icon {
+    font-size: 4rem;
+    color: #2ecc71;
+    margin-bottom: 15px;
+}
+
+.popup-icon i {
+    animation: bounce 0.6s;
+}
+
+.order-summary {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.order-summary p {
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.order-summary p strong {
+    color: #2c3e50;
+}
+
+.popup-close-btn {
+    padding: 12px 30px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.popup-close-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    80% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+}
+
+
+
+
+/* Animation for new notifications */
+@keyframes slideIn {
+    from { 
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-item.new-notification {
+    animation: slideIn 0.3s ease forwards;
+}
+
+/* Notification Bell Animation */
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+    75% { transform: rotate(-10deg); }
+}
+
+.notification-bell.shake {
+    animation: shake 0.5s;
+}
+  
+
+  @keyframes bellRing {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+    75% { transform: rotate(-10deg); }
+  }
+
+  @keyframes popIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-20px);
+    }
+    60% {
+      transform: translateY(-10px);
+    }
+  }
+
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .widgets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        overflow: hidden;
+    }
+    
+    .logo-container, .user-profile {
+        justify-content: center;
+    }
+    
+    .logo-container h1, 
+    .user-profile div {
+        display: none;
+    }
+    
+    .sidebar nav a span {
+        display: none;
+    }
+    
+    .sidebar nav a {
+        justify-content: center;
+        padding: 12px 0;
+    }
+    
+    .sidebar nav i {
+        margin-right: 0;
+        font-size: 18px;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-right {
+        margin-top: 15px;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Heart Icon Styles */
+.heart-icon {
+    margin-right: 15px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+}
+
+.heart-icon i {
+    font-size: 20px;
+    color: #ff6b6b; /* Red color */
+    animation: heartbeat 1.5s infinite;
+}
+
+/* Heartbeat Animation */
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+    14% {
+        transform: scale(1.3);
+    }
+    28% {
+        transform: scale(1);
+    }
+    42% {
+        transform: scale(1.3);
+    }
+    70% {
+        transform: scale(1);
+    }
+}
+
+/* Optional: Add a subtle pulse effect on hover */
+.heart-icon:hover i {
+    animation: heartbeat 0.8s infinite, pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 107, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+    }
+}
+
+/* Health Alert Popup Styles */
+.health-alert-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .alert-popup-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .alert-popup-content h3 {
+    color: #ee5253;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .alert-list {
+    margin-bottom: 20px;
+  }
+  
+  .alert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .alert-item i {
+    color: #ee5253;
+    font-size: 20px;
+    margin-top: 3px;
+  }
+  
+  .alert-item div {
+    flex: 1;
+  }
+  
+  .alert-item p {
+    margin: 5px 0;
+    color: #333;
+  }
+  
+  .alert-item small {
+    color: #999;
+    font-size: 12px;
+  }
+  
+  .mark-read-btn {
+    background: #10ac84;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+  }
+  
+  .close-alert-popup {
+    background: #2e86de;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  /* Heart Icon Badge */
+.heart-icon {
+    position: relative;
+  }
+  
+  .alert-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ee5253;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    font-weight: bold;
+  }
+  
+  .heart-icon.has-alerts i {
+    animation: heartbeat 1.5s infinite;
+  }
+  
+  @keyframes heartbeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+/* Message Icon Styles */
+.message-icon {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #555;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s;
+  }
+  
+  .message-icon:hover {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .message-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    display: none;
+  }
+  
+  .message-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    width: 350px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  .message-dropdown.show {
+    display: block;
+  }
+  
+  .message-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .message-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  .mark-all-read {
+    background: none;
+    border: none;
+    color: #4B6043;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .mark-all-read i {
+    margin-right: 5px;
+  }
+  
+  .message-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  .message-item {
+    padding: 15px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .message-item.unread {
+    background-color: #f8f9fa;
+    border-left: 3px solid #4B6043;
+  }
+  
+  .message-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .message-sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .message-subject {
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .message-preview {
+    color: #666;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .message-time {
+    font-size: 0.8rem;
+    color: #999;
+  }
+  
+/* Message Modal Styles */
+.message-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .message-modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    padding: 25px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .close-message-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #777;
+  }
+  
+  .message-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .message-body {
+    padding: 15px 0;
+    line-height: 1.6;
+  }
+  
+  .btn-reply {
+    background-color: #4B6043;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .btn-reply i {
+    margin-right: 5px;
+  }
+  
+  /* Pulse animation for new messages */
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  .has-messages {
+    animation: pulse 1.5s infinite;
+  }
+  
+  .has-messages .message-count {
+    animation: pulse 1.5s infinite;
+  }
+
+  /* Messaging System */
+.message-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.message-modal-content {
+    background-color: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-message-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-message-modal:hover {
+    color: #E74C3C;
+}
+
+.message-meta {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.message-body {
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.message-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-reply {
+    background-color: #4B6043;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-reply:hover {
+    background-color: #3a4d34;
+}
+
+/* New Message Popup */
+.new-message-popup {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #4B6043;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 999;
+    animation: slideUp 0.5s ease;
+    cursor: pointer;
+}
+
+.new-message-popup i {
+    font-size: 1.5rem;
+}
+
+.new-message-popup-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.new-message-popup-content p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Message Bubbles */
+.message-bubble {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin: 8px 0;
+    position: relative;
+    line-height: 1.4;
+}
+
+.message-incoming {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    border-top-left-radius: 5px;
+}
+
+.message-outgoing {
+    align-self: flex-end;
+    background-color: #4B6043;
+    color: white;
+    border-top-right-radius: 5px;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 5px;
+    display: block;
+    text-align: right;
+}
+
+/* Vet Message Center */
+.vet-message-center {
+    display: flex;
+    height: 500px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.vet-message-sidebar {
+    width: 300px;
+    background: #f8f9fa;
+    border-right: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+}
+
+.vet-message-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vet-message-header {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vet-message-display {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+}
+
+.vet-message-input {
+    padding: 15px;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.vet-message-input textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    outline: none;
+    resize: none;
+    min-height: 60px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.vet-message-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vet-send-btn {
+    background: #4B6043;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.vet-send-btn:hover {
+    background: #3a4d34;
+}
+
+/* Health Records Icon Styles */
+.health-records-icon {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+    color: #555;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.health-records-icon:hover {
+    color: #1dd1a1;
+}
+
+.health-records-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    display: none;
+}
+
+.health-records-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    width: 350px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.health-records-dropdown.show {
+    display: block;
+}
+
+.health-records-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.health-records-header h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.health-records-header button {
+    background: none;
+    border: none;
+    color: #1dd1a1;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.health-records-list {
+    padding: 0;
+}
+
+.health-record-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.health-record-item:hover {
+    background-color: #f9f9f9;
+}
+
+.health-record-item.unread {
+    background-color: #f0f8ff;
+}
+
+.health-record-item .record-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.health-record-item .record-cow {
+    font-weight: bold;
+    color: #333;
+}
+
+.health-record-item .record-status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: white;
+}
+
+.health-record-item .record-meta {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.health-record-item .record-purpose {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.health-record-item .record-notes {
+    font-size: 13px;
+    color: #555;
+    margin-top: 8px;
+}
+
+.health-record-item.empty {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+/* Health Record Modal Styles */
+.health-record-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.health-record-modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    position: relative;
+}
+
+.health-record-modal h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.record-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.record-cow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+}
+
+.record-cow i {
+    font-size: 24px;
+    color: #666;
+}
+
+.record-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: white;
+}
+
+.record-details {
+    margin-top: 20px;
+}
+
+.detail-row {
+    margin-bottom: 15px;
+}
+
+.detail-row strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.record-notes {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.task-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.task-stat {
+    text-align: center;
+    padding: 10px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+}
+
+#taskStatusChart {
+    max-height: 200px;
+    width: 100% !important;
+}
+
+.stat-color {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.stat-color.completed {
+    background-color: #1dd1a1;
+}
+
+.stat-color.not-done {
+    background-color: #ff6b6b;
+}
+
+.stat-color.assigned {
+    background-color: #feca57;
+}

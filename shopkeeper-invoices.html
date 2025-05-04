@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Add jsPDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* Base Styles */
+    :root {
+      --primary-color: #192a43;
+      --secondary-color: #ff7e5f;
+      --dark-color: #041742;
+      --light-color: #f8f9fa;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: var(--dark-color);
+      color: white;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .navbar-brand i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+      color: var(--secondary-color);
+    }
+    
+    .navbar-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .navbar-links a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+    
+    .navbar-links a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .navbar-links a i {
+      font-size: 1.1rem;
+    }
+    
+    .logout-button {
+      background-color: var(--danger-color);
+    }
+    
+    .logout-button:hover {
+      background-color: #c82333 !important;
+    }
+    
+    .dashboard {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    
+    .section h2 {
+      margin-top: 0;
+      color: #2c3e50;
+      font-size: 1.8rem;
+      border-bottom: 2px solid #f1f1f1;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section h2 i {
+      margin-right: 10px;
+      color: #1abc9c;
+    }
+    
+    /* Invoice Styles */
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    
+    #invoice-details {
+      padding: 30px;
+    }
+    
+    #invoice-details h3 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: #2c3e50;
+      text-align: center;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    #invoice-details h3::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, #1abc9c, #3498db);
+    }
+    
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    
+    .invoice-logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .invoice-logo img {
+      max-width: 180px;
+      height: auto;
+    }
+    
+    .invoice-logo h2 {
+      margin: 5px 0 0;
+      color: #1abc9c;
+      font-size: 1.8rem;
+    }
+    
+    .invoice-logo p {
+      margin: 0;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+    
+    #invoice-header {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    
+    #invoice-header p {
+      margin: 5px 0;
+    }
+    
+    #invoice-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    #invoice-meta p {
+      margin: 8px 0;
+      flex-basis: 48%;
+    }
+    
+    hr {
+      border: none;
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 20px 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    table th {
+      background-color: #2c3e50;
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+    
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+    
+    #invoice-totals {
+      text-align: right;
+      margin-top: 20px;
+    }
+    
+    #invoice-totals p {
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+    
+    #invoice-totals span {
+      display: inline-block;
+      min-width: 100px;
+      text-align: right;
+    }
+    
+    #invoice-totals #invoice-total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    #invoice-terms {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+    }
+    
+    #invoice-terms p {
+      margin: 8px 0;
+    }
+    
+    .no-invoice {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .no-invoice i {
+      font-size: 3rem;
+      color: #bdc3c7;
+      margin-bottom: 20px;
+    }
+    
+    .no-invoice h3 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    
+    .no-invoice p {
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+    
+    .btn-primary {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-primary:hover {
+      background-color: #16a085;
+    }
+    
+    .thank-you {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #e8f8f5;
+      border-radius: 6px;
+      color: #1abc9c;
+      font-weight: 500;
+    }
+    
+    /* Invoice Action Buttons */
+    .invoice-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .invoice-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      border: none;
+      color: white;
+    }
+    
+    .invoice-btn.print {
+      background-color: #3498db;
+    }
+    
+    .invoice-btn.print:hover {
+      background-color: #2980b9;
+    }
+    
+    .invoice-btn.pdf {
+      background-color: #e74c3c;
+    }
+    
+    .invoice-btn.pdf:hover {
+      background-color: #c0392b;
+    }
+    
+    /* Print-specific styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #invoice-details, #invoice-details * {
+        visibility: visible;
+      }
+      #invoice-details {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+      .navbar, .invoice-actions {
+        display: none !important;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      #invoice-meta p {
+        flex-basis: 100%;
+      }
+      
+      .navbar-links {
+        display: none;
+      }
+      
+      .section {
+        padding: 15px;
+      }
+      
+      #invoice-details {
+        padding: 15px;
+      }
+      
+      .invoice-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fas fa-store"></i>
+      <span>Shopkeeper Dashboard</span>
+    </div>
+    <div class="navbar-links">
+      <a href="shopkeeper-dashboard.html"><i class="fas fa-box-open"></i> Products</a>
+      <a href="shopkeeper-cart.html"><i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)</a>
+      <a href="shopkeeper-payments.html"><i class="fas fa-credit-card"></i> Payments</a>
+      <a href="shopkeeper-invoices.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+      <a href="#" onclick="confirmLogout()" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!-- Invoices Section -->
+  <div class="dashboard">
+    <section id="invoices" class="section">
+      <h2><i class="fas fa-file-invoice"></i> Invoices</h2>
+      <div class="card">
+        <!-- Invoice Action Buttons -->
+        <div class="invoice-actions">
+          <button class="invoice-btn print" onclick="printInvoice()">
+            <i class="fas fa-print"></i> Print Invoice
+          </button>
+          <button class="invoice-btn pdf" onclick="downloadPDF()">
+            <i class="fas fa-file-pdf"></i> Download as PDF
+          </button>
+        </div>
+        
+        <div id="invoice-details">
+          <!-- FarmSuite Logo and Header -->
+          <div class="invoice-logo">
+            <svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="40" height="30" rx="5" fill="#1abc9c"/>
+              <rect x="60" y="10" width="40" height="30" rx="5" fill="#3498db"/>
+              <rect x="110" y="10" width="40" height="30" rx="5" fill="#e74c3c"/>
+              <text x="20" y="35" font-family="Arial" font-size="20" fill="white">F</text>
+              <text x="70" y="35" font-family="Arial" font-size="20" fill="white">S</text>
+              <text x="120" y="35" font-family="Arial" font-size="20" fill="white">F</text>
+              <text x="20" y="48" font-family="Arial" font-size="8" fill="#2c3e50">Farm</text>
+              <text x="70" y="48" font-family="Arial" font-size="8" fill="#2c3e50">Suite</text>
+              <text x="120" y="48" font-family="Arial" font-size="8" fill="#2c3e50">Fresh</text>
+            </svg>
+            <h2>FarmSuite</h2>
+            <p>Fresh Produce Delivery</p>
+          </div>
+          
+          <!-- Billing Receipt -->
+          <h3>INVOICE</h3>
+          
+          <div class="invoice-header">
+            <div id="invoice-header">
+              <p><strong>Bill To:</strong></p>
+              <p><strong id="invoice-user-name">Sarim Rasbed</strong></p>
+              <p id="invoice-delivery-address">H13 Islamabad</p>
+            </div>
+            
+            <div id="invoice-meta">
+              <p><strong>Invoice #:</strong> <span id="invoice-number">INT-001</span></p>
+              <p><strong>Invoice Date:</strong> <span id="invoice-date">23/03/2025</span></p>
+              <p><strong>P.O.#:</strong> <span id="po-number">2412/2019</span></p>
+              <p><strong>Due Date:</strong> <span id="due-date">07/04/2025</span></p>
+            </div>
+          </div>
+
+          <hr>
+
+          <table id="invoice-items">
+            <thead>
+              <tr>
+                <th>QTY</th>
+                <th>DESCRIPTION</th>
+                <th>UNIT PRICE</th>
+                <th>AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Invoice items will be dynamically added here -->
+            </tbody>
+          </table>
+
+          <hr>
+
+          <div id="invoice-totals">
+            <p><strong>Subtotal:</strong> PKR <span id="invoice-subtotal">0.00</span></p>
+            <p><strong>Sales Tax (5.0%):</strong> PKR <span id="invoice-tax">0.00</span></p>
+            <p><strong style="font-size: 1.1rem;">TOTAL:</strong> PKR <span id="invoice-total" style="font-size: 1.1rem;">0.00</span></p>
+          </div>
+
+          <hr>
+
+          <div id="invoice-terms">
+            <p><strong>Terms & Conditions:</strong></p>
+            <p>Payment is due within 15 days</p>
+            <p><strong>Name of Bank:</strong> ABC Bank</p>
+            <p><strong>Account Number:</strong> 1234567890</p>
+            <p><strong>Routing:</strong> 008765432</p>
+          </div>
+          
+          <div class="thank-you">
+            <p>Thank you for your business!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Load jsPDF
+    const { jsPDF } = window.jspdf;
+    
+    // Load invoice data from localStorage
+    window.addEventListener("load", () => {
+      const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+      const paymentDetails = JSON.parse(localStorage.getItem('paymentDetails'));
+      const invoiceDetails = JSON.parse(localStorage.getItem('invoiceDetails'));
+      const invoiceCart = JSON.parse(localStorage.getItem('invoiceCart'));
+      const invoiceTotals = JSON.parse(localStorage.getItem('invoiceTotals'));
+
+      if (userDetails && paymentDetails && invoiceDetails && invoiceCart && invoiceTotals) {
+        // Update user details
+        document.getElementById("invoice-user-name").textContent = userDetails.userName;
+        document.getElementById("invoice-delivery-address").textContent = userDetails.deliveryAddress;
+        
+        // Update invoice meta details
+        document.getElementById("invoice-number").textContent = invoiceDetails.invoiceNumber;
+        document.getElementById("invoice-date").textContent = invoiceDetails.invoiceDate;
+        document.getElementById("po-number").textContent = invoiceDetails.poNumber;
+        document.getElementById("due-date").textContent = invoiceDetails.dueDate;
+        
+        // Update invoice items
+        const invoiceItems = document.getElementById("invoice-items").querySelector("tbody");
+        invoiceItems.innerHTML = "";
+        
+        invoiceCart.forEach(item => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.quantity || 1}</td>
+            <td>${item.productName}</td>
+            <td>PKR ${item.price.toFixed(2)}</td>
+            <td>PKR ${(item.price * (item.quantity || 1)).toFixed(2)}</td>
+          `;
+          invoiceItems.appendChild(row);
+        });
+        
+        // Update totals
+        document.getElementById("invoice-subtotal").textContent = invoiceTotals.subtotal;
+        document.getElementById("invoice-tax").textContent = invoiceTotals.tax;
+        document.getElementById("invoice-total").textContent = invoiceTotals.total;
+        
+        // Add payment method to terms
+        const terms = document.getElementById("invoice-terms");
+        const paymentMethod = document.createElement("p");
+        paymentMethod.innerHTML = `<strong>Payment Method:</strong> ${paymentDetails.paymentMethod}`;
+        if (paymentDetails.paymentMethod === 'card') {
+          paymentMethod.innerHTML += ` (${paymentDetails.cardType} ending in ${paymentDetails.cardNumber})`;
+        }
+        terms.insertBefore(paymentMethod, terms.firstChild);
+      } else {
+        // If no data found, show a message
+        document.getElementById("invoice-details").innerHTML = `
+          <div class="no-invoice">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <h3>No Invoice Found</h3>
+            <p>Please complete a purchase to generate an invoice.</p>
+            <a href="shopkeeper-dashboard.html" class="btn-primary">Browse Products</a>
+          </div>
+        `;
+        // Hide action buttons if no invoice
+        document.querySelector('.invoice-actions').style.display = 'none';
+      }
+    });
+
+    // Print Invoice Function
+    function printInvoice() {
+      window.print();
+    }
+    
+    // Download as PDF Function
+    function downloadPDF() {
+      const invoiceElement = document.getElementById('invoice-details');
+      
+      // Use html2canvas to capture the invoice
+      html2canvas(invoiceElement, {
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true,
+        allowTaint: true
+      }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 295; // A4 height in mm
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        // Add new page if content is too long
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        
+        // Save the PDF
+        pdf.save(`Invoice_${document.getElementById('invoice-number').textContent}.pdf`);
+      });
+    }
+
+    // Logout Confirmation
+    function confirmLogout() {
+      const confirmLogout = confirm("Are you sure you want to logout?");
+      if (confirmLogout) {
+        window.location.href = "index.html";
+      }
+    }
+  </script>
+</body>
+</html>

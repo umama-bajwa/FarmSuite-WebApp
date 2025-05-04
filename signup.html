@@ -6,25 +6,38 @@
     <title>FarmSuite - Sign Up</title>
     <link rel="icon" type="image/png" href="imgs/logo1.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="signup.css">
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="signup.css"></head>
 <body>
     <div class="container">
         <!-- Left Side - Signup Form -->
         <div class="left">
             <div class="signup-box">
+                <i class="fas fa-info-circle info-icon" id="infoIcon"></i>
+                <div class="instructions" id="instructions">
+                    <h3>Sign Up Instructions</h3>
+                    <ul>
+                        <li>Name: Only alphabets allowed</li>
+                        <li>Username: Lowercase letters and digits only</li>
+                        <li>Password: 4-6 characters (letters, digits, special chars)</li>
+                    </ul>
+                </div>
+                
                 <h1>FarmSuite.</h1>
                 <h2>Sign Up</h2>
                 
                 <form id="signupForm">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" required>
+                    <div id="nameError" class="error-message">Name should only contain alphabets</div>
                 
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
+                    <div id="usernameError" class="error-message">Username must be lowercase letters and digits only</div>
                 
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
+                    <div id="passwordError" class="error-message">Password must be 4-6 characters long</div>
                 
                     <div class="buttons">
                         <button type="submit" class="btn signup-btn">Sign Up</button>
@@ -43,6 +56,38 @@
     </div>
 
     <script>
+        // Toggle instructions visibility
+        document.getElementById("infoIcon").addEventListener("click", function() {
+            const instructions = document.getElementById("instructions");
+            instructions.style.display = instructions.style.display === "block" ? "none" : "block";
+        });
+
+        // Close instructions when clicking outside
+        document.addEventListener('click', function(event) {
+            const instructions = document.getElementById("instructions");
+            const infoIcon = document.getElementById("infoIcon");
+            
+            if (event.target !== infoIcon && !instructions.contains(event.target)) {
+                instructions.style.display = "none";
+            }
+        });
+
+        // Validation functions
+        function validateName(name) {
+            const regex = /^[A-Za-z\s]+$/;
+            return regex.test(name);
+        }
+
+        function validateUsername(username) {
+            const regex = /^[a-z0-9]+$/;
+            return regex.test(username);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 4 && password.length <= 6;
+        }
+
+        // Form validation
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
@@ -50,10 +95,29 @@
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
 
-            if (!name || !username || !password) {
-                alert("Please fill in all fields.");
-                return;
+            // Reset error messages
+            document.getElementById("nameError").style.display = "none";
+            document.getElementById("usernameError").style.display = "none";
+            document.getElementById("passwordError").style.display = "none";
+
+            let isValid = true;
+
+            if (!validateName(name)) {
+                document.getElementById("nameError").style.display = "block";
+                isValid = false;
             }
+
+            if (!validateUsername(username)) {
+                document.getElementById("usernameError").style.display = "block";
+                isValid = false;
+            }
+
+            if (!validatePassword(password)) {
+                document.getElementById("passwordError").style.display = "block";
+                isValid = false;
+            }
+
+            if (!isValid) return;
 
             try {
                 const response = await fetch("http://localhost:5000/signup", {
@@ -73,6 +137,34 @@
             } catch (error) {
                 console.error("Error:", error);
                 alert("Error connecting to the server. Please try again later.");
+            }
+        });
+
+        // Real-time validation feedback
+        document.getElementById("name").addEventListener("input", function() {
+            const name = this.value.trim();
+            if (name && !validateName(name)) {
+                document.getElementById("nameError").style.display = "block";
+            } else {
+                document.getElementById("nameError").style.display = "none";
+            }
+        });
+
+        document.getElementById("username").addEventListener("input", function() {
+            const username = this.value.trim();
+            if (username && !validateUsername(username)) {
+                document.getElementById("usernameError").style.display = "block";
+            } else {
+                document.getElementById("usernameError").style.display = "none";
+            }
+        });
+
+        document.getElementById("password").addEventListener("input", function() {
+            const password = this.value;
+            if (password && !validatePassword(password)) {
+                document.getElementById("passwordError").style.display = "block";
+            } else {
+                document.getElementById("passwordError").style.display = "none";
             }
         });
     </script>

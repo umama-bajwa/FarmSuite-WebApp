@@ -48,31 +48,21 @@
 
 
     <!-- Task List & Status Updates -->
-    <section id="tasks" class="section task-list">
-      <h2><i class="fas fa-tasks"></i> Task List</h2>
-      <div class="task-container">
-        <div class="task-list-container">
+<!-- Task List & Status Updates -->
+<section id="tasks" class="section task-list">
+  <h2><i class="fas fa-tasks"></i> Task List</h2>
+  <div class="task-container">
+      <div class="task-list-container">
           <ul id="task-list">
-            <li>
-              <span>Feed the cows (Deadline: 10:00 AM)</span>
-              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
-            </li>
-            <li>
-              <span>Milk the cows (Deadline: 11:00 AM)</span>
-              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
-            </li>
-            <li>
-              <span>Clean the barn (Deadline: 12:00 PM)</span>
-              <button onclick="updateTaskStatus(this, 'pending')"><i class="fas fa-play"></i> Mark as In Progress</button>
-            </li>
+              <!-- Tasks will be dynamically added here -->
+              <li>Loading tasks...</li>
           </ul>
-          <button onclick="reportIssue()"><i class="fas fa-exclamation-circle"></i> Report Issue</button>
-        </div>
-        <div class="chart-container">
-          <canvas id="taskChart"></canvas>
-        </div>
       </div>
-    </section>
+      <div class="chart-container">
+          <canvas id="taskChart"></canvas>
+      </div>
+  </div>
+</section>
 
     <!-- Livestock & Production Monitoring -->
 <section id="livestock" class="section livestock-monitoring">
@@ -84,11 +74,13 @@
         <h3><i class="fas fa-weight"></i> Milk Production</h3>
         <div class="form-group">
           <label for="cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
-          <input type="text" id="cow-id" placeholder="Enter Cow ID">
+          <input type="text" id="cow-id" placeholder="Enter Cow ID" oninput="validateCowId(this)">
+          <div class="error-message" id="cow-id-error">Cow ID must be a number</div>        
         </div>
         <div class="form-group">
           <label for="milk-production"><i class="fas fa-weight"></i> Milk Production (Liters):</label>
-          <input type="number" id="milk-production" placeholder="Enter milk production">
+          <input type="text" id="milk-production" placeholder="Enter milk production" oninput="validateMilkProduction(this)">
+          <div class="error-message" id="milk-production-error">Must be a number (e.g., 5.2)</div>
         </div>
         <button onclick="recordMilkProduction()"><i class="fas fa-save"></i> Record</button>
       </div>
@@ -115,11 +107,13 @@
         <h3><i class="fas fa-utensils"></i> Feed Consumption</h3>
         <div class="form-group">
           <label for="feed-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
-          <input type="text" id="feed-cow-id" placeholder="Enter Cow ID">
+          <input type="text" id="feed-cow-id" placeholder="Enter Cow ID" oninput="validateCowId(this)">
+      <div class="error-message" id="feed-cow-id-error">Cow ID must be a number</div>
         </div>
         <div class="form-group">
           <label for="feed-amount"><i class="fas fa-weight"></i> Feed Amount (kg):</label>
-          <input type="number" id="feed-amount" placeholder="Enter feed amount">
+          <input type="text" id="feed-amount" placeholder="Enter feed amount" oninput="validateFeedAmount(this)">
+      <div class="error-message" id="feed-amount-error">Must be a number (e.g., 10.5)</div>
         </div>
         <button onclick="recordFeedConsumption()"><i class="fas fa-save"></i> Record</button>
       </div>
@@ -140,21 +134,24 @@
       </div>
     </div>
 
-    <!-- Medication Administration Section -->
-    <div class="form-and-table-container">
+     <!-- Medication Administration Section -->
+     <div class="form-and-table-container">
       <div class="livestock-form">
         <h3><i class="fas fa-pills"></i> Medication Administration</h3>
         <div class="form-group">
           <label for="med-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
-          <input type="text" id="med-cow-id" placeholder="Enter Cow ID">
+          <input type="text" id="med-cow-id" placeholder="Enter Cow ID" oninput="validateCowId(this)">
+          <div class="error-message" id="med-cow-id-error">Cow ID must be a number</div>
         </div>
         <div class="form-group">
           <label for="medication"><i class="fas fa-prescription-bottle"></i> Medication:</label>
-          <input type="text" id="medication" placeholder="Enter medication">
+          <input type="text" id="medication" placeholder="Enter medication" oninput="validateMedication(this)">
+      <div class="error-message" id="medication-error">No special characters allowed</div>
         </div>
         <div class="form-group">
           <label for="dosage"><i class="fas fa-syringe"></i> Dosage:</label>
-          <input type="text" id="dosage" placeholder="Enter dosage">
+          <input type="text" id="dosage" placeholder="Enter dosage (e.g., 2 ml)" oninput="validateDosage(this)">
+      <div class="error-message" id="dosage-error">Format: number and unit (e.g., 2 ml)</div>
         </div>
         <button onclick="recordMedication()"><i class="fas fa-save"></i> Record</button>
       </div>
@@ -179,15 +176,28 @@
 </section>
 
 
+
+
 <!-- Abnormal Milk Production Tracking -->
 <section id="abnormal-milk" class="section abnormal-milk">
   <h2><i class="fas fa-chart-line"></i> Track Abnormal Milk Production</h2>
   <div class="abnormal-milk-container">
-    <!-- Form to input Cow ID -->
+    <!-- Form to input Cow ID and date range -->
     <div class="abnormal-milk-form">
       <div class="form-group">
         <label for="abnormal-cow-id"><i class="fas fa-tag"></i> Enter Cow ID:</label>
-        <input type="text" id="abnormal-cow-id" placeholder="Enter Cow ID">
+        <input type="text" id="med-cow-id" placeholder="Enter Cow ID" oninput="validateCowId(this)">
+        <div class="error-message" id="med-cow-id-error">Cow ID must be a number</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="from-date"><i class="fas fa-calendar"></i> From:</label>
+          <input type="date" id="from-date">
+        </div>
+        <div class="form-group">
+          <label for="to-date"><i class="fas fa-calendar"></i> To:</label>
+          <input type="date" id="to-date">
+        </div>
       </div>
       <button onclick="fetchAndPlotMilkProduction()"><i class="fas fa-chart-line"></i> Plot Milk Production</button>
     </div>
@@ -209,7 +219,8 @@
     <div class="breeding-form">
       <div class="form-group">
         <label for="cow-id-breeding"><i class="fas fa-tag"></i> Cow ID:</label>
-        <input type="text" id="cow-id-breeding" placeholder="Enter Cow ID">
+        <input type="text" id="med-cow-id" placeholder="Enter Cow ID" oninput="validateCowId(this)">
+        <div class="error-message" id="med-cow-id-error">Cow ID must be a number</div>
       </div>
       <div class="form-group">
         <label for="breeding-date"><i class="fas fa-calendar"></i> Breeding Date:</label>
@@ -240,11 +251,13 @@
     <div class="health-concern-form">
       <div class="form-group">
         <label for="health-cow-id"><i class="fas fa-tag"></i> Cow ID:</label>
-        <input type="text" id="health-cow-id" placeholder="Enter Cow ID" required>
+        <input type="text" id="health-cow-id" placeholder="Enter Cow ID" required oninput="validateCowId(this)">
+        <div class="error-message" id="health-cow-id-error">Cow ID must be a number</div>
       </div>
       <div class="form-group">
         <label for="health-concern"><i class="fas fa-exclamation-triangle"></i> Health Concern:</label>
-        <textarea id="health-concern" placeholder="Describe the health concern..." rows="4" required></textarea>
+        <textarea id="health-concern" placeholder="Describe the health concern..." rows="4" required oninput="validateHealthConcern(this)"></textarea>
+      <div class="error-message" id="health-concern-error">No special characters allowed</div>
       </div>
       <button onclick="reportHealthConcern()"><i class="fas fa-bell"></i> Report Concern</button>
     </div>
@@ -275,7 +288,7 @@
         <div class="progress" id="fodder-progress" style="width: 60%;"></div>
       </div>
       <p class="inventory-count"><span id="fodder-count">60</span> kg available</p>
-      <button onclick="requestRefill('fodder')"><i class="fas fa-cart-plus"></i> Request Fodder Refill</button>
+      <button onclick="openFodderModal()"><i class="fas fa-cart-plus"></i> Request Fodder Refill</button>    
     </div>
 
     <!-- Medicine Progress Bar -->
@@ -293,26 +306,124 @@
   </div>
 </section>
 
-    <!-- Communication -->
+    <!-- In worker-dashboard.html, update the communication section -->
 <section id="communication" class="section communication">
   <h2><i class="fas fa-comments"></i> Communication</h2>
   <div class="communication-container">
     <!-- Message Input -->
     <div class="message-input">
-      <label for="message"><i class="fas fa-envelope"></i> Message:</label>
-      <textarea id="message" placeholder="Type your message..."></textarea>
+      <div class="form-group">
+        <label for="message-subject"><i class="fas fa-heading"></i> Subject:</label>
+        <input type="text" id="message-subject" placeholder="Message subject">
+      </div>
+      <div class="form-group">
+        <label for="message"><i class="fas fa-envelope"></i> Message:</label>
+        <textarea id="message" placeholder="Type your message..." rows="4" required></textarea>
+      </div>
       <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send to Manager</button>
     </div>
 
-    <!-- Notifications -->
-    <div class="notifications">
-      <h3><i class="fas fa-bell"></i> Notifications</h3>
-      <ul id="notification-list">
-        <!-- Notifications will be dynamically added here -->
-      </ul>
+    <!-- Message Inbox -->
+    <div class="message-inbox">
+      <div class="inbox-tabs">
+        <button class="tab-button active" onclick="showMessages('inbox')">
+          <i class="fas fa-inbox"></i> Inbox
+          <span class="unread-count" id="inbox-count">0</span>
+        </button>
+        <button class="tab-button" onclick="showMessages('sent')">
+          <i class="fas fa-paper-plane"></i> Sent
+        </button>
+      </div>
+      
+      <div class="messages-container">
+        <!-- Inbox Messages -->
+        <div class="message-list" id="inbox-messages">
+          <!-- Messages from manager will appear here -->
+        </div>
+        
+        <!-- Sent Messages -->
+        <div class="message-list" id="sent-messages" style="display:none;">
+          <!-- Sent messages will appear here -->
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+
+<!-- Fodder Refill Modal -->
+<div class="modal" id="fodder-refill-modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeFodderModal()">&times;</span>
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-icon">
+        <i class="fas fa-haykal"></i>
+      </div>
+      <div class="header-text">
+        <h3>Fodder Refill Request</h3>
+        <p>Please fill out the details for your fodder order</p>
+      </div>
+    </div>
+    
+    <!-- Form Content -->
+    <form id="fodder-refill-form">
+      <div class="form-group">
+        <label for="fodder-type"><i class="fas fa-cubes"></i> Fodder Type</label>
+        <select id="fodder-type" required>
+          <option value="">Select fodder type</option>
+          <option value="premium">Premium Blend</option>
+          <option value="standard">Standard Mix</option>
+          <option value="organic">Organic Fodder</option>
+          <option value="custom">Custom Mix</option>
+        </select>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fodder-quantity"><i class="fas fa-weight-hanging"></i> Quantity (kg)</label>
+          <input type="number" id="fodder-quantity" min="10" max="1000" required>
+        </div>
+        <div class="form-group">
+          <label for="fodder-urgency"><i class="fas fa-clock"></i> Urgency</label>
+          <select id="fodder-urgency" required>
+            <option value="normal">Normal (3-5 days)</option>
+            <option value="urgent">Urgent (1-2 days)</option>
+            <option value="emergency">Emergency (same day)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="fodder-notes"><i class="fas fa-edit"></i> Special Instructions</label>
+        <textarea id="fodder-notes" rows="3" placeholder="Any special requirements or notes..."></textarea>
+      </div>
+      
+      <div class="form-footer">
+        <button type="button" class="btn-cancel" onclick="closeFodderModal()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-paper-plane"></i> Submit Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Success Popup -->
+<div id="fodder-success-popup" class="success-popup">
+  <div class="popup-content">
+    <div class="popup-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h3>Request Submitted!</h3>
+    <p>Your fodder refill request has been received and will be processed shortly.</p>
+    <button class="popup-close-btn" onclick="closeSuccessPopup()">OK</button>
+  </div>
+</div>
+
 
 
 <!-- Scroll to Top Button -->
@@ -360,23 +471,9 @@
       }
     });
 
-    // Update Task Status
-    function updateTaskStatus(button, status) {
-      const taskItem = button.parentElement;
-      const taskText = taskItem.querySelector('span');
-      if (status === 'pending') {
-        button.innerHTML = '<i class="fas fa-check"></i> Mark as Completed';
-        button.setAttribute('onclick', "updateTaskStatus(this, 'completed')");
-        taskStatus.pending++;
-        taskStatus.assigned--;
-      } else if (status === 'completed') {
-        taskItem.remove();
-        taskStatus.completed++;
-        taskStatus.pending--;
-        addNotification(`Task completed: ${taskText.textContent}`);
-      }
-      updateChart();
-    }
+
+
+
 
     // Update Chart Data
     function updateChart() {
@@ -398,241 +495,392 @@
     }'/'
 
 
+    // -------------------------------------- Milk Production Records Data
+let milkProductionRecords = [];
 
-    function recordMilkProduction() {
-    const cowId = document.getElementById('cow-id').value;
-    const milkProduction = document.getElementById('milk-production').value;
-
-    // Validate input
-    if (!cowId) {
-        alert("Please enter Cow ID");
+// Record Milk Production
+function recordMilkProduction() {
+  const cowIdValid = validateCowId(document.getElementById('cow-id'));
+      const milkProductionValid = validateMilkProduction(document.getElementById('milk-production'));
+      
+      if (!cowIdValid || !milkProductionValid) {
         return;
-    }
+      }
 
-    if (!milkProduction) {
-        alert("Please enter milk production amount");
-        return;
-    }
+      const cowId = document.getElementById('cow-id').value.trim();
+      const milkProduction = document.getElementById('milk-production').value.trim();
+  // Create a new record
+  const record = {
+    cowId: cowId,
+    milkProduction: milkProduction,
+    date: new Date().toLocaleDateString()
+  };
 
-    // Validate that milk production is a number
-    const milkAmount = parseFloat(milkProduction);
-    if (isNaN(milkAmount)) {
-        alert("Milk production must be a valid number");
-        return;
-    }
+  // Add to records array
+  milkProductionRecords.push(record);
 
-    // Prepare data for API
-    const data = {
-        cow_id: cowId,
-        milk_liters: milkAmount
-    };
+  // Update the table
+  updateMilkProductionTable();
 
-    // Send data to API
-    fetch('http://localhost:5000/api/milk-production', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.error || 'Server error');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Add notification
-        addNotification(`Milk production recorded: ${milkAmount} liters for Cow ID: ${cowId}`);
+  // Clear the form
+  document.getElementById('cow-id').value = "";
+  document.getElementById('milk-production').value = "";
 
-        // Clear input fields
-        document.getElementById('cow-id').value = '';
-        document.getElementById('milk-production').value = '';
-
-        // Refresh the milk production records table
-        fetchMilkProductionRecords();
-    })
-    .catch(error => {
-        console.error('Error recording milk production:', error);
-        alert('Failed to record milk production: ' + error.message);
-    });
+  // Add notification
+  addNotification(`Milk production recorded for Cow ID: ${cowId}`);
 }
 
-function fetchMilkProductionRecords() {
-    fetch('http://localhost:5000/api/milk-production')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch records');
-            }
-            return response.json();
-        })
-        .then(records => {
-            const recordsTable = document.getElementById('milk-records');
-            recordsTable.innerHTML = ''; // Clear existing records
+// Update Milk Production Table
+function updateMilkProductionTable() {
+  const tableBody = document.getElementById('milk-records');
+  tableBody.innerHTML = ""; // Clear existing rows
 
-            if (records.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="3">No records found</td>';
-                recordsTable.appendChild(row);
-                return;
-            }
-
-            records.forEach(record => {
-                const row = document.createElement('tr');
-
-                // Format the date
-                const recordDate = new Date(record.record_date);
-                const formattedDate = recordDate.toLocaleString();
-
-                row.innerHTML = `
-                    <td>${record.cow_id}</td>
-                    <td>${record.milk_liters}</td>
-                    <td>${formattedDate}</td>
-                `;
-
-                recordsTable.appendChild(row);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching milk records:', error);
-            const recordsTable = document.getElementById('milk-records');
-            recordsTable.innerHTML = `<tr><td colspan="3">Error loading records: ${error.message}</td></tr>`;
-        });
+  // Add each record as a new row
+  milkProductionRecords.forEach(record => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${record.cowId}</td>
+      <td>${record.milkProduction}</td>
+      <td>${record.date}</td>
+    `;
+    tableBody.appendChild(row);
+  });
 }
 
 
+// Modify the recordMilkProduction function to save to localStorage
+function recordMilkProduction() {
+  const cowId = document.getElementById('cow-id').value;
+  const milkProduction = document.getElementById('milk-production').value;
+
+  if (!cowId || !milkProduction) {
+    alert("Please enter Cow ID and Milk Production.");
+    return;
+  }
+
+  // Create a new record
+  const record = {
+    cowId: cowId,
+    milkProduction: milkProduction,
+    date: new Date().toLocaleDateString()
+  };
+
+  // Get existing records from localStorage or initialize empty array
+  let records = JSON.parse(localStorage.getItem('milkProductionRecords') || '[]');
+  
+  // Add new record
+  records.push(record);
+  
+  // Save back to localStorage
+  localStorage.setItem('milkProductionRecords', JSON.stringify(records));
+  
+  // Update the table
+  milkProductionRecords = records;
+  updateMilkProductionTable();
+
+  // Clear the form
+  document.getElementById('cow-id').value = "";
+  document.getElementById('milk-production').value = "";
+
+  // Add notification
+  addNotification(`Milk production recorded for Cow ID: ${cowId}`);
+}
+
+// Load records from localStorage when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    fetchMilkProductionRecords();
+  milkProductionRecords = JSON.parse(localStorage.getItem('milkProductionRecords') || []);
+  updateMilkProductionTable();
 });
 
 
 
+    // -------------------------------------- Feed consumption Records Data
+let feedConsumptionRecords = [];
 
-
-
- 
-  
-
-
-    function recordFeedConsumption() {
-      const cowId = document.getElementById('feed-cow-id').value;
-      const feedAmount = document.getElementById('feed-amount').value;
-
-      if (cowId && feedAmount) {
-        const record = {
-          cowId: cowId,
-          feedAmount: feedAmount,
-          date: new Date().toLocaleDateString()
-        };
-        feedRecords.push(record);
-        updateFeedConsumptionTable();
-        addNotification(`Feed consumption recorded: ${feedAmount} kg for Cow ${cowId}`);
-        document.getElementById('feed-cow-id').value = "";
-        document.getElementById('feed-amount').value = "";
-      } else {
-        alert("Please enter Cow ID and Feed Amount.");
+// Record Feed Consumption
+function recordFeedConsumption() {
+  const cowIdValid = validateCowId(document.getElementById('feed-cow-id'));
+      const feedAmountValid = validateFeedAmount(document.getElementById('feed-amount'));
+      
+      if (!cowIdValid || !feedAmountValid) {
+        return;
       }
-    }
 
-    function recordMedication() {
-      const cowId = document.getElementById('med-cow-id').value;
-      const medication = document.getElementById('medication').value;
-      const dosage = document.getElementById('dosage').value;
+      const cowId = document.getElementById('feed-cow-id').value.trim();
+      const feedAmount = document.getElementById('feed-amount').value.trim();
 
-      if (cowId && medication && dosage) {
-        const record = {
-          cowId: cowId,
-          medication: medication,
-          dosage: dosage,
-          date: new Date().toLocaleDateString()
-        };
-        medicationRecords.push(record);
-        updateMedicationTable();
-        addNotification(`Medication recorded: ${medication} (${dosage}) for Cow ${cowId}`);
-        document.getElementById('med-cow-id').value = "";
-        document.getElementById('medication').value = "";
-        document.getElementById('dosage').value = "";
-      } else {
-        alert("Please enter Cow ID, Medication, and Dosage.");
-      }
-    }
+  // Create a new record
+  const record = {
+    cowId: cowId,
+    feedAmount: feedAmount,
+    date: new Date().toLocaleDateString()
+  };
 
-    function updateMilkProductionTable() {
-      const tableBody = document.querySelector('#milk-records');
-      tableBody.innerHTML = ""; // Clear existing rows
+  // Add to records array
+  feedConsumptionRecords.push(record);
 
-      milkRecords.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${record.cowId}</td>
-          <td>${record.production} liters</td>
-          <td>${record.date}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
+  // Update the table
+  updateFeedConsumptionTable();
 
-    function updateFeedConsumptionTable() {
-      const tableBody = document.querySelector('#feed-records');
-      tableBody.innerHTML = ""; // Clear existing rows
+  // Clear the form
+  document.getElementById('feed-cow-id').value = "";
+  document.getElementById('feed-amount').value = "";
 
-      feedRecords.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${record.cowId}</td>
-          <td>${record.feedAmount} kg</td>
-          <td>${record.date}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
+  // Add notification
+  addNotification(`Feed consumption recorded for Cow ID: ${cowId}`);
+}
 
-    function updateMedicationTable() {
-      const tableBody = document.querySelector('#medication-records');
-      tableBody.innerHTML = ""; // Clear existing rows
+// Update Feed Consumption Table
+function updateFeedConsumptionTable() {
+  const tableBody = document.getElementById('feed-records');
+  tableBody.innerHTML = ""; // Clear existing rows
 
-      medicationRecords.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${record.cowId}</td>
-          <td>${record.medication}</td>
-          <td>${record.dosage}</td>
-          <td>${record.date}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
+  // Add each record as a new row
+  feedConsumptionRecords.forEach(record => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${record.cowId}</td>
+      <td>${record.feedAmount}</td>
+      <td>${record.date}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
 
-    // Report Health Concern
-function reportHealthConcern() {
-  const cowId = document.getElementById('health-cow-id').value;
-  const concern = document.getElementById('health-concern').value;
+// Record Feed Consumption with localStorage
+function recordFeedConsumption() {
+  const cowId = document.getElementById('feed-cow-id').value;
+  const feedAmount = document.getElementById('feed-amount').value;
 
-  if (!cowId || !concern) {
-    alert("Please enter Cow ID and describe the health concern.");
+  if (!cowId || !feedAmount) {
+    alert("Please enter Cow ID and Feed Amount.");
     return;
   }
 
-  // Create a new alert item
+  // Create a new record
+  const record = {
+    cowId: cowId,
+    feedAmount: feedAmount,
+    date: new Date().toLocaleDateString()
+  };
+
+  // Get existing records from localStorage or initialize empty array
+  let records = JSON.parse(localStorage.getItem('feedConsumptionRecords') || '[]');
+  
+  // Add new record
+  records.push(record);
+  
+  // Save back to localStorage
+  localStorage.setItem('feedConsumptionRecords', JSON.stringify(records));
+  
+  // Update the table
+  feedConsumptionRecords = records;
+  updateFeedConsumptionTable();
+
+  // Clear the form
+  document.getElementById('feed-cow-id').value = "";
+  document.getElementById('feed-amount').value = "";
+
+  // Add notification
+  addNotification(`Feed consumption recorded for Cow ID: ${cowId}`);
+}
+
+// Load records from localStorage when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  feedConsumptionRecords = JSON.parse(localStorage.getItem('feedConsumptionRecords') || []);
+  updateFeedConsumptionTable();
+});
+
+
+
+//-----------------------------------------  Medication Records Data
+let medicationRecords = [];
+
+// Record Medication
+function recordMedication() {
+  const cowIdValid = validateCowId(document.getElementById('med-cow-id'));
+      const medicationValid = validateMedication(document.getElementById('medication'));
+      const dosageValid = validateDosage(document.getElementById('dosage'));
+      
+      if (!cowIdValid || !medicationValid || !dosageValid) {
+        return;
+      }
+
+      const cowId = document.getElementById('med-cow-id').value.trim();
+      const medication = document.getElementById('medication').value.trim();
+      const dosage = document.getElementById('dosage').value.trim();
+
+
+  // Create a new record
+  const record = {
+    cowId: cowId,
+    medication: medication,
+    dosage: dosage,
+    date: new Date().toLocaleDateString()
+  };
+
+  // Add to records array
+  medicationRecords.push(record);
+
+  // Update the table
+  updateMedicationTable();
+
+  // Clear the form
+  document.getElementById('med-cow-id').value = "";
+  document.getElementById('medication').value = "";
+  document.getElementById('dosage').value = "";
+
+  // Add notification
+  addNotification(`Medication recorded for Cow ID: ${cowId}`);
+}
+
+// Update Medication Table
+function updateMedicationTable() {
+  const tableBody = document.getElementById('medication-records');
+  tableBody.innerHTML = ""; // Clear existing rows
+
+  // Add each record as a new row
+  medicationRecords.forEach(record => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${record.cowId}</td>
+      <td>${record.medication}</td>
+      <td>${record.dosage}</td>
+      <td>${record.date}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+// With localStorage:
+function recordMedication() {
+  const cowId = document.getElementById('med-cow-id').value;
+  const medication = document.getElementById('medication').value;
+  const dosage = document.getElementById('dosage').value;
+
+  if (!cowId || !medication || !dosage) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  const record = {
+    cowId: cowId,
+    medication: medication,
+    dosage: dosage,
+    date: new Date().toLocaleDateString()
+  };
+
+  let records = JSON.parse(localStorage.getItem('medicationRecords') || '[]');
+  records.push(record);
+  localStorage.setItem('medicationRecords', JSON.stringify(records));
+  
+  medicationRecords = records;
+  updateMedicationTable();
+
+  document.getElementById('med-cow-id').value = "";
+  document.getElementById('medication').value = "";
+  document.getElementById('dosage').value = "";
+
+  addNotification(`Medication recorded for Cow ID: ${cowId}`);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  medicationRecords = JSON.parse(localStorage.getItem('medicationRecords') || []);
+  updateMedicationTable();
+});
+
+
+function reportHealthConcern() {
+  const cowIdValid = validateCowId(document.getElementById('health-cow-id'));
+      const concernValid = validateHealthConcern(document.getElementById('health-concern'));
+      
+      if (!cowIdValid || !concernValid) {
+        return;
+      }
+
+      const cowId = document.getElementById('health-cow-id').value.trim();
+      const concern = document.getElementById('health-concern').value.trim();
+
+  // Create health alert data
+  const healthAlert = {
+    id: `health-${Date.now()}`, // Unique ID for the alert
+    cowId: cowId,
+    concern: concern,
+    timestamp: new Date().toISOString(),
+    status: 'unread', // Mark as unread for the manager
+    reportedBy: 'Worker' // Track who reported this
+  };
+
+  // Save to localStorage
+  saveHealthAlert(healthAlert);
+
+  // Update the worker's UI
   const alertItem = document.createElement('li');
   alertItem.innerHTML = `
     <i class="fas fa-exclamation-triangle"></i>
     <span><strong>Cow ID: ${cowId}</strong> - ${concern}</span>
   `;
-
-  // Add the alert to the list
   document.getElementById('health-alerts-list').appendChild(alertItem);
 
   // Clear the form
   document.getElementById('health-cow-id').value = "";
   document.getElementById('health-concern').value = "";
 
-  // Add notification
+  // Add notification to worker
   addNotification(`Health concern reported for Cow ID: ${cowId}`);
 }
 
+function saveHealthAlert(alertData) {
+  // Get existing health alerts or initialize empty array
+  let healthAlerts = JSON.parse(localStorage.getItem('healthAlerts') || '[]');
+  
+  // Add new alert
+  healthAlerts.push(alertData);
+  
+  // Save back to localStorage
+  localStorage.setItem('healthAlerts', JSON.stringify(healthAlerts));
+  
+  // Create manager notification
+  let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+  managerNotifications.push({
+    id: alertData.id,
+    type: 'health-alert',
+    title: 'Health Alert',
+    message: `Cow ${alertData.cowId}: ${alertData.concern}`,
+    timestamp: new Date().toISOString(),
+    alertData: alertData,
+    status: 'unread'
+  });
+  localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+}
+  
+
+
+
+function saveHealthAlert(alertData) {
+  // Get existing health alerts or initialize empty array
+  let healthAlerts = JSON.parse(localStorage.getItem('healthAlerts') || '[]');
+  
+  // Add new alert with a unique ID
+  alertData.id = `health-${Date.now()}`;
+  healthAlerts.push(alertData);
+  
+  // Save back to localStorage
+  localStorage.setItem('healthAlerts', JSON.stringify(healthAlerts));
+  
+  // Create manager notification
+  let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+  managerNotifications.push({
+    id: alertData.id,
+    type: 'health-alert',
+    title: 'Health Alert',
+    message: `Cow ${alertData.cowId}: ${alertData.concern}`,
+    timestamp: new Date().toISOString(),
+    alertData: alertData,
+    status: 'unread'
+  });
+  localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+}
 
 
     // Inventory & Supplies
@@ -670,14 +918,218 @@ document.addEventListener('DOMContentLoaded', function() {
   updateInventoryProgress();
 });
 
-    // Send Message Function
+
+
+
+// In worker-dashboard.js, update the messaging functions
+
+// Send Message Function
 function sendMessage() {
+  const subject = document.getElementById('message-subject').value;
   const message = document.getElementById('message').value;
-  if (message) {
-    addNotification(`Message sent to manager: ${message}`);
-    document.getElementById('message').value = "";
+  
+  if (!message) {
+    alert("Please enter a message.");
+    return;
+  }
+
+  // Create message data
+  const messageData = {
+    id: `msg-${Date.now()}`,
+    from: 'Worker',
+    to: 'Manager',
+    subject: subject || 'No subject',
+    message: message,
+    timestamp: new Date().toISOString(),
+    read: false
+  };
+
+  // Save to localStorage
+  let messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  messages.push(messageData);
+  localStorage.setItem('workerManagerMessages', JSON.stringify(messages));
+
+  // Add to sent messages
+  addSentMessage(messageData);
+  showMessages('sent');
+
+  // Clear the form
+  document.getElementById('message-subject').value = '';
+  document.getElementById('message').value = '';
+
+  // Add notification
+  addNotification(`Message sent to manager: ${subject || 'No subject'}`);
+}
+
+// Load messages when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  loadWorkerMessages();
+  setInterval(loadWorkerMessages, 5000); // Check for new messages every 5 seconds
+});
+
+function loadWorkerMessages() {
+  const messages = JSON.parse(localStorage.getItem('workerManagerMessages') || []);
+  
+  // Filter worker's messages
+  const sentMessages = messages.filter(msg => msg.from === 'Worker');
+  const receivedMessages = messages.filter(msg => msg.to === 'Worker');
+  const unreadCount = receivedMessages.filter(msg => !msg.read).length;
+
+  // Update inbox count
+  document.getElementById('inbox-count').textContent = unreadCount;
+  if (unreadCount > 0) {
+    document.getElementById('inbox-count').style.display = 'inline-block';
+  } else {
+    document.getElementById('inbox-count').style.display = 'none';
+  }
+
+  // Display inbox messages
+  const inboxList = document.getElementById('inbox-messages');
+  inboxList.innerHTML = '';
+  
+  if (receivedMessages.length === 0) {
+    inboxList.innerHTML = '<div class="empty-message">No messages in inbox</div>';
+  } else {
+    receivedMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    receivedMessages.forEach(msg => {
+      const messageItem = document.createElement('div');
+      messageItem.className = `message-item ${msg.read ? '' : 'unread'}`;
+      messageItem.innerHTML = `
+        <div class="message-header">
+          <strong>From: ${msg.from}</strong>
+          <span>${new Date(msg.timestamp).toLocaleString()}</span>
+        </div>
+        <div class="message-subject">${msg.subject}</div>
+        <div class="message-preview">${msg.message.substring(0, 50)}${msg.message.length > 50 ? '...' : ''}</div>
+      `;
+      messageItem.addEventListener('click', () => viewFullMessage(msg, 'worker'));
+      inboxList.appendChild(messageItem);
+    });
+  }
+
+  // Display sent messages
+  const sentList = document.getElementById('sent-messages');
+  sentList.innerHTML = '';
+  
+  if (sentMessages.length === 0) {
+    sentList.innerHTML = '<div class="empty-message">No sent messages</div>';
+  } else {
+    sentMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    sentMessages.forEach(msg => {
+      const messageItem = document.createElement('div');
+      messageItem.className = 'message-item';
+      messageItem.innerHTML = `
+        <div class="message-header">
+          <strong>To: ${msg.to}</strong>
+          <span>${new Date(msg.timestamp).toLocaleString()}</span>
+        </div>
+        <div class="message-subject">${msg.subject}</div>
+        <div class="message-preview">${msg.message.substring(0, 50)}${msg.message.length > 50 ? '...' : ''}</div>
+      `;
+      messageItem.addEventListener('click', () => viewFullMessage(msg, 'worker'));
+      sentList.appendChild(messageItem);
+    });
   }
 }
+
+function showMessages(type) {
+  if (type === 'inbox') {
+    document.getElementById('inbox-messages').style.display = 'block';
+    document.getElementById('sent-messages').style.display = 'none';
+    document.querySelector('.inbox-tabs .tab-button:nth-child(1)').classList.add('active');
+    document.querySelector('.inbox-tabs .tab-button:nth-child(2)').classList.remove('active');
+  } else {
+    document.getElementById('inbox-messages').style.display = 'none';
+    document.getElementById('sent-messages').style.display = 'block';
+    document.querySelector('.inbox-tabs .tab-button:nth-child(1)').classList.remove('active');
+    document.querySelector('.inbox-tabs .tab-button:nth-child(2)').classList.add('active');
+  }
+}
+
+function viewFullMessage(message, userType) {
+  // Mark as read if it's an incoming message
+  if (userType === 'worker' && message.to === 'Worker') {
+    markMessageAsRead(message.id);
+  }
+
+  // Create modal to display full message
+  const modal = document.createElement('div');
+  modal.className = 'message-modal';
+  modal.innerHTML = `
+    <div class="message-modal-content">
+      <span class="close-modal">&times;</span>
+      <h3>${message.subject}</h3>
+      <div class="message-meta">
+        <div><strong>From:</strong> ${message.from}</div>
+        <div><strong>To:</strong> ${message.to}</div>
+        <div><strong>Date:</strong> ${new Date(message.timestamp).toLocaleString()}</div>
+      </div>
+      <div class="message-body">
+        ${message.message}
+      </div>
+      ${message.to === 'Manager' ? `
+      <button class="btn-reply" onclick="replyToMessage('${message.to}', 'RE: ${message.subject}')">
+        <i class="fas fa-reply"></i> Reply
+      </button>
+      ` : ''}
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Close modal handlers
+  modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+function markMessageAsRead(messageId) {
+  let messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  messages = messages.map(msg => {
+    if (msg.id === messageId) {
+      return {...msg, read: true};
+    }
+    return msg;
+  });
+  localStorage.setItem('workerManagerMessages', JSON.stringify(messages));
+  loadWorkerMessages(); // Refresh the message list
+}
+
+function replyToMessage(recipient, subject) {
+  // Pre-fill the message form
+  document.getElementById('message-subject').value = subject;
+  document.getElementById('message').focus();
+  document.querySelector('.message-modal').remove();
+}
+
+
+
+
+// Add sent message to the UI
+function addSentMessage(message) {
+  const sentList = document.getElementById('sent-messages-list');
+  const messageItem = document.createElement('li');
+  messageItem.innerHTML = `
+    <div class="message-header">
+      <strong>${message.subject}</strong>
+      <span>${new Date(message.timestamp).toLocaleString()}</span>
+    </div>
+    <div class="message-content">${message.message}</div>
+  `;
+  sentList.prepend(messageItem);
+}
+
+// Load sent messages when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  const messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  const workerMessages = messages.filter(msg => msg.from === 'Worker');
+  
+  workerMessages.forEach(message => {
+    addSentMessage(message);
+  });
+});
+
 
 // Add Notification Function
 function addNotification(message) {
@@ -836,49 +1288,13 @@ const abnormalMilkChart = new Chart(abnormalMilkCtx, {
   },
 });
 
-// Fetch and Plot Milk Production Data
-function fetchAndPlotMilkProduction() {
-  const cowId = document.getElementById('abnormal-cow-id').value;
 
-  if (!cowId) {
-    alert("Please enter a Cow ID.");
-    return;
-  }
 
-  // Fetch milk production data for all cows from the API
-  fetch(`http://localhost:5000/api/milk-production`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch milk production data');
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Filter data for the specific Cow ID
-      const filteredData = data.filter(record => record.cow_id === cowId);
 
-      if (filteredData.length === 0) {
-        alert(`No milk production records found for Cow ID: ${cowId}`);
-        return;
-      }
 
-      // Extract dates and milk production values for the specific cow
-      const labels = filteredData.map(record => new Date(record.record_date).toLocaleDateString());
-      const milkData = filteredData.map(record => record.milk_liters);
 
-      // Update the chart data
-      abnormalMilkChart.data.labels = labels;
-      abnormalMilkChart.data.datasets[0].data = milkData;
-      abnormalMilkChart.update();
 
-      // Add notification
-      addNotification(`Milk production data plotted for Cow ID: ${cowId}`);
-    })
-    .catch(error => {
-      console.error('Error fetching milk production data:', error);
-      alert('Failed to fetch milk production data: ' + error.message);
-    });
-}
+
 
 // Logout Confirmation
 function confirmLogout() {
@@ -910,6 +1326,401 @@ scrollToTopBtn.addEventListener("click", () => {
   });
 });
 
+// Fodder Refill Modal Functions
+function openFodderModal() {
+  document.getElementById('fodder-refill-modal').style.display = 'block';
+}
+
+function closeFodderModal() {
+  document.getElementById('fodder-refill-modal').style.display = 'none';
+}
+
+function showSuccessPopup() {
+  document.getElementById('fodder-success-popup').style.display = 'flex';
+}
+
+function closeSuccessPopup() {
+  document.getElementById('fodder-success-popup').style.display = 'none';
+  closeFodderModal();
+}
+
+// Handle form submission
+document.getElementById('fodder-refill-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const fodderType = document.getElementById('fodder-type').value;
+  const quantity = document.getElementById('fodder-quantity').value;
+  const urgency = document.getElementById('fodder-urgency').value;
+  const notes = document.getElementById('fodder-notes').value;
+  
+  // Create request data
+  const requestData = {
+    type: 'fodder',
+    fodderType: fodderType,
+    quantity: quantity,
+    urgency: urgency,
+    notes: notes,
+    timestamp: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  // Save to localStorage (or send to API in real app)
+  saveFodderRequest(requestData);
+  
+  // Show success popup
+  showSuccessPopup();
+  
+  // Add notification
+  addNotification(`Fodder refill requested: ${quantity}kg of ${fodderType} (${urgency} priority)`);
+  
+  // Reset form
+  this.reset();
+});
+
+// In the worker-dashboard.html script section
+
+function saveFodderRequest(requestData) {
+    // Get existing requests or initialize empty array
+    let requests = JSON.parse(localStorage.getItem('fodderRequests') || '[]');
+    
+    // Add new request
+    requests.push(requestData);
+    
+    // Save back to localStorage
+    localStorage.setItem('fodderRequests', JSON.stringify(requests));
+    
+    // Create manager notification
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+    managerNotifications.push({
+        id: `fodder-${Date.now()}`,
+        type: 'fodder-request',
+        title: 'Fodder Refill Request',
+        message: `Worker requested ${requestData.quantity}kg of ${requestData.fodderType} (${requestData.urgency} priority)`,
+        timestamp: new Date().toISOString(),
+        requestData: requestData,
+        status: 'unread'
+    });
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+}
+
+function loadWorkerTasks() {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || []);
+    const workerTasks = tasks.filter(task => 
+        task.assigned_to === 'all' || 
+        task.assigned_to === 'worker' || 
+        task.assigned_to === 'worker1' || 
+        task.assigned_to === 'worker2' // Add all worker IDs here
+    );
+    
+    // Reset task status counts
+    taskStatus = {
+        assigned: 0,
+        pending: 0,
+        completed: 0,
+        notDone: 0
+    };
+    
+    // Count tasks by status
+    workerTasks.forEach(task => {
+        if (task.status === 'assigned') {
+            taskStatus.assigned++;
+        } else if (task.status === 'pending') {
+            taskStatus.pending++;
+        } else if (task.status === 'completed') {
+            taskStatus.completed++;
+        } else if (task.status === 'notDone') {
+            taskStatus.notDone++;
+        }
+    });
+    
+    // Update the chart with current counts
+    updateChart();
+    
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
+    
+    if (workerTasks.length === 0) {
+        taskList.innerHTML = '<li>No tasks assigned</li>';
+        return;
+    }
+    
+    workerTasks.forEach(task => {
+        const taskItem = document.createElement('li');
+        
+        // Format due date
+        let dueDateText = '';
+        if (task.due_date) {
+            const dueDate = new Date(task.due_date);
+            dueDateText = ` (Due: ${dueDate.toLocaleDateString()})`;
+        }
+        
+        // Determine badge color based on status
+        let badgeClass = '';
+        let badgeText = '';
+        if (task.status === 'assigned') {
+            badgeClass = 'status-badge assigned';
+            badgeText = 'Assigned';
+        } else if (task.status === 'pending') {
+            badgeClass = 'status-badge pending';
+            badgeText = 'In Progress';
+        } else if (task.status === 'completed') {
+            badgeClass = 'status-badge completed';
+            badgeText = 'Completed';
+        } else if (task.status === 'notDone') {
+            badgeClass = 'status-badge not-done';
+            badgeText = 'Not Done';
+        }
+        
+        taskItem.innerHTML = `
+            <div class="task-header">
+                <span class="task-title">${task.title}${dueDateText}</span>
+                <span class="${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="task-description">${task.description || ''}</div>
+            <div class="task-buttons">
+                ${task.status !== 'completed' && task.status !== 'notDone' ? `
+                <button class="btn-in-progress" onclick="updateTaskStatus(this, '${task.id}', 'pending')">
+                    <i class="fas fa-play"></i> In Progress
+                </button>
+                <button class="btn-complete" onclick="updateTaskStatus(this, '${task.id}', 'completed')">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+                <button class="btn-not-done" onclick="updateTaskStatus(this, '${task.id}', 'notDone')">
+                    <i class="fas fa-times"></i> Not Done
+                </button>
+                ` : ''}
+                ${task.status === 'completed' ? `
+                <span class="task-completed-text"><i class="fas fa-check-circle"></i> Task completed</span>
+                ` : ''}
+                ${task.status === 'notDone' ? `
+                <span class="task-not-done-text"><i class="fas fa-times-circle"></i> Task not done</span>
+                ` : ''}
+            </div>
+        `;
+        
+        taskList.appendChild(taskItem);
+    });
+}
+
+// Update task status from worker dashboard
+function updateTaskStatus(button, taskId, newStatus) {
+    let tasks = JSON.parse(localStorage.getItem('tasks') || []);
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    
+    if (taskIndex !== -1) {
+        // Get the current status to decrement that count
+        const currentStatus = tasks[taskIndex].status;
+        
+        // Update the task status
+        tasks[taskIndex].status = newStatus;
+        tasks[taskIndex].last_updated = new Date().toISOString();
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        
+        // Update the taskStatus counts
+        if (currentStatus === 'assigned') {
+            taskStatus.assigned--;
+        } else if (currentStatus === 'pending') {
+            taskStatus.pending--;
+        } else if (currentStatus === 'completed') {
+            taskStatus.completed--;
+        } else if (currentStatus === 'notDone') {
+            taskStatus.notDone--;
+        }
+        
+        // Increment the new status count
+        if (newStatus === 'pending') {
+            taskStatus.pending++;
+        } else if (newStatus === 'completed') {
+            taskStatus.completed++;
+        } else if (newStatus === 'notDone') {
+            taskStatus.notDone++;
+        } else if (newStatus === 'assigned') {
+            taskStatus.assigned++;
+        }
+        
+        // Update the chart with new data
+        updateChart();
+        
+        // Add appropriate notification
+        if (newStatus === 'completed') {
+            addNotification(`Task completed: ${tasks[taskIndex].title}`);
+        } else if (newStatus === 'notDone') {
+            addNotification(`Marked as not done: ${tasks[taskIndex].title}`);
+        } else if (newStatus === 'pending') {
+            addNotification(`Task in progress: ${tasks[taskIndex].title}`);
+        }
+        
+        // Reload tasks to update the UI
+        loadWorkerTasks();
+        
+        // Create manager notification if task is completed or marked as not done
+        if (newStatus === 'completed' || newStatus === 'notDone') {
+            let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+            managerNotifications.push({
+                id: `task-${Date.now()}`,
+                type: 'task-update',
+                title: 'Task Update',
+                message: `Task "${tasks[taskIndex].title}" was marked as ${newStatus} by worker`,
+                timestamp: new Date().toISOString(),
+                taskData: tasks[taskIndex],
+                status: 'unread'
+            });
+            localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+        }
+    }
+}
+
+// Update task status from worker dashboard
+function updateTaskStatus(button, taskId, newStatus) {
+    let tasks = JSON.parse(localStorage.getItem('tasks') || []);
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    
+    if (taskIndex !== -1) {
+        // Get the current status to decrement that count
+        const currentStatus = tasks[taskIndex].status;
+        
+        // Update the task status
+        tasks[taskIndex].status = newStatus;
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        
+        // Update the taskStatus counts
+        if (currentStatus === 'assigned') {
+            taskStatus.assigned--;
+        } else if (currentStatus === 'pending') {
+            taskStatus.pending--;
+        } else if (currentStatus === 'completed') {
+            taskStatus.completed--;
+        } else if (currentStatus === 'notDone') {
+            taskStatus.notDone--;
+        }
+        
+        // Increment the new status count
+        if (newStatus === 'pending') {
+            taskStatus.pending++;
+        } else if (newStatus === 'completed') {
+            taskStatus.completed++;
+        } else if (newStatus === 'notDone') {
+            taskStatus.notDone++;
+        }
+        
+        // Update the chart with new data
+        updateChart();
+        
+        // Update UI
+        const taskItem = button.parentElement;
+        if (newStatus === 'pending') {
+            button.innerHTML = '<i class="fas fa-check"></i> Mark as Completed';
+            button.setAttribute('onclick', `updateTaskStatus(this, '${taskId}', 'completed')`);
+        } else if (newStatus === 'completed') {
+            taskItem.remove();
+            addNotification(`Task completed: ${tasks[taskIndex].title}`);
+        }
+    }
+}
+
+
+// Load tasks when page loads and set interval to check for new tasks
+document.addEventListener('DOMContentLoaded', function() {
+    loadWorkerTasks();
+    setInterval(loadWorkerTasks, 5000); // Check for new tasks every 5 seconds
+});
+
+
+
+
+
+// ---------------------------------------------- validation functions
+ // Validation Functions
+ function validateCowId(input) {
+      const errorId = input.id + '-error';
+      const errorElement = document.getElementById(errorId);
+      const value = input.value.trim();
+      
+      if (!/^\d+$/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateMilkProduction(input) {
+      const errorElement = document.getElementById('milk-production-error');
+      const value = input.value.trim();
+      
+      if (!/^\d*\.?\d+$/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateFeedAmount(input) {
+      const errorElement = document.getElementById('feed-amount-error');
+      const value = input.value.trim();
+      
+      if (!/^\d*\.?\d+$/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateMedication(input) {
+      const errorElement = document.getElementById('medication-error');
+      const value = input.value.trim();
+      
+      if (/[^a-zA-Z0-9\s]/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateDosage(input) {
+      const errorElement = document.getElementById('dosage-error');
+      const value = input.value.trim();
+      
+      if (!/^\d+\s*[a-zA-Z]+$/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+    function validateHealthConcern(input) {
+      const errorElement = document.getElementById('health-concern-error');
+      const value = input.value.trim();
+      
+      if (/[^a-zA-Z0-9\s.,]/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
 
 
   </script>

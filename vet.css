@@ -151,29 +151,279 @@ h2 i {
   background-color: #45a049;
 }
 
-/* Checked Cows Section */
+/* Checked Cows Section Styles */
 .cows-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
 .cow-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cow-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+
+.cow-avatar {
+  width: 60px;
+  height: 60px;
+  background-color: #E8F5E9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.cow-avatar i {
+  font-size: 2rem;
+  color: #4CAF50;
+}
+
+.cow-details {
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+.cow-details h4 {
+  margin: 0 0 10px 0;
+  color: #2C3E50;
+}
+
+.cow-details p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.cow-item button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+  margin-top: auto;
+}
+
+.cow-item button:hover {
+  background-color: #45a049;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+  grid-column: 1 / -1;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #ddd;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/* Medical Records Section Styles */
+.medical-records-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.record-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.record-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.record-cow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.record-cow i {
+  font-size: 1.2rem;
+  color: #4CAF50;
+}
+
+.record-cow h4 {
+  margin: 0;
+  color: #2C3E50;
+}
+
+.record-status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.record-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.record-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.record-meta p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.record-meta i {
+  width: 16px;
+  text-align: center;
+  color: #4CAF50;
+}
+
+.record-purpose,
+.record-medication,
+.record-notes {
+  margin: 5px 0;
+}
+
+.record-purpose p,
+.record-medication p {
+  margin: 0;
+  color: #555;
+}
+
+.record-notes {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 3px solid #4CAF50;
+}
+
+.record-notes p {
+  margin: 0;
+  color: #333;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #ddd;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.record-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.send-to-manager-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.send-to-manager-btn:hover {
+  background-color: #2980b9;
+}
+
+.send-to-manager-btn i {
+  font-size: 14px;
+}
+
+.delete-all-btn {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.delete-all-btn:hover {
+  background-color: #e74c3c;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+
+
+
+
+
+
 
 .cow-item img {
   width: 100%;
@@ -370,6 +620,238 @@ h2 i {
   background-color: #45a049;
 }
 
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #4B6043;
+}
+
+.notification-item i {
+  font-size: 1.5rem;
+  margin-right: 15px;
+  color: #4B6043;
+}
+
+.visit-details {
+  flex: 1;
+  text-align: left;
+}
+
+.visit-details h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.visit-details p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.visit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visit-actions button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.visit-actions button:first-child {
+  background: #71be4f;
+  color: white;
+}
+
+.visit-actions button:last-child {
+  background: #f1f1f1;
+  color: #555;
+}
+
+.visit-actions button:hover {
+  opacity: 0.9;
+}
+
+
+/* Response Popup Styles */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1002;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.popup-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.popup-icon i {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.popup-content p {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.popup-close-btn {
+  background: #4B6043;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.popup-close-btn:hover {
+  background: #3a4d34;
+  transform: translateY(-2px);
+}
+
+/* Success and Error Icon Styles */
+.success-icon {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.error-icon {
+  color: #E74C3C;
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Animation */
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Response Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.popup-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.popup-icon .success-icon {
+  color: #4CAF50;
+}
+
+.popup-icon .error-icon {
+  color: #F44336;
+}
+
+.popup-content h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.popup-content p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.popup-close-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.popup-close-btn:hover {
+  background-color: #3e8e41;
+}
+
+
+
 /* Animation for Popup */
 @keyframes slideIn {
   from {
@@ -380,4 +862,209 @@ h2 i {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* Dashboard Banner */
+.dashboard-banner {
+  background: linear-gradient(135deg, #4B6043, #a6ca62); /* Green gradient matching your theme */
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin: 0 auto 40px auto;
+  max-width: 1200px; /* Same as dashboard width */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Consistent with card shadow */
+  animation: fadeInDown 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+}
+
+.banner-content h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.banner-content p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dashboard-banner .fa-stethoscope {
+  font-size: 2rem; /* Adjust the size of the seedling icon */
+  margin-top: 0.5px; /* Adjust the spacing above the icon */
+  margin-bottom: 0.2px; /* Adjust the spacing below the icon */
+  color: #eae1bf;
+}
+
+/* Animation for banner */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add some decorative elements */
+.dashboard-banner::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.dashboard-banner::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+/* Scheduled Appointments Styles */
+.appointments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.appointment-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #4CAF50;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appointment-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.appointment-header h4 {
+  margin: 0;
+  color: #2C3E50;
+}
+
+.priority {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.priority.high {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.priority.medium {
+  background-color: #FFF8E1;
+  color: #FF8F00;
+}
+
+.priority.low {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.appointment-details {
+  margin-bottom: 15px;
+}
+
+.appointment-details p {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.appointment-details i {
+  color: #4CAF50;
+  width: 16px;
+  text-align: center;
+}
+
+.appointment-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.appointment-actions button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.appointment-actions button:hover {
+  background-color: #45a049;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #ddd;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/* Add this new style for error messages */
+.error-message {
+  color: #e74c3c;
+  font-size: 1rem;
+  margin-top: 5px;
+  display: none;
+}
+
+.input-error {
+  border-color: #e74c3c !important;
 }

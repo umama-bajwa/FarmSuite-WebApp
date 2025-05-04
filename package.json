@@ -10,11 +10,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.0",
     "mysql": "^2.18.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umama-bajwa/FarmSuite-WebApp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/umama-bajwa/FarmSuite-WebApp/issues"
+  },
+  "homepage": "https://github.com/umama-bajwa/FarmSuite-WebApp#readme",
   "description": ""
 }

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="imgs/logo1.png">
+    <title>FarmSuite.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="tasks.css">
+
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation (same as index.html) -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <i class="fas fa-tractor"></i>                
+                <h1>FarmSuite.</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="manager-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="tasks.html"><i class="fas fa-tasks"></i> Task Management</a></li>
+                    <li><a href="livestock.html"><i class="fas fa-cow"></i> Livestock</a></li>
+                    <li><a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                    <li><a href="messaging.html"><i class="fas fa-comments"></i> Messaging</a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+            <div class="logout-section">
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Task Management</h2>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search tasks...">
+                    </div>
+                    <button class="btn-primary" id="addTaskBtn">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-widgets">
+<!-- In the Filter Tasks section -->
+<div class="widget task-filters">
+    <div class="widget-header">
+        <h3>Filter Tasks</h3>
+    </div>
+    <div class="widget-header">
+        <h3>All Tasks</h3>
+        <div class="task-actions">
+            <button class="btn-icon" title="List View">
+                <i class="fas fa-list"></i>
+            </button>
+            <button class="btn-icon" title="Calendar View">
+                <i class="fas fa-calendar"></i>
+            </button>
+            <button class="btn-danger" id="clearAllTasksBtn">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+            <button class="btn-outline" id="clearFiltersBtn">
+                <i class="fas fa-times"></i> Clear Filters
+            </button>
+        </div>
+    </div>
+    <div class="widget-content">
+        <div class="filter-options">
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="filterStatus" class="form-control form-select">
+                    <option value="">All Tasks</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="NotDone">Not Done</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select id="filterPriority" class="form-control form-select">
+                    <option value="">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assigned To</label>
+                <select id="filterWorker" class="form-control form-select">
+                    <option value="">All Workers</option>
+                    <option value="all">Worker</option>
+                    <option value="worker1">Worker 1</option>
+                    <option value="worker2">Worker 2</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- Task List -->
+                <div class="widget task-list-widget">
+                    <div class="widget-header">
+                        <h3>All Tasks</h3>
+                        <div class="task-views">
+                            <button class="btn-icon active" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button class="btn-icon" title="Calendar View">
+                                <i class="fas fa-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="40px"></th>
+                                        <th>Task</th>
+                                        <th>Assigned To</th>
+                                        <th>Due Date</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                        <td>
+                                            <strong>Check abnormal milk production in Barn A</strong>
+                                            <div class="task-description">Inspect cows #12, #15, #22 for reduced output</div>
+                                        </td>
+                                        <td>John Doe</td>
+                                        <td>Today</td>
+                                        <td><span class="badge badge-danger">High</span></td>
+                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                        <td>
+                                            <strong>Schedule vet visit for pregnant cows</strong>
+                                            <div class="task-description">Contact Dr. Smith for routine checkup</div>
+                                        </td>
+                                        <td>Jane Smith</td>
+                                        <td>Tomorrow</td>
+                                        <td><span class="badge badge-warning">Medium</span></td>
+                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" checked>
+                                        </td>
+                                        <td>
+                                            <strong>Order additional fodder</strong>
+                                            <div class="task-description">Place order with GreenFields supplier</div>
+                                        </td>
+                                        <td>Mike Johnson</td>
+                                        <td>Last Friday</td>
+                                        <td><span class="badge badge-primary">Low</span></td>
+                                        <td><span class="badge badge-success">Completed</span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                        <td>
+                                            <strong>Coordinate waste disposal with Green Nursery</strong>
+                                            <div class="task-description">Schedule pickup for organic waste</div>
+                                        </td>
+                                        <td>John Doe</td>
+                                        <td>Next Monday</td>
+                                        <td><span class="badge badge-warning">Medium</span></td>
+                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="widget-footer">
+                        <div class="pagination">
+                            <button class="btn-outline" disabled>Previous</button>
+                            <button class="btn-outline active">1</button>
+                            <button class="btn-outline">2</button>
+                            <button class="btn-outline">3</button>
+                            <button class="btn-outline">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<!-- Add Task Modal -->
+<!-- In the Add Task Modal section -->
+<div class="modal" id="addTaskModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Task</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="taskForm">
+                <input type="hidden" id="taskId" name="taskId">
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="Enter task title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Enter task description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigned To</label>
+                    <select id="workerSelect" name="assigned_to" class="form-control" required>
+                        <option value="">Select worker</option>
+                        <option value="all">All Workers</option>
+                        <option value="worker1">Worker 1</option>
+                        <option value="worker2">Worker 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select name="priority" class="form-control" required>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" name="due_date" class="form-control" required>
+                </div>
+                <button type="submit" class="btn-primary">Assign Task</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-outline modal-close">Cancel</button>
+            <button type="submit" form="taskForm" class="btn-primary">Save Task</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Clear All Confirmation Modal -->
+<div class="modal" id="clearAllModal">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3>Confirm Clear All</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body text-center">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <p>Are you sure you want to delete ALL tasks?</p>
+            <p class="text-muted">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer justify-center">
+            <button class="btn-outline modal-close">Cancel</button>
+            <!-- In your Clear All Confirmation Modal -->
+        <button class="btn-danger" id="confirmClearAll">
+            <i class="fas fa-trash"></i> Clear All
+        </button>        
+        </div>
+    </div>
+</div>
+
+<!-- Success Notification -->
+<div class="notification" id="clearAllSuccess">
+    <div class="notification-content success">
+        <i class="fas fa-check-circle"></i>
+        <span>All tasks have been successfully deleted.</span>
+    </div>
+</div>
+
+<!-- Task Updated Success Popup -->
+<div class="modal" id="taskUpdatedPopup">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-body text-center">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h4>Task Updated Successfully!</h4>
+            <p>Your changes have been saved.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" id="deleteTaskModal">
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="warning-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <p>Are you sure you want to delete this task?</p>
+        <p class="text-muted">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer justify-center">
+        <button class="btn-outline modal-close">Cancel</button>
+        <button class="btn-danger" id="confirmDeleteBtn">Delete Task</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Delete Success Notification -->
+  <div class="notification" id="deleteSuccess">
+    <div class="notification-content success">
+      <i class="fas fa-check-circle"></i>
+      <span>Task deleted successfully.</span>
+    </div>
+  </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/main.js"></script>
+<script>
+
+// Task-specific JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize elements
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const addTaskModal = document.getElementById('addTaskModal');
+    const modalCloseBtns = document.querySelectorAll('.modal-close');
+    const taskForm = document.getElementById('taskForm');
+    
+    // Load initial tasks
+    loadTasks();
+
+    // Modal open/close functionality
+    if (addTaskBtn && addTaskModal) {
+        addTaskBtn.addEventListener('click', function() {
+            // Reset form and set title to "Add New Task"
+            taskForm.reset();
+            document.getElementById('taskId').value = '';
+            addTaskModal.querySelector('.modal-header h3').textContent = 'Add New Task';
+            addTaskModal.classList.add('active');
+        });
+    }
+    
+    modalCloseBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').classList.remove('active');
+        });
+    });
+    
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) {
+            e.target.classList.remove('active');
+        }
+    });
+    
+    // Task form submission
+    taskForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(taskForm);
+        const taskData = Object.fromEntries(formData.entries());
+        
+        if (taskData.taskId) {
+            // Update existing task
+            updateExistingTask(taskData);
+        } else {
+            // Add new task
+            addNewTask(taskData);
+        }
+    });
+
+    // Task view toggle
+    const viewButtons = document.querySelectorAll('.task-views button');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            // Here you would switch between list and calendar views
+        });
+    });
+
+    // Load workers into select dropdowns
+    loadWorkers();
+});
+
+
+
+function loadWorkers() {
+    const workerSelect = document.getElementById('workerSelect');
+    const filterWorker = document.getElementById('filterWorker');
+    
+    // Clear both selects except for first option
+    workerSelect.innerHTML = '<option value="">Select worker</option>';
+    filterWorker.innerHTML = '<option value="">All Workers</option>';
+    
+    // Try to fetch from API
+    fetch('http://localhost:5000/api/workers')
+        .then(res => res.json())
+        .then(workers => {
+            workers.forEach(worker => {
+                const option1 = document.createElement('option');
+                option1.value = worker.id;
+                option1.textContent = worker.username;
+                workerSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = worker.id;
+                option2.textContent = worker.username;
+                filterWorker.appendChild(option2);
+            });
+        })
+        .catch(err => {
+            console.error("Failed to load workers:", err);
+            // Fallback options with consistent values
+            const defaultWorkers = [
+                {id: 'all', username: 'All Workers'},
+                {id: 'worker', username: 'Worker'},
+                {id: 'worker1', username: 'Worker 1'},
+                {id: 'worker2', username: 'Worker 2'}
+            ];
+            
+            defaultWorkers.forEach(worker => {
+                const option1 = document.createElement('option');
+                option1.value = worker.id;
+                option1.textContent = worker.username;
+                workerSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = worker.id;
+                option2.textContent = worker.username;
+                filterWorker.appendChild(option2);
+            });
+        });
+}
+
+
+// Add new task
+function addNewTask(taskData) {
+    // Add metadata
+    taskData.id = Date.now().toString();
+    taskData.created_at = new Date().toISOString();
+    taskData.status = 'assigned'; // Changed from 'pending' to 'assigned'
+    taskData.created_by = 'Manager';
+    
+    // Get existing tasks
+    let tasks = JSON.parse(localStorage.getItem('tasks') || []);
+    
+    // Add the new task
+    tasks.push(taskData);
+    
+    // Save to localStorage
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    
+    // Update the UI
+    renderTasks(tasks);
+    
+    // Show success popup
+    showTaskSuccessPopup(taskData);
+    
+    // Close modal and reset form
+    document.getElementById('addTaskModal').classList.remove('active');
+    document.getElementById('taskForm').reset();
+    applyFilters();
+}
+
+// Update existing task
+function updateExistingTask(taskData) {
+    const taskId = taskData.taskId;
+    delete taskData.taskId;
+    
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    
+    // Find the task to update
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    if (taskIndex !== -1) {
+        // Preserve important fields from original task
+        taskData.id = taskId;
+        taskData.created_at = tasks[taskIndex].created_at;
+        taskData.status = tasks[taskIndex].status; // Preserve the status
+        
+        // Replace the task
+        tasks[taskIndex] = taskData;
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        
+        // Update UI
+        renderTasks(tasks);
+        
+        // Show success popup
+        const popup = document.getElementById('taskUpdatedPopup');
+        popup.classList.add('active');
+        
+        // Close popup when clicking anywhere
+        const closePopup = () => {
+            popup.classList.remove('active');
+            popup.removeEventListener('click', closePopup);
+        };
+        popup.addEventListener('click', closePopup);
+        
+        // Auto-close after 3 seconds
+        setTimeout(() => {
+            popup.classList.remove('active');
+        }, 3000);
+        
+        // Close modal and reset form
+        document.getElementById('addTaskModal').classList.remove('active');
+        document.getElementById('taskForm').reset();
+    }
+    applyFilters();
+}
+
+// Save task to localStorage and update UI
+function saveTask(taskData) {
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.push(taskData);
+    
+    // Save to localStorage
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    
+    // Update the task table
+    renderTasks(tasks);
+}
+
+// Load tasks from localStorage
+function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    renderTasks(tasks);
+    applyFilters();
+}
+
+// Render tasks to the table
+function renderTasks(tasks) {
+
+    const taskTableBody = document.querySelector('.table tbody');
+    taskTableBody.innerHTML = '';
+    
+    if (!tasks || tasks.length === 0) {
+        taskTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center">No tasks found matching your filters</td>
+            </tr>
+        `;
+        return;
+    }
+   
+    // Sort tasks by due date (soonest first)
+    tasks.sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+    
+    // Create a map to ensure unique tasks
+    const taskMap = new Map();
+    tasks.forEach(task => {
+        // Only add if it's not already in the map (keeps the first occurrence)
+        if (!taskMap.has(task.id)) {
+            taskMap.set(task.id, task);
+        }
+    });
+    
+    // Render only unique tasks
+    taskMap.forEach(task => {
+        const row = document.createElement('tr');
+        
+        // Determine badge classes
+        const statusBadgeClass = getStatusBadgeClass(task.status);
+        const priorityBadgeClass = getPriorityBadgeClass(task.priority);
+        const dueDateText = formatDueDate(task.due_date, task.status);
+        
+        row.innerHTML = `
+            <td>
+                <input type="checkbox" ${task.status === 'completed' ? 'checked' : ''} data-task-id="${task.id}">
+            </td>
+            <td>
+                <strong>${task.title}</strong>
+                <div class="task-description">${task.description || ''}</div>
+            </td>
+            <td>${getWorkerName(task.assigned_to)}</td>
+            <td>${dueDateText}</td>
+            <td><span class="badge ${priorityBadgeClass}">${task.priority}</span></td>
+            <td><span class="badge ${statusBadgeClass}">${task.status}</span></td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-icon edit-task-btn" data-task-id="${task.id}" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon delete-task-btn" data-task-id="${task.id}" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        
+        taskTableBody.appendChild(row);
+    });
+    
+    // Add event listeners for checkboxes and buttons
+    addTaskEventListeners();
+}
+
+// Add event listeners to task table elements
+function addTaskEventListeners() {
+    // Checkbox status toggle
+    document.querySelectorAll('.table input[type="checkbox"][data-task-id]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateTaskStatus(this.dataset.taskId, this.checked);
+        });
+    });
+    
+    // Edit buttons
+    document.querySelectorAll('.edit-task-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            editTask(this.dataset.taskId);
+        });
+    });
+    
+    // Delete buttons
+  document.querySelectorAll('.delete-task-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      deleteTask(this.dataset.taskId);
+    });
+  });
+}
+
+// Helper functions
+function getStatusBadgeClass(status) {
+    switch(status) {
+        case 'completed': return 'badge-success';
+        case 'NotDone': return 'badge-danger';
+        default: return 'badge-warning';
+    }
+}
+
+function getPriorityBadgeClass(priority) {
+    switch(priority) {
+        case 'high': return 'badge-danger';
+        case 'low': return 'badge-primary';
+        default: return 'badge-warning';
+    }
+}
+
+
+function formatDueDate(dueDate, status) {
+    if (!dueDate) return 'No date';
+    
+    const date = new Date(dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0); // Normalize time for comparison
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+        return 'Invalid date';
+    }
+    
+    if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+    } else if (date < today && status !== 'completed') {
+        return 'Overdue';
+    }
+    
+    return date.toLocaleDateString();
+}
+
+
+function getWorkerName(workerId) {
+    switch(workerId) {
+        case 'all': return 'All Workers';
+        case 'worker': return 'Worker';
+        case 'worker1': return 'Worker 1';
+        case 'worker2': return 'Worker 2';
+        default: return workerId; // Fallback for other IDs
+    }
+}
+
+// Show success popup when task is assigned
+function showTaskSuccessPopup(task) {
+    const popup = document.createElement('div');
+    popup.className = 'task-success-popup';
+    popup.innerHTML = `
+        <div class="popup-content">
+            <div class="popup-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Task Assigned Successfully!</h3>
+            <div class="task-details">
+                <p><strong>Task:</strong> ${task.title}</p>
+                <p><strong>Assigned To:</strong> ${getWorkerName(task.assigned_to)}</p>
+                <p><strong>Due Date:</strong> ${formatDueDate(task.due_date, task.status)}</p>
+            </div>
+            <button class="popup-close-btn" onclick="this.parentElement.parentElement.remove()">
+                OK
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (popup.parentNode) {
+            popup.remove();
+        }
+    }, 5000);
+}
+
+// Update task status
+function updateTaskStatus(taskId, isCompleted) {
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    
+    // Find and update the task
+    const updatedTasks = tasks.map(task => {
+        if (task.id === taskId) {
+            return {...task, status: isCompleted ? 'completed' : 'pending'};
+        }
+        return task;
+    });
+    
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    renderTasks(updatedTasks);
+    applyFilters();
+}
+
+// Edit task
+function editTask(taskId) {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const task = tasks.find(t => t.id === taskId);
+    
+    if (!task) return;
+    
+    const modal = document.getElementById('addTaskModal');
+    const form = document.getElementById('taskForm');
+    
+    // Update modal title
+    modal.querySelector('.modal-header h3').textContent = 'Edit Task';
+    
+    // Fill form
+    form.querySelector('input[name="title"]').value = task.title;
+    form.querySelector('textarea[name="description"]').value = task.description || '';
+    form.querySelector('select[name="assigned_to"]').value = task.assigned_to;
+    form.querySelector('select[name="priority"]').value = task.priority;
+    
+    // Format date for input
+    if (task.due_date) {
+        const dueDate = new Date(task.due_date);
+        if (!isNaN(dueDate.getTime())) {
+            const formattedDate = dueDate.toISOString().split('T')[0];
+            form.querySelector('input[name="due_date"]').value = formattedDate;
+        }
+    }
+    
+    // Set task ID
+    document.getElementById('taskId').value = taskId;
+    
+    // Show modal
+    modal.classList.add('active');
+}
+
+// Delete task
+// Global variable to store task ID to be deleted
+let taskToDelete = null;
+
+function deleteTask(taskId) {
+  taskToDelete = taskId;
+  document.getElementById('deleteTaskModal').classList.add('active');
+  applyFilters();
+}
+
+
+// Set up confirmation button
+document.getElementById('confirmDeleteBtn')?.addEventListener('click', function() {
+  if (!taskToDelete) return;
+  
+  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  tasks = tasks.filter(t => t.id !== taskToDelete);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  renderTasks(tasks);
+  
+  // Close modal
+  document.getElementById('deleteTaskModal').classList.remove('active');
+  
+  // Show success notification
+  const notification = document.getElementById('deleteSuccess');
+  notification.style.display = 'block';
+  
+  // Hide after 3 seconds
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 3000);
+  
+  // Reset taskToDelete
+  taskToDelete = null;
+});
+
+
+
+// Logout functionality
+document.getElementById('logout-btn').addEventListener('click', function() {
+    const confirmLogout = confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+        window.location.href = "index.html"; // Redirect to index.html
+    }
+});
+
+
+function clearAllTasks() {
+    // Show the confirmation modal
+    document.getElementById('clearAllModal').classList.add('active');
+}
+
+// Set up the confirmation button handler separately
+document.getElementById('confirmClearAll')?.addEventListener('click', function() {
+    // Clear tasks from localStorage
+    localStorage.setItem('tasks', JSON.stringify([]));
+    
+    // Update the UI with empty array
+    renderTasks([]);
+    
+    // Close the confirmation modal
+    document.getElementById('clearAllModal').classList.remove('active');
+    
+    // Show success notification
+    const notification = document.getElementById('clearAllSuccess');
+    notification.style.display = 'block';
+    
+    // Hide after 3 seconds
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+});
+
+// Set up the main Clear All button to show the modal
+document.getElementById('clearAllTasksBtn')?.addEventListener('click', clearAllTasks);
+
+
+// Make sure to add event listeners for your modal close buttons
+document.querySelectorAll('#clearAllModal .modal-close').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.getElementById('clearAllModal').classList.remove('active');
+    });
+});
+
+document.getElementById('clearAllTasksBtn')?.addEventListener('click', clearAllTasks);
+
+
+
+// Add event listeners for filter changes
+document.addEventListener('DOMContentLoaded', function() {
+    // Add these event listeners to your existing DOMContentLoaded function
+    document.getElementById('filterStatus')?.addEventListener('change', applyFilters);
+    document.getElementById('filterPriority')?.addEventListener('change', applyFilters);
+    document.getElementById('filterWorker')?.addEventListener('change', applyFilters);
+});
+
+
+
+//ftn to apply active filters
+function applyFilters() {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const statusFilter = document.getElementById('filterStatus').value;
+    const priorityFilter = document.getElementById('filterPriority').value;
+    const workerFilter = document.getElementById('filterWorker').value;
+    
+    const filteredTasks = tasks.filter(task => {
+        // Check status filter
+        let statusMatch = true;
+        if (statusFilter) {
+            if (statusFilter === 'NotDone') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dueDate = new Date(task.due_date);
+                dueDate.setHours(0, 0, 0, 0); // Normalize time for comparison
+                
+                // Task is "Not Done" if:
+                // 1. It's not completed AND
+                // 2. Due date is in the past AND
+                // 3. Status is not "completed"
+                statusMatch = task.status !== 'completed' && 
+                             dueDate < today;
+            } else {
+                statusMatch = task.status === statusFilter;
+            }
+        }
+        
+        // Check priority filter
+        const priorityMatch = !priorityFilter || task.priority === priorityFilter;
+        
+        // Check worker filter
+        let workerMatch = true;
+        if (workerFilter) {
+            if (workerFilter === 'all') {
+                workerMatch = true; // Show all tasks
+            } else if (workerFilter === 'worker') {
+                // Show tasks assigned to "Worker" (not Worker 1 or Worker 2)
+                workerMatch = task.assigned_to === 'worker' || 
+                              task.assigned_to === 'Worker' || 
+                              task.assigned_to === 'all';
+            } else {
+                workerMatch = task.assigned_to === workerFilter;
+            }
+        }
+        
+        return statusMatch && priorityMatch && workerMatch;
+    });
+    
+    renderTasks(filteredTasks);
+}
+
+function clearAllFilters() {
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterPriority').value = '';
+    document.getElementById('filterWorker').value = '';
+    loadTasks(); // This will show all tasks again
+}
+document.getElementById('clearFiltersBtn')?.addEventListener('click', clearAllFilters);
+
+
+    </script>
+</body>
+</html>

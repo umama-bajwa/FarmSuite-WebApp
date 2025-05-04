@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vet Dashboard</title>
+  <link rel="icon" type="image/png" href="imgs/logo1.png">
+  <title>FarmSuite.</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="vet.css">
 </head>
@@ -24,11 +25,25 @@
     </div>
   </nav>
 
+
+
+
   <!-- Dashboard Content -->
   <div class="dashboard">
+    <!-- Vet Dashboard Banner -->
+<section class="dashboard-banner">
+  <div class="banner-content">
+    <i class="fa-solid fa-stethoscope"></i>
+    <h1>Veterinary Dashboard</h1>
+    <p>Monitor herd care, track animal health records, and stay informed with real-time veterinary insights.</p>
+  </div>
+</section>
     <!-- Notifications Section -->
     <section id="notifications" class="section">
       <h2><i class="fas fa-bell"></i> Notifications</h2>
+      <button onclick="deleteAllNotifications()" class="delete-all-btn">
+        <i class="fas fa-trash"></i> Delete All
+      </button>
       <div class="card">
         <div class="notifications-container" id="notifications-container">
           <!-- Notifications will be dynamically added here -->
@@ -36,9 +51,24 @@
       </div>
     </section>
 
+<!-- Scheduled Appointments Section -->
+<section id="scheduled-appointments" class="section">
+  <h2><i class="fas fa-calendar-check"></i> Scheduled Appointments</h2>
+  <div class="card">
+    <div class="appointments-container" id="scheduled-appointments-container">
+      <!-- Accepted appointments will be dynamically added here -->
+    </div>
+  </div>
+</section>
+
+    
+
     <!-- Checked Cows Section -->
     <section id="checked" class="section">
       <h2><i class="fas fa-check-circle"></i> Checked Cows</h2>
+      <button onclick="deleteAllCheckedCows()" class="delete-all-btn">
+        <i class="fas fa-trash"></i> Delete All
+      </button>
       <div class="card">
         <div class="cows-grid" id="checked-cows-container">
           <!-- Checked cows will be dynamically added here -->
@@ -49,6 +79,9 @@
     <!-- Medical Records Section -->
     <section id="medical-records" class="section">
       <h2><i class="fas fa-file-medical"></i> Medical Records</h2>
+      <button onclick="deleteAllMedicalRecords()" class="delete-all-btn">
+        <i class="fas fa-trash"></i> Delete All
+      </button>
       <div class="card">
         <div class="medical-records-container" id="medical-records-container">
           <!-- Medical records will be dynamically added here -->
@@ -56,6 +89,8 @@
       </div>
     </section>
   </div>
+
+  
 
   <!-- Popup Form for Adding Medical Records -->
 <div id="medicalRecordFormPopup" class="popup-form-overlay">
@@ -78,24 +113,42 @@
       </div>
       <div class="form-group">
         <label for="medication">Medication</label>
-        <input type="text" id="medication" placeholder="Enter medication (if any)">
+        <input type="text" id="medication" placeholder="Enter medication" oninput="validateMedication(this)">
+        <div class="error-message" id="medication-error">No special characters allowed</div>
       </div>
       <div class="form-group">
         <label for="notes">Notes</label>
         <textarea id="notes" placeholder="Enter notes" required></textarea>
       </div>
-      <div class="form-actions">
-        <button type="button" onclick="closeMedicalRecordForm()" class="cancel-btn">Cancel</button>
-        <button type="submit" class="submit-btn">Save Record</button>
-      </div>
+      <!-- Update the medical record form actions -->
+    <div class="form-actions">
+      <button type="button" onclick="closeMedicalRecordForm()" class="cancel-btn">Cancel</button>
+      <button type="submit" class="submit-btn">Save Record</button>
+      <button type="button" onclick="submitAndSendToManager(event)" class="send-btn">
+        <i class="fas fa-paper-plane"></i> Send to Manager
+      </button>
+    </div>
     </form>
   </div>
 </div>
+
 
   <!-- Scroll to Top Button -->
   <button id="scrollToTopBtn" class="scroll-to-top">
     <i class="fas fa-arrow-up"></i>
   </button>
+
+<!-- Response Popup -->
+<div id="responsePopup" class="popup-overlay">
+  <div class="popup-content">
+    <div class="popup-icon">
+      <i id="responseIcon"></i>
+    </div>
+    <h3 id="responseTitle"></h3>
+    <p id="responseMessage"></p>
+    <button onclick="closeResponsePopup()" class="popup-close-btn">OK</button>
+  </div>
+</div>
 
   <!-- JavaScript -->
   <script>
@@ -110,20 +163,192 @@
     let medicalRecords = [];
 
     // Render Notifications
-    function renderNotifications() {
-      const notificationsContainer = document.getElementById("notifications-container");
-      notificationsContainer.innerHTML = notifications
-        .map(
-          (cow) => `
-          <div class="notification-item">
-            <i class="fas fa-exclamation-circle"></i>
-            <span><strong>Cow ID: ${cow.id}</strong> needs to be checked. Last checked ${cow.lastChecked}.</span>
-            <button onclick="markAsChecked('${cow.id}')"><i class="fas fa-check"></i> Mark as Checked</button>
-          </div>
-        `
-        )
-        .join("");
+   // In your vet.html's JavaScript section, update the renderNotifications function:
+
+   function renderNotifications() {
+    const notificationsContainer = document.getElementById("notifications-container");
+    const vetVisits = JSON.parse(localStorage.getItem('vetVisits') || '[]');
+    
+    // Filter pending visits
+    const pendingVisits = vetVisits.filter(visit => visit.status === 'pending');
+    
+    if (pendingVisits.length === 0) {
+        notificationsContainer.innerHTML = `
+            <div class="notification-item">
+                <i class="fas fa-check-circle"></i>
+                <span>No pending vet visits at this time.</span>
+            </div>
+        `;
+        return;
     }
+    
+    notificationsContainer.innerHTML = pendingVisits
+        .map(visit => {
+            // Safely parse the date
+            let visitDate;
+            try {
+                visitDate = new Date(visit.dateTime);
+                if (isNaN(visitDate.getTime())) {
+                    // If direct parsing fails, try alternative formats
+                    visitDate = new Date(visit.dateTime.replace(' ', 'T'));
+                }
+            } catch (e) {
+                visitDate = new Date(); // Fallback to current date if parsing fails
+            }
+            
+            // Format the date for display
+            const formattedDate = visitDate.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="notification-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="visit-details">
+                        <h4>New Vet Visit Request</h4>
+                        <p><strong>Purpose:</strong> ${visit.purpose}</p>
+                        <p><strong>Priority:</strong> ${visit.priority}</p>
+                        <p><strong>Scheduled:</strong> ${formattedDate}</p>
+                        <p><strong>Notes:</strong> ${visit.notes || 'No notes'}</p>
+                    </div>
+                    <div class="visit-actions">
+                        <button onclick="acceptVisit('${visit.id}')"><i class="fas fa-check"></i> Accept</button>
+                        <button onclick="declineVisit('${visit.id}')"><i class="fas fa-times"></i> Decline</button>
+                    </div>
+                </div>
+            `;
+        })
+        .join("");
+}
+// Show response popup
+function showResponsePopup(isSuccess, title, message) {
+    const popup = document.getElementById("responsePopup");
+    const icon = document.getElementById("responseIcon");
+    const popupTitle = document.getElementById("responseTitle");
+    const popupMessage = document.getElementById("responseMessage");
+    
+    // Set icon and colors
+    if (isSuccess) {
+        icon.className = "fas fa-check-circle success-icon";
+    } else {
+        icon.className = "fas fa-times-circle error-icon";
+    }
+    
+    // Set content
+    popupTitle.textContent = title;
+    popupMessage.textContent = message;
+    
+    // Show popup
+    popup.style.display = "flex";
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        popup.style.display = "none";
+    }, 5000);
+}
+
+// Close response popup
+function closeResponsePopup() {
+    document.getElementById("responsePopup").style.display = "none";
+}
+
+// Initialize vet visits if not exists
+if (!localStorage.getItem('vetVisits')) {
+    localStorage.setItem('vetVisits', JSON.stringify([]));
+}
+
+
+function acceptVisit(visitId) {
+  let vetVisits = JSON.parse(localStorage.getItem('vetVisits') || '[]');
+  let visitDetails = null;
+  
+  vetVisits = vetVisits.map(visit => {
+    if (visit.id === visitId) {
+      visitDetails = visit;
+      return {...visit, status: 'accepted'};
+    }
+    return visit;
+  });
+  
+  localStorage.setItem('vetVisits', JSON.stringify(vetVisits));
+  
+  // Update manager notifications
+  let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+  managerNotifications.push({
+    id: `visit-${visitId}-accepted`,
+    type: 'vet-visit',
+    title: 'Visit Accepted',
+    message: `Vet has accepted visit for ${visitDetails.purpose || 'unknown purpose'}`,
+    timestamp: new Date().toISOString(),
+    visitId: visitId,
+    status: 'unread'
+  });
+  localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+  
+  renderNotifications();
+  renderScheduledAppointments();  // Add this line
+  
+  showResponsePopup(
+    true,
+    'Visit Accepted',
+    `You have accepted the visit for ${visitDetails.purpose || 'unknown purpose'}.`
+  );
+}
+
+function declineVisit(visitId) {
+    let vetVisits = JSON.parse(localStorage.getItem('vetVisits') || []);
+    let visitDetails = null;
+    
+    vetVisits = vetVisits.map(visit => {
+        if (visit.id === visitId) {
+            visitDetails = visit;
+            return {...visit, status: 'declined'};
+        }
+        return visit;
+    });
+    
+    localStorage.setItem('vetVisits', JSON.stringify(vetVisits));
+    
+    // Update manager notifications
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    if (visitDetails) {
+        managerNotifications.push({
+            id: `visit-${visitId}-declined`,
+            type: 'vet-visit',
+            title: 'Visit Declined',
+            message: `Vet has declined visit for ${visitDetails.purpose || 'unknown purpose'}`,
+            timestamp: new Date().toISOString(),
+            visitId: visitId,
+            status: 'unread'
+        });
+        localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+    }
+    
+    renderNotifications();
+    
+    // Show popup
+    if (visitDetails) {
+        showResponsePopup(
+            false,
+            'Visit Declined',
+            `You have declined the visit for ${visitDetails.purpose || 'unknown purpose'}.`
+        );
+    } else {
+        showResponsePopup(
+            false,
+            'Visit Declined',
+            'The visit has been declined.'
+        );
+    }
+}
+
+
+// Update the initial render
+renderNotifications();
 
     // Mark as Checked Functionality
     function markAsChecked(cowId) {
@@ -137,22 +362,45 @@
       }
     }
 
-    // Render Checked Cows
-    function renderCheckedCows() {
-      const checkedCowsContainer = document.getElementById("checked-cows-container");
-      checkedCowsContainer.innerHTML = checkedCows
-        .map(
-          (cow) => `
-          <div class="cow-item">
-            <img src="https://via.placeholder.com/150" alt="Cow ${cow.id}">
-            <span>Cow ID: ${cow.id}</span>
-            <span>Last Checked: ${cow.lastChecked}</span>
-            <button onclick="addMedicalRecord('${cow.id}')"><i class="fas fa-file-medical"></i> Add Record</button>
-          </div>
-        `
-        )
-        .join("");
-    }
+    // Initialize storage if not exists
+if (!localStorage.getItem('checkedCows')) {
+  localStorage.setItem('checkedCows', JSON.stringify([]));
+}
+ 
+
+// Render Checked Cows
+function renderCheckedCows() {
+  const checkedCowsContainer = document.getElementById("checked-cows-container");
+  const checkedCows = JSON.parse(localStorage.getItem('checkedCows') || []);
+  
+  if (checkedCows.length === 0) {
+    checkedCowsContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-cow"></i>
+        <p>No cows checked yet</p>
+      </div>
+    `;
+    return;
+  }
+  
+  checkedCowsContainer.innerHTML = checkedCows.map(cow => `
+    <div class="cow-item">
+      <div class="cow-avatar">
+        <i class="fas fa-cow"></i>
+      </div>
+      <div class="cow-details">
+        <h4>Cow ID: ${cow.id}</h4>
+        <p><strong>Purpose:</strong> ${cow.purpose || 'Not specified'}</p>
+        <p><strong>Checked on:</strong> ${new Date(cow.dateChecked).toLocaleDateString()}</p>
+        <p><strong>Priority:</strong> <span class="priority ${cow.priority?.toLowerCase() || 'medium'}">${cow.priority || 'Medium'}</span></p>
+      </div>
+      <button onclick="addMedicalRecord('${cow.id}')">
+        <i class="fas fa-file-medical"></i> Add Record
+      </button>
+    </div>
+  `).join('');
+}
+
 
     // Add Medical Record Functionality
     function addMedicalRecord(cowId) {
@@ -183,6 +431,9 @@ function addMedicalRecord(cowId) {
   document.getElementById("medicalRecordFormPopup").style.display = "flex";
 }
 
+
+
+
 // Close Medical Record Form
 function closeMedicalRecordForm() {
   document.getElementById("medicalRecordFormPopup").style.display = "none";
@@ -190,7 +441,13 @@ function closeMedicalRecordForm() {
   currentCowId = null;
 }
 
-// Submit Medical Record Form
+
+// Initialize storage if not exists
+if (!localStorage.getItem('medicalRecords')) {
+  localStorage.setItem('medicalRecords', JSON.stringify([]));
+}
+
+
 function submitMedicalRecord(event) {
   event.preventDefault();
   const healthStatus = document.getElementById("healthStatus").value;
@@ -198,20 +455,102 @@ function submitMedicalRecord(event) {
   const notes = document.getElementById("notes").value;
 
   if (healthStatus && notes && currentCowId) {
-    medicalRecords.push({
+    let medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+    
+    const newRecord = {
+      id: `record-${Date.now()}`,
       cowId: currentCowId,
       healthStatus,
       medication,
       notes,
-      lastChecked: new Date().toLocaleDateString(),
-    });
+      date: new Date().toISOString(),
+      vetName: "Dr. Vet"
+    };
+    
+    medicalRecords.push(newRecord);
+    localStorage.setItem('medicalRecords', JSON.stringify(medicalRecords));
+    
+    // Update the livestock health counts in localStorage
+    updateLivestockHealthCounts();
+    
     renderMedicalRecords();
     closeMedicalRecordForm();
-    alert(`Medical record added for Cow ${currentCowId}!`);
-  } else {
-    alert("Please fill in all required fields!");
+    
+    showResponsePopup(
+      true,
+      'Record Saved',
+      `Medical record for Cow ${currentCowId} has been saved successfully.`
+    );
   }
 }
+
+function updateLivestockHealthCounts() {
+  const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+  
+  // Get the most recent record for each cow
+  const latestRecords = {};
+  medicalRecords.forEach(record => {
+    if (!latestRecords[record.cowId] || 
+        new Date(record.date) > new Date(latestRecords[record.cowId].date)) {
+      latestRecords[record.cowId] = record;
+    }
+  });
+  
+  // Count health statuses
+  const healthCounts = {
+    Healthy: 0,
+    Recovering: 0,
+    Sick: 0,
+    Critical: 0
+  };
+  
+  Object.values(latestRecords).forEach(record => {
+    if (healthCounts.hasOwnProperty(record.healthStatus)) {
+      healthCounts[record.healthStatus]++;
+    }
+  });
+  
+  // Save to localStorage
+  localStorage.setItem('livestockHealthCounts', JSON.stringify(healthCounts));
+}
+
+
+
+// Add this new function to vet.html
+function updateLivestockHealthCounts() {
+  const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+  
+  // Get the most recent record for each cow
+  const latestRecords = {};
+  medicalRecords.forEach(record => {
+    if (!latestRecords[record.cowId] || 
+        new Date(record.date) > new Date(latestRecords[record.cowId].date)) {
+      latestRecords[record.cowId] = record;
+    }
+  });
+  
+  // Count health statuses
+  const healthCounts = {
+    Healthy: 0,
+    Recovering: 0,
+    Sick: 0,
+    Critical: 0
+  };
+  
+  Object.values(latestRecords).forEach(record => {
+    if (healthCounts.hasOwnProperty(record.healthStatus)) {
+      healthCounts[record.healthStatus]++;
+    }
+  });
+  
+  // Save to localStorage
+  localStorage.setItem('livestockHealthCounts', JSON.stringify(healthCounts));
+}
+
+
+
+
+
 
     // Scroll to Top Button
     const scrollToTopBtn = document.getElementById("scrollToTopBtn");
@@ -241,8 +580,494 @@ function submitMedicalRecord(event) {
 
     // Initial Render
     renderNotifications();
+    renderScheduledAppointments();  // Add this line
     renderCheckedCows();
     renderMedicalRecords();
-  </script>
+
+
+
+
+
+
+
+    // Vet Message Center
+function setupVetMessageCenter() {
+    const messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    const vetMessages = messages.filter(msg => msg.to === 'Vet');
+    
+    // Display message list
+    const messageList = document.getElementById('vet-message-list');
+    messageList.innerHTML = vetMessages.map(msg => `
+        <div class="message-item ${msg.replies.some(r => !r.read) ? 'unread' : ''}" onclick="openVetMessage('${msg.id}')">
+            <div class="message-sender">From: ${msg.from}</div>
+            <div class="message-subject">${msg.subject}</div>
+            <div class="message-preview">${msg.content.substring(0, 50)}${msg.content.length > 50 ? '...' : ''}</div>
+            <div class="message-time">${new Date(msg.timestamp).toLocaleDateString()}</div>
+        </div>
+    `).join('');
+    
+    // Show first message if available
+    if (vetMessages.length > 0) {
+        openVetMessage(vetMessages[0].id);
+    }
+}
+
+function openVetMessage(messageId) {
+    const messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    const message = messages.find(m => m.id === messageId);
+    
+    if (!message) return;
+    
+    // Mark as read
+    message.read = true;
+    localStorage.setItem('managerVetMessages', JSON.stringify(messages));
+    
+    // Update UI
+    document.getElementById('vet-message-display').innerHTML = `
+        <div class="message-header">
+            <h3>${message.subject}</h3>
+            <div class="message-meta">
+                <span>From: ${message.from}</span>
+                <span>Date: ${new Date(message.timestamp).toLocaleString()}</span>
+                <span>Priority: ${message.priority}</span>
+            </div>
+        </div>
+        <div class="message-original">
+            ${message.content}
+        </div>
+        <div class="message-thread">
+            ${message.replies.map(reply => `
+                <div class="message-bubble ${reply.from === 'Vet' ? 'message-outgoing' : 'message-incoming'}">
+                    ${reply.content}
+                    <span class="message-time">${new Date(reply.timestamp).toLocaleTimeString()}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    // Set up reply functionality
+    document.getElementById('vet-send-reply').onclick = function() {
+        const replyContent = document.getElementById('vet-reply-content').value.trim();
+        if (!replyContent) return;
+        
+        // Create reply
+        const reply = {
+            id: `reply-${Date.now()}`,
+            from: 'Vet',
+            to: 'Manager',
+            content: replyContent,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Add reply to message
+        message.replies.push(reply);
+        
+        // Update in localStorage
+        const updatedMessages = messages.map(m => 
+            m.id === message.id ? message : m
+        );
+        localStorage.setItem('managerVetMessages', JSON.stringify(updatedMessages));
+        
+        // Add reply to thread display
+        const thread = document.querySelector('.message-thread');
+        const replyElement = document.createElement('div');
+        replyElement.className = 'message-bubble message-outgoing';
+        replyElement.innerHTML = `
+            ${reply.content}
+            <span class="message-time">${new Date(reply.timestamp).toLocaleTimeString()}</span>
+        `;
+        thread.appendChild(replyElement);
+        
+        // Clear reply input
+        document.getElementById('vet-reply-content').value = '';
+        
+        // Scroll to bottom
+        thread.scrollTop = thread.scrollHeight;
+        
+        // In a real app, you would notify the manager here
+    };
+    
+    // Scroll to bottom
+    const thread = document.querySelector('.message-thread');
+    if (thread) {
+        thread.scrollTop = thread.scrollHeight;
+    }
+}
+
+// Check for new messages periodically
+setInterval(function() {
+    const messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    const unreadMessages = messages.filter(msg => 
+        msg.to === 'Vet' && !msg.read
+    );
+    
+    if (unreadMessages.length > 0) {
+        showNewMessageNotification(unreadMessages[0]);
+    }
+}, 30000);
+
+function showNewMessageNotification(message) {
+    const popup = document.createElement('div');
+    popup.className = 'new-message-popup';
+    popup.innerHTML = `
+        <i class="fas fa-envelope"></i>
+        <div class="new-message-popup-content">
+            <h4>New Message from Manager</h4>
+            <p>${message.subject}</p>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        popup.remove();
+    }, 5000);
+    
+    // Click to view message
+    popup.addEventListener('click', () => {
+        openVetMessage(message.id);
+        popup.remove();
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', setupVetMessageCenter);
+
+
+
+
+// Render Scheduled Appointments
+function renderScheduledAppointments() {
+  const container = document.getElementById("scheduled-appointments-container");
+  const vetVisits = JSON.parse(localStorage.getItem('vetVisits') || '[]');
+  const acceptedVisits = vetVisits.filter(visit => visit.status === 'accepted');
+  
+  if (acceptedVisits.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <p>No scheduled appointments</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = acceptedVisits.map(visit => {
+    let visitDate;
+    try {
+      visitDate = new Date(visit.dateTime);
+      if (isNaN(visitDate.getTime())) {
+        visitDate = new Date(visit.dateTime.replace(' ', 'T'));
+      }
+    } catch (e) {
+      visitDate = new Date();
+    }
+    
+    const formattedDate = visitDate.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    return `
+      <div class="appointment-item" data-id="${visit.id}">
+        <div class="appointment-header">
+          <h4>${visit.purpose}</h4>
+          <span class="priority ${visit.priority.toLowerCase()}">${visit.priority}</span>
+        </div>
+        <div class="appointment-details">
+          <p><i class="fas fa-calendar-day"></i> ${formattedDate}</p>
+          <p><i class="fas fa-info-circle"></i> ${visit.notes || 'No additional notes'}</p>
+        </div>
+        <div class="appointment-actions">
+          <button onclick="markAppointmentComplete('${visit.id}')">
+            <i class="fas fa-check"></i> Mark as Checked
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Mark appointment as complete and move to checked cows
+function markAppointmentComplete(visitId) {
+  let vetVisits = JSON.parse(localStorage.getItem('vetVisits') || '[]');
+  let checkedCows = JSON.parse(localStorage.getItem('checkedCows') || []);
+  
+  // Find and update the visit
+  const updatedVisits = vetVisits.map(visit => {
+    if (visit.id === visitId) {
+      // Add to checked cows before marking as completed
+      checkedCows.push({
+        id: visit.cowId || generateCowId(), // Ensure we have a cow ID
+        visitId: visit.id,
+        purpose: visit.purpose,
+        dateChecked: new Date().toISOString(),
+        notes: visit.notes,
+        priority: visit.priority
+      });
+      return {...visit, status: 'completed'};
+    }
+    return visit;
+  });
+  
+  // Update storage
+  localStorage.setItem('vetVisits', JSON.stringify(updatedVisits));
+  localStorage.setItem('checkedCows', JSON.stringify(checkedCows));
+  
+  // Update manager notifications
+  const visit = vetVisits.find(v => v.id === visitId);
+  if (visit) {
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+    managerNotifications.push({
+      id: `visit-${visitId}-completed`,
+      type: 'vet-visit',
+      title: 'Visit Completed',
+      message: `Vet has completed visit for ${visit.purpose || 'unknown purpose'}`,
+      timestamp: new Date().toISOString(),
+      visitId: visitId,
+      status: 'unread'
+    });
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+  }
+  
+  // Update UI
+  renderScheduledAppointments();
+  renderCheckedCows();
+  
+  showResponsePopup(
+    true,
+    'Appointment Completed',
+    `You have marked the visit for ${visit?.purpose || 'unknown purpose'} as completed.`
+  );
+}
+
+// Helper function to generate cow ID if not provided
+function generateCowId() {
+  return 'cow-' + Math.random().toString(36).substr(2, 8);
+}
+
+
+function renderMedicalRecords() {
+  const container = document.getElementById("medical-records-container");
+  const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+  const checkedCows = JSON.parse(localStorage.getItem('checkedCows') || []);
+  
+  if (medicalRecords.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-file-medical"></i>
+        <p>No medical records found</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Sort records by date (newest first)
+  medicalRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  container.innerHTML = medicalRecords.map(record => {
+    // Find cow details
+    const cow = checkedCows.find(c => c.id === record.cowId);
+    const cowPurpose = cow ? cow.purpose : 'Unknown purpose';
+    
+    // Format date
+    const formattedDate = new Date(record.date).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    // Determine status color
+    let statusColor;
+    switch(record.healthStatus) {
+      case 'Healthy': statusColor = '#4CAF50'; break;
+      case 'Recovering': statusColor = '#FFC107'; break;
+      case 'Sick': statusColor = '#FF9800'; break;
+      case 'Critical': statusColor = '#F44336'; break;
+      default: statusColor = '#9E9E9E';
+    }
+    
+    return `
+      <div class="record-item">
+        <div class="record-header">
+          <div class="record-cow">
+            <i class="fas fa-cow"></i>
+            <h4>Cow ID: ${record.cowId}</h4>
+          </div>
+          <div class="record-status" style="background-color: ${statusColor}">
+            ${record.healthStatus}
+          </div>
+        </div>
+        
+        <div class="record-details">
+          <div class="record-meta">
+            <p><i class="fas fa-calendar-day"></i> ${formattedDate}</p>
+            <p><i class="fas fa-user-md"></i> ${record.vetName}</p>
+          </div>
+          
+          <div class="record-purpose">
+            <p><strong>Purpose:</strong> ${cowPurpose}</p>
+          </div>
+          
+          <div class="record-medication">
+            <p><strong>Medication:</strong> ${record.medication}</p>
+          </div>
+          
+          <div class="record-notes">
+            <p><strong>Notes:</strong> ${record.notes}</p>
+          </div>
+        </div>
+        
+        <div class="record-actions">
+          <button onclick="sendRecordToManager('${record.id}')" class="send-to-manager-btn">
+            <i class="fas fa-paper-plane"></i> Send to Manager
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+function sendRecordToManager(recordId) {
+  const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+  const record = medicalRecords.find(r => r.id === recordId);
+  
+  if (!record) {
+    showResponsePopup(false, 'Error', 'Record not found!');
+    return;
+  }
+  
+  const checkedCows = JSON.parse(localStorage.getItem('checkedCows') || []);
+  const cow = checkedCows.find(c => c.id === record.cowId);
+  
+  // Create notification for manager
+  let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+  
+  // Check if this record was already sent
+  const alreadySent = managerNotifications.some(n => 
+    n.type === 'health-record' && n.recordId === recordId
+  );
+  
+  if (alreadySent) {
+    showResponsePopup(false, 'Already Sent', 'This record was already sent to the manager.');
+    return;
+  }
+  
+  // Create a new notification
+  managerNotifications.push({
+    id: `health-record-${Date.now()}`,
+    type: 'health-record',
+    title: 'New Health Record',
+    message: `Vet has submitted a health record for Cow ${record.cowId}`,
+    cowId: record.cowId,
+    recordId: record.id,
+    healthStatus: record.healthStatus,
+    medication: record.medication,
+    notes: record.notes,
+    purpose: cow?.purpose || 'Unknown purpose',
+    timestamp: new Date().toISOString(),
+    status: 'unread'
+  });
+  
+  localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+  
+  showResponsePopup(
+    true,
+    'Record Sent',
+    `Medical record for Cow ${record.cowId} has been sent to the manager.`
+  );
+}
+
+
+function submitAndSendToManager(event) {
+  event.preventDefault();
+  
+  // First submit the record normally
+  submitMedicalRecord(event);
+  
+  // Then get the latest record (which was just added)
+  const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || []);
+  const latestRecord = medicalRecords[medicalRecords.length - 1];
+  
+  if (latestRecord) {
+    // Send the latest record to manager
+    sendRecordToManager(latestRecord.id);
+  }
+  
+  // Close the form
+  closeMedicalRecordForm();
+}
+ 
+
+// Listen for storage changes (works across tabs/windows)
+window.addEventListener('storage', function(event) {
+  if (event.key === 'livestockHealthCounts') {
+    updateHealthChart(); // On manager dashboard
+    // Or updateLivestockHealthCounts() on vet dashboard if needed
+  }
+});
+
+
+// Function to delete all notifications (vet visits)
+function deleteAllNotifications() {
+    if (confirm("Are you sure you want to delete all pending vet visit notifications?")) {
+        let vetVisits = JSON.parse(localStorage.getItem('vetVisits') || []);
+        // Keep only completed visits
+        vetVisits = vetVisits.filter(visit => visit.status === 'completed' || visit.status === 'accepted');
+        localStorage.setItem('vetVisits', JSON.stringify(vetVisits));
+        renderNotifications();
+        showResponsePopup(true, "Success", "All pending notifications have been deleted.");
+    }
+}
+
+// Function to delete all checked cows
+function deleteAllCheckedCows() {
+    if (confirm("Are you sure you want to delete all checked cow records?")) {
+        localStorage.setItem('checkedCows', JSON.stringify([]));
+        renderCheckedCows();
+        showResponsePopup(true, "Success", "All checked cow records have been deleted.");
+    }
+}
+
+// Function to delete all medical records
+function deleteAllMedicalRecords() {
+    if (confirm("Are you sure you want to delete ALL medical records? This cannot be undone.")) {
+        localStorage.setItem('medicalRecords', JSON.stringify([]));
+        renderMedicalRecords();
+        // Also update the livestock health counts
+        localStorage.setItem('livestockHealthCounts', JSON.stringify({
+            Healthy: 0,
+            Recovering: 0,
+            Sick: 0,
+            Critical: 0
+        }));
+        showResponsePopup(true, "Success", "All medical records have been deleted.");
+    }
+}
+
+
+function validateMedication(input) {
+      const errorElement = document.getElementById('medication-error');
+      const value = input.value.trim();
+      
+      if (/[^a-zA-Z0-9\s]/.test(value)) {
+        input.classList.add('input-error');
+        errorElement.style.display = 'block';
+        return false;
+      } else {
+        input.classList.remove('input-error');
+        errorElement.style.display = 'none';
+        return true;
+      }
+    }
+
+ </script>
 </body>
 </html>

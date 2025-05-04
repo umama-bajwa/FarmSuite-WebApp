@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="imgs/logo1.png">
+    <title>FarmSuite.</title>
+    <link rel="stylesheet" href="manager-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <i class="fas fa-tractor"></i>                
+                <h1>FarmSuite.</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="tasks.html"><i class="fas fa-tasks"></i> Task Management</a></li>                    <li><a href="#livestock"><i class="fas fa-cow"></i> Livestock</a></li>
+                    <li><a href="#health"><i class="fas fa-heartbeat"></i> Health Records</a></li>
+                    <li><a href="inventory.html"><i class="fas fa-warehouse"></i> Inventory</a></li>
+                    <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                    <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+
+            <div class="logout-section">
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <header>
+                <div class="header-left">
+                    <h2>Manager Dashboard</h2>
+                    <p id="current-date">Monday, June 5, 2023</p>
+                </div>
+                <div class="header-right">
+                <!-- Message Icon -->
+                <div class="message-icon" title="Messages" id="message-icon">
+                    <i class="fas fa-envelope"></i>
+                    <span class="message-count">0</span>
+                    <div class="message-dropdown">
+                    <div class="message-header">
+                        <h4>Messages</h4>
+                        <button class="mark-all-read">
+                        <i class="fas fa-check-double"></i> Mark all read
+                        </button>
+                    </div>
+                    <div class="message-list" id="manager-message-list">
+                        <!-- Messages will appear here -->
+                    </div>
+                    </div>
+                </div>
+
+
+<!-- Add this right before the message icon in the header-right div -->
+<div class="health-records-icon" title="Health Records" id="health-records-icon">
+    <i class="fas fa-file-medical"></i>
+    <span class="health-records-count">0</span>
+    <div class="health-records-dropdown">
+        <div class="health-records-header">
+            <h4>Health Records</h4>
+            <button class="mark-all-read">
+                <i class="fas fa-check-double"></i> Mark all read
+            </button>
+        </div>
+        <div class="health-records-list" id="health-records-list">
+            <!-- Health records will appear here -->
+        </div>
+    </div>
+</div>
+
+
+                    <!-- Add this heart icon before the notification bell -->
+                    <div class="heart-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    
+                    <!-- Regular Notification Bell -->
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">0</span>
+                        <div class="notification-dropdown">
+                            <div class="notification-header">
+                                <h4>Notifications</h4>
+                                <button class="clear-notifications">
+                                    <i class="fas fa-trash-alt"></i>
+                                    Clear All
+                                </button>
+                            </div>
+                            <div class="notification-list">
+                                <!-- Regular notifications will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-widget">
+                        <i class="fas fa-sun"></i>
+                        <span>28°C</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Widgets -->
+            <div class="widgets-grid">
+                <!-- Task Management Widget -->
+<div class="widget task-widget">
+    <div class="widget-header">
+        <h3>Task Management</h3>
+        <div class="widget-actions">
+            <button class="btn-add" id="add-task-btn"><i class="fas fa-plus"></i> Add Task</button>
+        </div>
+    </div>
+    <div class="widget-content">
+        <div class="task-stats">
+            <div class="task-stat">
+                <div class="stat-value" id="completed-count" style="color: #1dd1a1;">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="task-stat">
+                <div class="stat-value" id="notdone-count" style="color: #ff6b6b;">0</div>
+                <div class="stat-label">Not Done</div>
+            </div>
+            <div class="task-stat">
+                <div class="stat-value" id="assigned-count" style="color: #feca57;">0</div>
+                <div class="stat-label">Assigned</div>
+            </div>
+        </div>
+        <canvas id="taskStatusChart"></canvas>
+    </div>
+</div>
+
+                <!-- Livestock Health Widget -->
+                <div class="widget health-widget">
+                    <div class="widget-header">
+                        <h3>Livestock Health Overview</h3>
+                        <div class="widget-actions">
+                            <select id="health-filter">
+                                <option>All Cattle</option>
+                                <option>Milking Cows</option>
+                                <option>Calves</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="health-stats">
+                        <div class="health-stat">
+                            <div class="stat-value">42</div>
+                            <div class="stat-label">Healthy</div>
+                        </div>
+                        <div class="health-stat warning">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Needs Check</div>
+                        </div>
+                        <div class="health-stat critical">
+                            <div class="stat-value">1</div>
+                            <div class="stat-label">Critical</div>
+                        </div>
+                    </div>
+                    <canvas id="healthChart"></canvas>
+                </div>
+
+                <!-- Milk Production Widget -->
+                <div class="widget milk-widget">
+                    <div class="widget-header">
+                        <h3>Milk Production</h3>
+                        <div class="widget-actions">
+                            <select id="milk-filter">
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option>This Season</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="milk-alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Alert: 15% drop in production from Cow #204</span>
+                    </div>
+                    <canvas id="milkChart"></canvas>
+                </div>
+
+                <!-- Inventory Widget -->
+                <div class="widget inventory-widget">
+                    <div class="widget-header">
+                        <h3>Inventory Status</h3>
+                        <div class="widget-actions">
+                            <button class="btn-order" id="order-fodder-btn"><i class="fas fa-truck"></i> Order</button>                        </div>
+                    </div>
+                    <div class="inventory-items">
+                        <div class="inventory-item">
+                            <div class="item-name">Premium Fodder</div>
+                            <div class="item-stock">
+                                <div class="stock-bar" style="width: 30%; background-color: #ff6b6b;"></div>
+                            </div>
+                            <div class="item-quantity">150kg / 500kg</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-name">Mineral Supplements</div>
+                            <div class="item-stock">
+                                <div class="stock-bar" style="width: 65%; background-color: #feca57;"></div>
+                            </div>
+                            <div class="item-quantity">32kg / 50kg</div>
+                        </div>
+                        <div class="inventory-item">
+                            <div class="item-name">Medical Supplies</div>
+                            <div class="item-stock">
+                                <div class="stock-bar" style="width: 80%; background-color: #1dd1a1;"></div>
+                            </div>
+                            <div class="item-quantity">40 units / 50 units</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Widget -->
+                <div class="widget quick-actions-widget">
+                    <div class="widget-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="schedule-vet-btn">
+                            <i class="fas fa-user-md"></i>
+                            <span>Schedule Vet</span>
+                        </button>
+                        <button class="action-btn" id="waste-disposal-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Waste Disposal</span>
+                        </button>
+                        <button class="action-btn" id="send-message-btn">
+                            <i class="fas fa-envelope"></i>
+                            <span>Message Vet</span>
+                        </button>
+                        <button class="action-btn" id="generate-report-btn">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Generate Report</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Breeding Tracker Widget -->
+                <div class="widget breeding-widget">
+                    <div class="widget-header">
+                        <h3>Breeding Tracker</h3>
+                        <div class="widget-actions">
+                            <button class="btn-add" id="add-breeding-btn"><i class="fas fa-plus"></i> Add Record</button>
+                        </div>
+                    </div>
+                    <div class="breeding-list">
+                        <div class="breeding-item">
+                            <div class="breeding-info">
+                                <h4>Cow #142</h4>
+                                <p>Breeding Date: May 15, 2023</p>
+                                <span class="breeding-due">Expected Calving: Feb 2024</span>
+                            </div>
+                            <div class="breeding-status pregnant">
+                                <i class="fas fa-heart"></i>
+                                <span>Confirmed</span>
+                            </div>
+                        </div>
+                        <div class="breeding-item">
+                            <div class="breeding-info">
+                                <h4>Cow #187</h4>
+                                <p>Breeding Date: June 1, 2023</p>
+                                <span class="breeding-due">Test Due: June 30</span>
+                            </div>
+                            <div class="breeding-status pending">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span>Pending</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="task-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Add New Task</h3>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" placeholder="Enter task title" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-assignee">Assign To</label>
+                    <select id="task-assignee" required>
+                        <option value="">Select worker</option>
+                        <option value="1">John Doe</option>
+                        <option value="2">Sarah Smith</option>
+                        <option value="3">Mike Johnson</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-due">Due Date & Time</label>
+                    <input type="datetime-local" id="task-due" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority">
+                        <option value="normal">Normal</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-notes">Notes</label>
+                    <textarea id="task-notes" rows="3" placeholder="Additional information"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Create Task</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vet Schedule Modal -->
+    <div class="modal" id="vet-schedule-modal">
+        <div class="modal-content vet-modal">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-user-md modal-icon"></i>
+                <h3>Schedule Veterinary Visit</h3>
+                
+            </div>
+            
+            <form id="vet-schedule-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vet-purpose">Purpose of Visit</label>
+                        <select id="vet-purpose" required>
+                            <option value="">Select purpose</option>
+                            <option value="routine">Routine Checkup</option>
+                            <option value="vaccination">Vaccination</option>
+                            <option value="emergency">Emergency Care</option>
+                            <option value="breeding">Breeding Consultation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="vet-priority">Priority Level</label>
+                        <div class="priority-selector">
+                            <input type="radio" name="priority" id="low-priority" value="low" checked>
+                            <label for="low-priority" class="priority-label low">Low</label>
+                            
+                            <input type="radio" name="priority" id="medium-priority" value="medium">
+                            <label for="medium-priority" class="priority-label medium">Medium</label>
+                            
+                            <input type="radio" name="priority" id="high-priority" value="high">
+                            <label for="high-priority" class="priority-label high">High</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vet-date">Date & Time</label>
+                        <input type="datetime-local" id="vet-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vet-animal">Animal(s) Concerned</label>
+                        <select id="vet-animal" multiple>
+                            <option value="all">All Cattle</option>
+                            <option value="cow142">Cow #142</option>
+                            <option value="cow187">Cow #187</option>
+                            <option value="cow204">Cow #204</option>
+                            <option value="calves">Calves</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vet-notes">Special Notes</label>
+                    <textarea id="vet-notes" rows="3" placeholder="Describe symptoms, concerns, or special instructions..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vet-contact">Preferred Contact Method</label>
+                    <div class="contact-methods">
+                        <input type="checkbox" id="contact-email" checked>
+                        <label for="contact-email" class="method-label email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        
+                        <input type="checkbox" id="contact-sms" checked>
+                        <label for="contact-sms" class="method-label sms">
+                            <i class="fas fa-sms"></i> SMS
+                        </label>
+                        
+                        <input type="checkbox" id="contact-call">
+                        <label for="contact-call" class="method-label call">
+                            <i class="fas fa-phone"></i> Call
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-footer">
+                    <button type="button" class="btn-cancel" id="waste-cancel-btn">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-calendar-check"></i> Schedule Visit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+<!-- waste disposal modal -->
+<div class="modal" id="waste-disposal-modal">
+    <div class="modal-content waste-modal">
+        <span class="close-modal">&times;</span>      
+      <!-- Modal Header with Icon -->
+      <div class="modal-header">
+        <div class="header-icon">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <div class="header-text">
+          <h3>Waste Disposal Request</h3>
+          <p>Schedule manure or waste removal from your farm</p>
+        </div>
+      </div>
+      
+      <!-- Waste Type Selection -->
+      <div class="form-section">
+        <label class="section-label">
+          <i class="fas fa-cubes"></i> Waste Type
+        </label>
+        <div class="waste-type-options">
+          <div class="waste-option" onclick="selectWasteType(this, 'manure')">
+            <i class="fas fa-poop"></i>
+            <span>Manure</span>
+          </div>
+          <div class="waste-option" onclick="selectWasteType(this, 'organic')">
+            <i class="fas fa-leaf"></i>
+            <span>Organic Waste</span>
+          </div>
+          <div class="waste-option" onclick="selectWasteType(this, 'plastic')">
+            <i class="fas fa-recycle"></i>
+            <span>Plastic Waste</span>
+          </div>
+          <div class="waste-option" onclick="selectWasteType(this, 'hazardous')">
+            <i class="fas fa-biohazard"></i>
+            <span>Hazardous Waste</span>
+          </div>
+        </div>
+        <input type="hidden" id="waste-type">
+      </div>
+      
+      <!-- Waste Details -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="waste-amount">
+            <i class="fas fa-weight-hanging"></i> Estimated Amount (kg)
+          </label>
+          <input type="number" id="waste-amount" placeholder="Enter approximate weight">
+        </div>
+        <div class="form-group">
+          <label for="waste-location">
+            <i class="fas fa-map-marker-alt"></i> Collection Location
+          </label>
+          <select id="waste-location">
+            <option value="">Select location</option>
+            <option value="north_barn">North Barn</option>
+            <option value="south_barn">South Barn</option>
+            <option value="compost_area">Compost Area</option>
+            <option value="storage_shed">Storage Shed</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Urgency Selection -->
+      <div class="form-section">
+        <label class="section-label">
+          <i class="fas fa-clock"></i> Urgency Level
+        </label>
+        <div class="urgency-options">
+          <label class="urgency-option">
+            <input type="radio" name="urgency" value="routine" checked>
+            <div class="urgency-card">
+              <i class="fas fa-calendar-week"></i>
+              <span>Routine</span>
+              <small>Next scheduled pickup</small>
+            </div>
+          </label>
+          <label class="urgency-option">
+            <input type="radio" name="urgency" value="soon">
+            <div class="urgency-card">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Soon</span>
+              <small>Within 3 days</small>
+            </div>
+          </label>
+          <label class="urgency-option">
+            <input type="radio" name="urgency" value="urgent">
+            <div class="urgency-card">
+              <i class="fas fa-bell"></i>
+              <span>Urgent</span>
+              <small>Immediate attention</small>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Additional Notes -->
+      <div class="form-group">
+        <label for="waste-notes">
+          <i class="fas fa-edit"></i> Additional Notes
+        </label>
+        <textarea id="waste-notes" rows="3" placeholder="Special instructions, safety concerns, etc."></textarea>
+      </div>
+      
+      <!-- Form Footer -->
+      <div class="form-footer">
+        <button type="button" class="btn-cancel" onclick="closeWasteModal()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button type="button" class="btn-submit" onclick="submitWasteRequest()">
+          <i class="fas fa-paper-plane"></i> Submit Request
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+<div id="waste-success-popup" class="success-popup">
+    <div class="popup-content">
+      <div class="popup-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3>Request Submitted Successfully!</h3>
+      <p>Your waste disposal request has been received and will be processed shortly.</p>
+      <button class="popup-close-btn" onclick="closeSuccessPopup()">OK</button>
+    </div>
+  </div>
+
+  <!-- Notification Center -->
+<div class="notification-center">
+    <div class="notification-header">
+      <h3><i class="fas fa-bell"></i> Notifications</h3>
+      <span class="notification-count">0</span>
+    </div>
+    <div class="notification-list" id="manager-notifications">
+      <!-- Notifications will appear here -->
+    </div>
+  </div>
+  
+  <!-- Fodder Request Notification Template (hidden) -->
+  <div class="notification-template" id="fodder-notification-template" style="display:none;">
+    <div class="notification-item fodder-request">
+      <div class="notification-icon">
+        <i class="fas fa-haykal"></i>
+      </div>
+      <div class="notification-content">
+        <h4>New Fodder Request</h4>
+        <p class="request-details"></p>
+        <p class="request-time"></p>
+      </div>
+      <div class="notification-actions">
+        <button class="btn-approve"><i class="fas fa-check"></i> Approve</button>
+        <button class="btn-deny"><i class="fas fa-times"></i> Deny</button>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Fodder Approval Success Popup -->
+<div id="fodder-approval-popup" class="success-popup">
+    <div class="popup-content">
+      <div class="popup-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3>Request Approved!</h3>
+      <p>The fodder request has been approved and will be processed.</p>
+      <button class="popup-close-btn" onclick="closeApprovalPopup()">OK</button>
+    </div>
+  </div>
+  
+  <!-- Fodder Denial Popup -->
+  <div id="fodder-denial-popup" class="success-popup">
+    <div class="popup-content">
+      <div class="popup-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <h3>Request Denied</h3>
+      <p>The fodder request has been denied.</p>
+      <button class="popup-close-btn" onclick="closeDenialPopup()">OK</button>
+    </div>
+  </div>
+
+
+  <!-- Vet Schedule Success Popup -->
+<!-- Vet Schedule Success Popup -->
+<div id="vet-schedule-success-popup" class="success-popup">
+    <div class="popup-content">
+      <div class="popup-icon">
+        <i class="fas fa-calendar-check"></i>
+      </div>
+      <h3>Vet Visit Scheduled!</h3>
+      <div class="appointment-details" id="appointment-details">
+        <!-- Details will be inserted here -->
+      </div>
+      <button class="popup-close-btn" onclick="closeVetScheduleSuccess()">OK</button>
+    </div>
+  </div>
+
+
+<!-- Add this modal HTML with your other modals -->
+<div class="modal" id="fodder-order-modal">
+    <div class="modal-content fodder-modal">
+        <span class="close-modal">&times;</span>
+        
+        <!-- Modal Header with Icon -->
+        <div class="modal-header">
+            <div class="header-icon">
+                <i class="fas fa-haykal"></i>
+            </div>
+            <div class="header-text">
+                <h3>Order Animal Fodder</h3>
+                <p>Fill out the form to place your fodder order</p>
+            </div>
+        </div>
+        
+        <!-- Fodder Order Form -->
+        <form id="fodder-order-form">
+            <!-- Fodder Type Selection -->
+            <div class="form-section">
+                <label class="section-label">
+                    <i class="fas fa-cubes"></i> Fodder Type
+                </label>
+                <div class="fodder-type-options">
+                    <div class="fodder-option" onclick="selectFodderType(this, 'premium')">
+                        <i class="fas fa-star"></i>
+                        <span>Premium Blend</span>
+                        <small>High-protein mix</small>
+                    </div>
+                    <div class="fodder-option" onclick="selectFodderType(this, 'standard')">
+                        <i class="fas fa-wheat-awn"></i>
+                        <span>Standard Mix</span>
+                        <small>Balanced nutrition</small>
+                    </div>
+                    <div class="fodder-option" onclick="selectFodderType(this, 'organic')">
+                        <i class="fas fa-leaf"></i>
+                        <span>Organic</span>
+                        <small>Certified organic</small>
+                    </div>
+                    <div class="fodder-option" onclick="selectFodderType(this, 'custom')">
+                        <i class="fas fa-gears"></i>
+                        <span>Custom Mix</span>
+                        <small>Special formulation</small>
+                    </div>
+                </div>
+                <input type="hidden" id="fodder-type" required>
+            </div>
+            
+            <!-- Quantity and Urgency -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fodder-quantity">
+                        <i class="fas fa-weight-hanging"></i> Quantity (kg)
+                    </label>
+                    <div class="quantity-input">
+                        <button type="button" class="quantity-btn" onclick="adjustQuantity(-50)">-50</button>
+                        <button type="button" class="quantity-btn" onclick="adjustQuantity(-10)">-10</button>
+                        <input type="number" id="fodder-quantity" min="50" step="10" value="100" required>
+                        <button type="button" class="quantity-btn" onclick="adjustQuantity(10)">+10</button>
+                        <button type="button" class="quantity-btn" onclick="adjustQuantity(50)">+50</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fodder-urgency">
+                        <i class="fas fa-clock"></i> Delivery Urgency
+                    </label>
+                    <select id="fodder-urgency" required>
+                        <option value="routine">Routine (3-5 days)</option>
+                        <option value="priority">Priority (2 days)</option>
+                        <option value="urgent">Urgent (24 hours)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Delivery Details -->
+            <div class="form-section">
+                <label class="section-label">
+                    <i class="fas fa-truck"></i> Delivery Information
+                </label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="delivery-date">Preferred Delivery Date</label>
+                        <input type="date" id="delivery-date" min="">
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery-time">Preferred Time Window</label>
+                        <select id="delivery-time">
+                            <option value="morning">Morning (8am-12pm)</option>
+                            <option value="afternoon">Afternoon (12pm-4pm)</option>
+                            <option value="evening">Evening (4pm-7pm)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="delivery-notes">Special Delivery Instructions</label>
+                    <textarea id="delivery-notes" rows="2" placeholder="Gate code, special access, storage location, etc."></textarea>
+                </div>
+            </div>
+            
+            <!-- Supplier Options -->
+            <div class="form-section">
+                <label class="section-label">
+                    <i class="fas fa-store"></i> Preferred Supplier
+                </label>
+                <div class="supplier-options">
+                    <div class="supplier-option">
+                        <input type="radio" name="supplier" id="supplier1" value="GreenPastures" checked>
+                        <label for="supplier1">
+                            <span>Green Pastures Co.</span>
+                            <small>Our regular supplier</small>
+                        </label>
+                    </div>
+                    <div class="supplier-option">
+                        <input type="radio" name="supplier" id="supplier2" value="OrganicFeeds">
+                        <label for="supplier2">
+                            <span>Organic Feeds Ltd.</span>
+                            <small>Specializes in organic</small>
+                        </label>
+                    </div>
+                    <div class="supplier-option">
+                        <input type="radio" name="supplier" id="supplier3" value="BulkAgro">
+                        <label for="supplier3">
+                            <span>Bulk Agro</span>
+                            <small>Best for large orders</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Footer -->
+            <div class="form-footer">
+                <button type="button" class="btn-cancel" onclick="closeFodderModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Place Order
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Success Popup -->
+<div id="fodder-success-popup" class="success-popup">
+    <div class="popup-content">
+        <div class="popup-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Order Placed Successfully!</h3>
+        <div class="order-summary" id="order-summary">
+            <!-- Order details will be inserted here -->
+        </div>
+        <button class="popup-close-btn" onclick="closeFodderSuccess()">
+            <i class="fas fa-thumbs-up"></i> Got it!
+        </button>
+    </div>
+</div>
+
+
+  
+
+
+
+
+
+    <script>
+
+
+// Initialize storage if not exists
+if (!localStorage.getItem('managerNotifications')) {
+    localStorage.setItem('managerNotifications', JSON.stringify([]));
+}
+
+if (!localStorage.getItem('fodderRequests')) {
+    localStorage.setItem('fodderRequests', JSON.stringify([]));
+}
+
+        // Set current date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', options);
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+         
+            // Milk Production Chart
+            const milkCtx = document.getElementById('milkChart').getContext('2d');
+            const milkChart = new Chart(milkCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Liters',
+                        data: [320, 340, 310, 290, 330, 350, 340],
+                        backgroundColor: 'rgba(29, 209, 161, 0.2)',
+                        borderColor: '#1dd1a1',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 250
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Modal functionality
+            const taskModal = document.getElementById('task-modal');
+            const vetModal = document.getElementById('vet-schedule-modal');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const scheduleVetBtn = document.getElementById('schedule-vet-btn');
+            const closeModals = document.getElementsByClassName('close-modal');
+            const cancelButtons = document.querySelectorAll('.btn-cancel');
+
+            // Open task modal
+            addTaskBtn.onclick = function() {
+                taskModal.style.display = 'block';
+            }
+
+            // Open vet schedule modal
+            scheduleVetBtn.onclick = function() {
+                vetModal.style.display = 'block';
+            }
+
+            // Close modals when clicking X
+            for (let i = 0; i < closeModals.length; i++) {
+                closeModals[i].onclick = function() {
+                    taskModal.style.display = 'none';
+                    vetModal.style.display = 'none';
+                }
+            }
+
+            // Close modals when clicking cancel buttons
+            for (let i = 0; i < cancelButtons.length; i++) {
+                cancelButtons[i].onclick = function() {
+                    taskModal.style.display = 'none';
+                    vetModal.style.display = 'none';
+                }
+            }
+
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                if (event.target == taskModal) {
+                    taskModal.style.display = 'none';
+                }
+                if (event.target == vetModal) {
+                    vetModal.style.display = 'none';
+                }
+            }
+
+            // Task form submission
+            document.getElementById('task-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Here you would normally send the data to a server
+                alert('Task created successfully!');
+                taskModal.style.display = 'none';
+                this.reset();
+            });
+
+// Update the vet schedule form submission
+// Update the vet schedule form submission
+document.getElementById('vet-schedule-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const purpose = document.getElementById('vet-purpose').value;
+    const priority = document.querySelector('input[name="priority"]:checked').value;
+    const dateTime = document.getElementById('vet-date').value;
+    const notes = document.getElementById('vet-notes').value;
+    const animals = Array.from(document.getElementById('vet-animal').selectedOptions)
+        .map(option => option.value);
+    
+    // Format the date for display
+    const formattedDate = new Date(dateTime).toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // Create vet visit data
+    const vetVisit = {
+        id: Date.now().toString(),
+        purpose,
+        priority,
+        dateTime: new Date(dateTime).toISOString(),
+        notes,
+        animals,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        notified: false
+    };
+    
+    // Save to localStorage
+    let vetVisits = JSON.parse(localStorage.getItem('vetVisits') || '[]');
+    vetVisits.push(vetVisit);
+    localStorage.setItem('vetVisits', JSON.stringify(vetVisits));
+    
+    // Show success popup with details
+    showVetScheduleSuccess(vetVisit, formattedDate);
+    
+    // Close modal and reset form
+    vetModal.style.display = 'none';
+    this.reset();
+});
+
+
+// Show vet schedule success popup with details
+// Show vet schedule success popup with details
+function showVetScheduleSuccess(visit, formattedDate) {
+    const popup = document.getElementById('vet-schedule-success-popup');
+    const detailsContainer = document.getElementById('appointment-details');
+    
+    // Create the details HTML
+    detailsContainer.innerHTML = `
+        <p><strong>Purpose:</strong> ${visit.purpose}</p>
+        <p><strong>Priority:</strong> ${visit.priority.charAt(0).toUpperCase() + visit.priority.slice(1)}</p>
+        <p><strong>Date & Time:</strong> ${formattedDate}</p>
+        <p><strong>Animals:</strong> ${visit.animals.join(', ')}</p>
+        ${visit.notes ? `<p><strong>Notes:</strong> ${visit.notes}</p>` : ''}
+    `;
+    
+    // Show the popup
+    popup.style.display = 'flex';
+}
+
+// Close vet schedule success popup
+function closeVetScheduleSuccess() {
+    document.getElementById('vet-schedule-success-popup').style.display = 'none';
+}
+
+// Close vet schedule success popup when clicking outside
+document.addEventListener('click', function(event) {
+    const vetPopup = document.getElementById('vet-schedule-success-popup');
+    const popupContent = vetPopup.querySelector('.popup-content');
+    
+    // Check if click is outside the popup content
+    if (vetPopup.style.display === 'flex' && !popupContent.contains(event.target)) {
+        closeVetScheduleSuccess();
+    }
+});
+
+// Close vet schedule success popup
+function closeVetScheduleSuccess() {
+    document.getElementById('vet-schedule-success-popup').style.display = 'none';
+}
+
+
+            // Add this with your other modal event listeners
+            document.getElementById('waste-cancel-btn').addEventListener('click', function() {
+                document.getElementById('waste-disposal-modal').style.display = 'none';
+                resetWasteForm();
+            });
+
+            document.getElementById('send-message-btn').addEventListener('click', function() {
+            
+            });
+
+            document.getElementById('generate-report-btn').addEventListener('click', function() {
+                alert('Report generation would initiate here');
+            });
+
+            document.getElementById('order-fodder-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            openFodderPopup();
+        });
+        });
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            const confirmLogout = confirm("Are you sure you want to logout?");
+            if (confirmLogout) {
+                window.location.href = "index.html"; // Redirect to index.html
+            }
+        });
+
+        // Handle navigation links
+        document.querySelectorAll('.sidebar nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Remove active class from all links
+                document.querySelectorAll('.sidebar nav a').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // If it's the tasks link, navigate to tasks.html
+                if (this.getAttribute('href') === 'tasks.html') {
+                    e.preventDefault();
+                    window.location.href = 'tasks.html';
+                }
+            });
+        });
+
+        // Highlight active link in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            if (currentPage === 'tasks.html') {
+                document.querySelectorAll('.sidebar nav a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === 'tasks.html') {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+
+         // Open Waste Disposal Modal
+  function openWasteDisposal() {
+    document.getElementById('waste-disposal-modal').style.display = 'block';
+  }
+  
+  // Close Waste Disposal Modal
+  function closeWasteModal() {
+    document.getElementById('waste-disposal-modal').style.display = 'none';
+  }
+  
+  // Select Waste Type
+  function selectWasteType(element, type) {
+    // Remove selected class from all options
+    document.querySelectorAll('.waste-option').forEach(opt => {
+      opt.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked option
+    element.classList.add('selected');
+    document.getElementById('waste-type').value = type;
+  }
+  
+// Submit Waste Request (updated version)
+function submitWasteRequest() {
+  const wasteType = document.getElementById('waste-type').value;
+  const wasteAmount = document.getElementById('waste-amount').value;
+  const wasteLocation = document.getElementById('waste-location').value;
+  const urgency = document.querySelector('input[name="urgency"]:checked').value;
+  const notes = document.getElementById('waste-notes').value;
+  
+  // Basic validation
+  if (!wasteType) {
+    alert("Please select a waste type");
+    return;
+  }
+  
+  if (!wasteAmount) {
+    alert("Please enter the approximate amount");
+    return;
+  }
+  
+  if (!wasteLocation) {
+    alert("Please select a collection location");
+    return;
+  }
+  
+  // Prepare data for API
+  const wasteData = {
+    type: wasteType,
+    amount: wasteAmount,
+    location: wasteLocation,
+    urgency: urgency,
+    notes: notes,
+    date: new Date().toISOString()
+  };
+  
+  // Here you would typically send to your backend API
+  console.log("Submitting waste disposal request:", wasteData);
+  
+  // Simulate API call with timeout
+  setTimeout(() => {
+    // Close the waste modal
+    closeWasteModal();
+    
+    // Show success popup
+    showSuccessPopup();
+    
+    // Add notification
+    addNotification(`Waste disposal requested: ${wasteType} (${wasteAmount}kg)`);
+    
+    // Reset the form completely
+    resetWasteForm();
+  }, 1000); // Simulate network delay
+}
+
+// Function to completely reset the waste form
+function resetWasteForm() {
+  // Reset waste type selection
+  document.querySelectorAll('.waste-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  document.getElementById('waste-type').value = '';
+  
+  // Reset form fields
+  document.getElementById('waste-amount').value = '';
+  document.getElementById('waste-location').value = '';
+  document.getElementById('waste-notes').value = '';
+  
+  // Reset urgency selection to default (routine)
+  const urgencyRadios = document.getElementsByName('urgency');
+  if (urgencyRadios.length > 0) {
+    urgencyRadios[0].checked = true; // First radio button (routine)
+  }
+}
+
+
+  
+  // Update your existing quick action button to open this modal
+  document.getElementById('waste-disposal-btn').addEventListener('click', openWasteDisposal);
+
+
+  // Show success popup
+function showSuccessPopup() {
+  document.getElementById('waste-success-popup').style.display = 'flex';
+}
+
+// Close success popup
+function closeSuccessPopup() {
+  document.getElementById('waste-success-popup').style.display = 'none';
+}
+
+// Submit Waste Request (updated version)
+function submitWasteRequest() {
+  const wasteType = document.getElementById('waste-type').value;
+  const wasteAmount = document.getElementById('waste-amount').value;
+  const wasteLocation = document.getElementById('waste-location').value;
+  const urgency = document.querySelector('input[name="urgency"]:checked').value;
+  const notes = document.getElementById('waste-notes').value;
+  
+  // Basic validation
+  if (!wasteType) {
+    alert("Please select a waste type");
+    return;
+  }
+  
+  if (!wasteAmount) {
+    alert("Please enter the approximate amount");
+    return;
+  }
+  
+  if (!wasteLocation) {
+    alert("Please select a collection location");
+    return;
+  }
+  
+  // Prepare data for API
+  const wasteData = {
+    type: wasteType,
+    amount: wasteAmount,
+    location: wasteLocation,
+    urgency: urgency,
+    notes: notes,
+    date: new Date().toISOString()
+  };
+  
+  // Here you would typically send to your backend API
+  console.log("Submitting waste disposal request:", wasteData);
+  
+  // Simulate API call with timeout
+  setTimeout(() => {
+    // Close the waste modal
+    closeWasteModal();
+    
+    // Show success popup
+    showSuccessPopup();
+    
+    // Add notification
+    addNotification(`Waste disposal requested: ${wasteType} (${wasteAmount}kg)`);
+    
+    // Clear form
+    document.querySelectorAll('.waste-option').forEach(opt => {
+      opt.classList.remove('selected');
+    });
+    document.getElementById('waste-type').value = '';
+    document.getElementById('waste-amount').value = '';
+    document.getElementById('waste-location').value = '';
+    document.getElementById('waste-notes').value = '';
+  }, 1000); // Simulate network delay
+
+  // Add notification
+  //addNotification(`Waste disposal requested: ${wasteType} (${wasteAmount}kg) - ${urgency} priority`);
+}
+
+
+// Notification System
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for new notifications
+    checkForNotifications();
+    
+    // Set up notification bell
+    const notificationBell = document.querySelector('.notification-bell');
+    const notificationDropdown = document.querySelector('.notification-dropdown');
+    
+    notificationBell.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationDropdown.style.display = 
+            notificationDropdown.style.display === 'block' ? 'none' : 'block';
+        updateNotificationCount(0); // Reset count when opened
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', function() {
+        notificationDropdown.style.display = 'none';
+    });
+    
+    // Clear notifications
+    document.querySelector('.clear-notifications')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        clearAllNotifications();
+    });
+    
+    // Check for new notifications every 30 seconds
+    setInterval(checkForNotifications, 30000);
+});
+
+function checkForNotifications() {
+    // Check for fodder requests
+    const fodderRequests = JSON.parse(localStorage.getItem('fodderRequests') || '[]');
+    const pendingFodderRequests = fodderRequests.filter(req => req.status === 'pending');
+
+    // Check for other notifications (excluding health alerts)
+    const managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+    const unreadNotifications = managerNotifications.filter(notif => 
+        (notif.status === 'unread' || notif.status === 'read') && notif.type !== 'health-alert'
+    );
+    
+    // Show all notifications if they exist
+    if (pendingFodderRequests.length > 0 || unreadNotifications.length > 0) {
+        showNotifications(pendingFodderRequests, unreadNotifications);
+    } else {
+        // Show empty state if no notifications
+        document.querySelector('.notification-list').innerHTML = `
+            <div class="notification-item empty">
+                <i class="fas fa-check-circle"></i>
+                <span>No new notifications</span>
+            </div>
+        `;
+    }
+    
+    // Update notification count (excluding health alerts)
+    updateNotificationCount(pendingFodderRequests.length + unreadNotifications.length);
+}
+
+function showNotifications(fodderRequests, managerNotifications) {
+    const notificationList = document.querySelector('.notification-list');
+    const notificationCount = document.querySelector('.notification-count');
+    const notificationBell = document.querySelector('.notification-bell');
+    
+    // Clear existing notifications (but keep the header)
+    notificationList.innerHTML = '';
+    
+    // Add fodder request notifications
+    fodderRequests.forEach(request => {
+        const notification = createFodderRequestNotification(request);
+        notificationList.appendChild(notification);
+    });
+    
+    // Add manager notifications
+    managerNotifications.forEach(notification => {
+        const notificationElement = createManagerNotification(notification);
+        notificationList.appendChild(notificationElement);
+    });
+    
+    // Update notification count
+    const totalNotifications = fodderRequests.length + managerNotifications.length;
+    updateNotificationCount(totalNotifications);
+    
+    // Animate the bell
+    notificationBell.classList.add('shake');
+    setTimeout(() => {
+        notificationBell.classList.remove('shake');
+    }, 500);
+}
+
+function createFodderRequestNotification(request) {
+    const notification = document.createElement('div');
+    notification.className = 'notification-item fodder-request';
+    
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas fa-haykal"></i>
+        </div>
+        <div class="notification-content">
+            <h4>Fodder Refill Request</h4>
+            <p>${request.quantity}kg of ${request.fodderType} (${request.urgency} priority)</p>
+            <small>Requested at ${new Date(request.timestamp).toLocaleTimeString()}</small>
+        </div>
+        <div class="notification-actions">
+            <button class="btn-approve" onclick="approveFodderRequest('${request.timestamp}')">
+                <i class="fas fa-check"></i> Approve
+            </button>
+            <button class="btn-deny" onclick="denyFodderRequest('${request.timestamp}')">
+                <i class="fas fa-times"></i> Deny
+            </button>
+        </div>
+    `;
+    
+    return notification;
+}
+
+
+function createManagerNotification(notification) {
+    const notificationElement = document.createElement('div');
+    notificationElement.className = 'notification-item';
+    
+    let iconClass = 'fa-bell';
+    if (notification.type === 'fodder-request') iconClass = 'fa-haykal';
+    else if (notification.type === 'vet-visit') iconClass = 'fa-user-md';
+    else if (notification.type === 'waste') iconClass = 'fa-trash-alt';
+    
+    notificationElement.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas ${iconClass}"></i>
+        </div>
+        <div class="notification-content">
+            <h4>${notification.title}</h4>
+            <p>${notification.message}</p>
+            <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
+        </div>
+        ${notification.type === 'fodder-request' ? `
+        <div class="notification-actions">
+            <button class="btn-approve" onclick="approveFodderRequest('${notification.id}')">
+                <i class="fas fa-check"></i> Approve
+            </button>
+            <button class="btn-deny" onclick="denyFodderRequest('${notification.id}')">
+                <i class="fas fa-times"></i> Deny
+            </button>
+        </div>
+        ` : ''}
+    `;
+    
+    return notificationElement;
+}
+
+
+
+function createVetResponseNotification(response) {
+    const notification = document.createElement('div');
+    notification.className = `notification-item ${response.status}`;
+    
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas fa-user-md"></i>
+        </div>
+        <div class="notification-content">
+            <h4>Vet Visit Accepted</h4>
+            <p>Vet has accepted your visit request for ${response.purpose}</p>
+            <p><strong>Scheduled:</strong> ${new Date(response.dateTime).toLocaleString()}</p>
+            <small>${new Date().toLocaleTimeString()}</small>
+        </div>
+        <div class="notification-actions">
+            <span class="status-approved">
+                <i class="fas fa-check-circle"></i> Accepted
+            </span>
+        </div>
+    `;
+    
+    return notification;
+}
+
+
+function createFodderNotification(request) {
+    const notification = document.createElement('div');
+    notification.className = 'notification-item fodder-request';
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas fa-haykal"></i>
+        </div>
+        <div class="notification-content">
+            <h4>New Fodder Request</h4>
+            <p class="request-details">${request.quantity}kg of ${request.fodderType} (${request.urgency} priority)</p>
+            <p class="request-time">Requested at ${new Date(request.timestamp).toLocaleTimeString()}</p>
+        </div>
+        <div class="notification-actions">
+            <button class="btn-approve"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn-deny"><i class="fas fa-times"></i> Deny</button>
+        </div>
+    `;
+    
+    // Add action handlers
+    notification.querySelector('.btn-approve').addEventListener('click', function() {
+        approveRequest(request, notification);
+    });
+    
+    notification.querySelector('.btn-deny').addEventListener('click', function() {
+        denyRequest(request, notification);
+    });
+    
+    return notification;
+}
+
+function createGeneralNotification(notification) {
+    const notificationElement = document.createElement('div');
+    notificationElement.className = 'notification-item';
+    
+    let iconClass = 'fa-bell';
+    if (notification.type === 'waste') iconClass = 'fa-trash-alt';
+    else if (notification.type === 'health') iconClass = 'fa-heartbeat';
+    else if (notification.type === 'task') iconClass = 'fa-tasks';
+    
+    notificationElement.innerHTML = `
+        <div class="notification-icon">
+            <i class="fas ${iconClass}"></i>
+        </div>
+        <div class="notification-content">
+            <h4>${notification.title}</h4>
+            <p>${notification.message}</p>
+            <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
+        </div>
+    `;
+    
+    return notificationElement;
+}
+
+
+
+function approveFodderRequest(notificationId) {
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    let fodderRequests = JSON.parse(localStorage.getItem('fodderRequests') || []);
+    
+    // Find the notification to remove
+    const notificationIndex = managerNotifications.findIndex(n => n.id === notificationId);
+    if (notificationIndex === -1) return;
+    
+    // Remove the notification
+    managerNotifications.splice(notificationIndex, 1);
+    
+    // Update fodder request status
+    fodderRequests = fodderRequests.map(req => {
+        if (req.timestamp === managerNotifications.find(n => n.id === notificationId)?.requestData?.timestamp) {
+            return {...req, status: 'approved'};
+        }
+        return req;
+    });
+    
+    // Save changes
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+    localStorage.setItem('fodderRequests', JSON.stringify(fodderRequests));
+    
+    // Show approval popup
+    showApprovalPopup();
+    
+    // Refresh notifications
+    checkForNotifications();
+}
+
+function denyFodderRequest(notificationId) {
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    let fodderRequests = JSON.parse(localStorage.getItem('fodderRequests') || []);
+    
+    // Find the notification to remove
+    const notificationIndex = managerNotifications.findIndex(n => n.id === notificationId);
+    if (notificationIndex === -1) return;
+    
+    // Remove the notification
+    managerNotifications.splice(notificationIndex, 1);
+    
+    // Update fodder request status
+    fodderRequests = fodderRequests.map(req => {
+        if (req.timestamp === managerNotifications.find(n => n.id === notificationId)?.requestData?.timestamp) {
+            return {...req, status: 'denied'};
+        }
+        return req;
+    });
+    
+    // Save changes
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+    localStorage.setItem('fodderRequests', JSON.stringify(fodderRequests));
+    
+    // Show denial popup
+    showDenialPopup();
+    
+    // Refresh notifications
+    checkForNotifications();
+}
+
+
+function updateRequestStatus(request, status) {
+    let requests = JSON.parse(localStorage.getItem('fodderRequests') || '[]');
+    
+    requests = requests.map(req => {
+        if (req.timestamp === request.timestamp) {
+            req.status = status;
+        }
+        return req;
+    });
+    
+    localStorage.setItem('fodderRequests', JSON.stringify(requests));
+}
+
+
+
+function markNotificationsAsSeen(vetVisits, managerNotifications) {
+    // Mark vet visits as notified
+    const updatedVetVisits = vetVisits.map(visit => {
+        if ((visit.status === 'accepted' || visit.status === 'declined') && !visit.notified) {
+            return {...visit, notified: true};
+        }
+        return visit;
+    });
+
+    // Mark manager notifications as read
+    const updatedNotifications = managerNotifications.map(notif => {
+        if (notif.status === 'unread') {
+            return {...notif, status: 'read'};
+        }
+        return notif;
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('vetVisits', JSON.stringify(updatedVetVisits));
+    localStorage.setItem('managerNotifications', JSON.stringify(updatedNotifications));
+}
+
+
+function clearAllNotifications() {
+    // Clear all notifications from localStorage
+    localStorage.setItem('managerNotifications', JSON.stringify([]));
+    localStorage.setItem('fodderRequests', JSON.stringify([]));
+    
+    // Clear all notifications from the UI
+    document.querySelector('.notification-list').innerHTML = '';
+    
+    // Update notification count
+    updateNotificationCount(0);
+    
+    // Add a placeholder message
+    document.querySelector('.notification-list').innerHTML = `
+        <div class="notification-item empty">
+            <i class="fas fa-check-circle"></i>
+            <span>No new notifications</span>
+        </div>
+    `;
+}
+
+
+function updateNotificationCount(count) {
+    const countElement = document.querySelector('.notification-count');
+    countElement.textContent = count;
+    countElement.style.display = count > 0 ? 'flex' : 'none';
+}
+
+// Function to add a new notification (call this when events happen)
+function addNotification(title, message, type = 'info') {
+    const notifications = JSON.parse(localStorage.getItem('notifications') || []);
+    
+    const newNotification = {
+        id: Date.now(),
+        title,
+        message,
+        type,
+        timestamp: new Date().toISOString(),
+        read: false
+    };
+    
+    notifications.unshift(newNotification); // Add to beginning of array
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+    
+    // Update UI if dropdown is open
+    if (document.querySelector('.notification-dropdown').style.display === 'block') {
+        checkForNotifications();
+    }
+}
+
+// Show approval popup
+function showApprovalPopup() {
+  document.getElementById('fodder-approval-popup').style.display = 'flex';
+}
+
+// Show denial popup
+function showDenialPopup() {
+  document.getElementById('fodder-denial-popup').style.display = 'flex';
+}
+
+// Close approval popup
+function closeApprovalPopup() {
+  document.getElementById('fodder-approval-popup').style.display = 'none';
+}
+
+// Close denial popup
+function closeDenialPopup() {
+  document.getElementById('fodder-denial-popup').style.display = 'none';
+}
+
+
+
+
+
+
+
+
+
+
+function openFodderPopup() {
+        document.getElementById('fodder-order-modal').style.display = 'block';
+        
+        // Set minimum delivery date to tomorrow
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const minDate = tomorrow.toISOString().split('T')[0];
+        document.getElementById('delivery-date').min = minDate;
+    }
+    
+    function closeFodderModal() {
+        document.getElementById('fodder-order-modal').style.display = 'none';
+        resetFodderForm();
+    }
+    
+    function selectFodderType(element, type) {
+        // Remove selected class from all options
+        document.querySelectorAll('.fodder-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked option
+        element.classList.add('selected');
+        document.getElementById('fodder-type').value = type;
+    }
+    
+    function adjustQuantity(amount) {
+        const quantityInput = document.getElementById('fodder-quantity');
+        let newValue = parseInt(quantityInput.value) + amount;
+        
+        // Ensure quantity doesn't go below minimum
+        if (newValue < 50) newValue = 50;
+        
+        quantityInput.value = newValue;
+    }
+    
+    function resetFodderForm() {
+        // Reset form fields
+        document.getElementById('fodder-order-form').reset();
+        
+        // Reset selected fodder type
+        document.querySelectorAll('.fodder-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        document.getElementById('fodder-type').value = '';
+        
+        // Reset quantity to default
+        document.getElementById('fodder-quantity').value = '100';
+    }
+    
+    function closeFodderSuccess() {
+        document.getElementById('fodder-success-popup').style.display = 'none';
+        closeFodderModal();
+    }
+
+    // Add this to your existing JavaScript
+document.addEventListener('click', function(event) {
+    const fodderModal = document.getElementById('fodder-order-modal');
+    const fodderModalContent = document.querySelector('.fodder-modal');
+    
+    // Check if click is outside the fodder modal content
+    if (fodderModal.style.display === 'block' && !fodderModalContent.contains(event.target) && event.target !== document.getElementById('order-fodder-btn')) {
+        closeFodderModal();
+    }
+});
+    
+    // Handle form submission
+    document.getElementById('fodder-order-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const fodderType = document.getElementById('fodder-type').value;
+        const quantity = document.getElementById('fodder-quantity').value;
+        const urgency = document.getElementById('fodder-urgency').value;
+        const deliveryDate = document.getElementById('delivery-date').value;
+        const deliveryTime = document.getElementById('delivery-time').value;
+        const deliveryNotes = document.getElementById('delivery-notes').value;
+        const supplier = document.querySelector('input[name="supplier"]:checked').value;
+        
+        // Format the delivery date
+        const formattedDate = new Date(deliveryDate).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Create order summary
+        const orderSummary = document.getElementById('order-summary');
+        orderSummary.innerHTML = `
+            <p><strong>Fodder Type:</strong> <span>${getFodderTypeName(fodderType)}</span></p>
+            <p><strong>Quantity:</strong> <span>${quantity} kg</span></p>
+            <p><strong>Urgency:</strong> <span>${getUrgencyName(urgency)}</span></p>
+            <p><strong>Supplier:</strong> <span>${getSupplierName(supplier)}</span></p>
+            <p><strong>Delivery Date:</strong> <span>${formattedDate}</span></p>
+            <p><strong>Delivery Window:</strong> <span>${getTimeWindow(deliveryTime)}</span></p>
+            ${deliveryNotes ? `<p><strong>Notes:</strong> <span>${deliveryNotes}</span></p>` : ''}
+        `;
+        
+        // Here you would normally send the data to your backend
+        console.log("Submitting fodder order:", {
+            fodderType,
+            quantity,
+            urgency,
+            deliveryDate,
+            deliveryTime,
+            deliveryNotes,
+            supplier
+        });
+        
+        // Show success popup
+        document.getElementById('fodder-success-popup').style.display = 'flex';
+        
+        // Add notification
+        addNotification(`Fodder order placed: ${quantity}kg of ${getFodderTypeName(fodderType)}`);
+    });
+    
+    // Helper functions for display names
+    function getFodderTypeName(type) {
+        const types = {
+            'premium': 'Premium Blend',
+            'standard': 'Standard Mix',
+            'organic': 'Organic',
+            'custom': 'Custom Mix'
+        };
+        return types[type] || type;
+    }
+    
+    function getUrgencyName(urgency) {
+        const urgencies = {
+            'routine': 'Routine (3-5 days)',
+            'priority': 'Priority (2 days)',
+            'urgent': 'Urgent (24 hours)'
+        };
+        return urgencies[urgency] || urgency;
+    }
+    
+    function getSupplierName(supplier) {
+        const suppliers = {
+            'GreenPastures': 'Green Pastures Co.',
+            'OrganicFeeds': 'Organic Feeds Ltd.',
+            'BulkAgro': 'Bulk Agro'
+        };
+        return suppliers[supplier] || supplier;
+    }
+    
+    function getTimeWindow(time) {
+        const windows = {
+            'morning': 'Morning (8am-12pm)',
+            'afternoon': 'Afternoon (12pm-4pm)',
+            'evening': 'Evening (4pm-7pm)'
+        };
+        return windows[time] || time;
+    }
+    
+    // Update your existing order button to open this modal
+    document.getElementById('order-fodder-btn').addEventListener('click', openFodderPopup);
+// Add this to your existing JavaScript
+document.addEventListener('click', function(event) {
+    const wasteModal = document.getElementById('waste-disposal-modal');
+    const wasteModalContent = document.querySelector('.waste-modal');
+    
+    // Check if click is outside the waste modal content
+    if (wasteModal.style.display === 'block' && !wasteModalContent.contains(event.target)) {
+        // Check if the click wasn't on the waste disposal button itself
+        if (event.target !== document.getElementById('waste-disposal-btn')) {
+            closeWasteModal();
+        }
+    }
+});
+
+
+
+
+// Heart Icon Functionality
+document.querySelector('.heart-icon').addEventListener('click', function() {
+  // Get all health alerts
+  const healthAlerts = JSON.parse(localStorage.getItem('healthAlerts') || []);
+  
+  // Filter for unread alerts
+  const unreadAlerts = healthAlerts.filter(alert => alert.status === 'unread');
+  
+  if (unreadAlerts.length === 0) {
+    alert('No new health alerts');
+    return;
+  }
+  
+  // Create a popup to display the alerts
+  const alertPopup = document.createElement('div');
+  alertPopup.className = 'health-alert-popup';
+  alertPopup.innerHTML = `
+    <div class="alert-popup-content">
+      <h3><i class="fas fa-heartbeat"></i> Health Alerts (${unreadAlerts.length})</h3>
+      <div class="alert-list">
+        ${unreadAlerts.map(alert => `
+          <div class="alert-item">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong>Cow ${alert.cowId}</strong>
+              <p>${alert.concern}</p>
+              <small>${new Date(alert.timestamp).toLocaleString()}</small>
+            </div>
+            <button class="mark-read-btn" data-id="${alert.id}">
+              <i class="fas fa-check"></i> Mark as Read
+            </button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="close-alert-popup">Close</button>
+    </div>
+  `;
+  
+  document.body.appendChild(alertPopup);
+  
+  // Add click handler for mark as read buttons
+  alertPopup.querySelectorAll('.mark-read-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const alertId = this.getAttribute('data-id');
+      markAlertAsRead(alertId);
+      this.closest('.alert-item').remove();
+    });
+  });
+  
+  // Close popup handler
+  alertPopup.querySelector('.close-alert-popup').addEventListener('click', function() {
+    alertPopup.remove();
+  });
+});
+
+function markAlertAsRead(alertId) {
+  // Update in healthAlerts
+  let healthAlerts = JSON.parse(localStorage.getItem('healthAlerts') || '[]');
+  healthAlerts = healthAlerts.map(alert => {
+    if (alert.id === alertId) {
+      return {...alert, status: 'read'};
+    }
+    return alert;
+  });
+  localStorage.setItem('healthAlerts', JSON.stringify(healthAlerts));
+  
+  // Update in managerNotifications
+  let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || '[]');
+  managerNotifications = managerNotifications.map(notif => {
+    if (notif.id === alertId) {
+      return {...notif, status: 'read'};
+    }
+    return notif;
+  });
+  localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+}
+
+
+
+
+// Update the heart icon with unread count
+function updateHeartIcon() {
+  const healthAlerts = JSON.parse(localStorage.getItem('healthAlerts') || []);
+  const unreadCount = healthAlerts.filter(alert => alert.status === 'unread').length;
+  
+  const heartIcon = document.querySelector('.heart-icon');
+  let badge = heartIcon.querySelector('.alert-badge');
+  
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'alert-badge';
+    heartIcon.appendChild(badge);
+  }
+  
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = 'flex';
+    heartIcon.classList.add('has-alerts');
+  } else {
+    badge.style.display = 'none';
+    heartIcon.classList.remove('has-alerts');
+  }
+}
+
+// Call this periodically to update the icon
+setInterval(updateHeartIcon, 5000);
+
+// Also call it on page load
+document.addEventListener('DOMContentLoaded', updateHeartIcon);
+
+
+
+
+
+// Message System
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize message icon
+  const messageIcon = document.getElementById('message-icon');
+  const messageDropdown = document.querySelector('.message-dropdown');
+  
+  // Toggle message dropdown
+  messageIcon.addEventListener('click', function(e) {
+    e.stopPropagation();
+    messageDropdown.classList.toggle('show');
+    updateMessageCount(0); // Reset count when opened
+    loadMessages();
+  });
+  
+  // Close dropdown when clicking elsewhere
+  document.addEventListener('click', function() {
+    messageDropdown.classList.remove('show');
+  });
+  
+  // Mark all messages as read
+  document.querySelector('.mark-all-read')?.addEventListener('click', function(e) {
+    e.stopPropagation();
+    markAllMessagesAsRead();
+  });
+  
+  // Check for new messages every 30 seconds
+  setInterval(checkForNewMessages, 30000);
+  checkForNewMessages(); // Also check on page load
+});
+
+function checkForNewMessages() {
+  const messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  const unreadMessages = messages.filter(msg => msg.to === 'Manager' && !msg.read);
+  
+  if (unreadMessages.length > 0) {
+    updateMessageCount(unreadMessages.length);
+    // You could add a subtle notification here if desired
+  }
+}
+
+function loadMessages() {
+  const messageList = document.getElementById('manager-message-list');
+  const messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  const managerMessages = messages.filter(msg => msg.to === 'Manager');
+  
+  // Clear existing messages
+  messageList.innerHTML = '';
+  
+  if (managerMessages.length === 0) {
+    messageList.innerHTML = `
+      <div class="message-item empty">
+        <i class="fas fa-envelope-open"></i>
+        <span>No messages</span>
+      </div>
+    `;
+    return;
+  }
+  
+  // Sort by timestamp (newest first)
+  managerMessages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
+  // Add each message to the list
+  managerMessages.forEach(msg => {
+    const messageItem = document.createElement('div');
+    messageItem.className = `message-item ${msg.read ? '' : 'unread'}`;
+    messageItem.innerHTML = `
+      <div class="message-sender">
+        <span>From: ${msg.from}</span>
+        <span class="message-time">${new Date(msg.timestamp).toLocaleString()}</span>
+      </div>
+      <div class="message-subject">${msg.subject}</div>
+      <div class="message-preview">${msg.message.substring(0, 50)}${msg.message.length > 50 ? '...' : ''}</div>
+    `;
+    
+    // Add click handler to view full message and mark as read
+    messageItem.addEventListener('click', function() {
+      viewFullMessage(msg);
+      markMessageAsRead(msg.id);
+      this.classList.remove('unread');
+      updateMessageCount();
+    });
+    
+    messageList.appendChild(messageItem);
+  });
+}
+
+
+
+// In manager-dashboard.js, update the message functions
+
+// View full message with reply option
+function viewFullMessage(message) {
+  // Mark as read when viewing
+  markMessageAsRead(message.id);
+  
+  const modal = document.createElement('div');
+  modal.className = 'message-modal';
+  modal.innerHTML = `
+    <div class="message-modal-content">
+      <span class="close-message-modal">&times;</span>
+      <h3>${message.subject}</h3>
+      <div class="message-meta">
+        <div><strong>From:</strong> ${message.from}</div>
+        <div><strong>To:</strong> ${message.to}</div>
+        <div><strong>Date:</strong> ${new Date(message.timestamp).toLocaleString()}</div>
+      </div>
+      <div class="message-body">
+        ${message.message}
+      </div>
+      <div class="message-actions">
+        <button class="btn-reply" onclick="replyToMessage('${message.from}', 'RE: ${message.subject}')">
+          <i class="fas fa-reply"></i> Reply
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Close modal handlers
+  modal.querySelector('.close-message-modal').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+// Reply to message function
+function replyToMessage(recipient, subject) {
+  // Create reply modal
+  const modal = document.createElement('div');
+  modal.className = 'message-modal';
+  modal.innerHTML = `
+    <div class="message-modal-content">
+      <span class="close-message-modal">&times;</span>
+      <h3>Reply to ${recipient}</h3>
+      <form id="reply-form">
+        <div class="form-group">
+          <label for="reply-subject">Subject</label>
+          <input type="text" id="reply-subject" value="${subject}" required>
+        </div>
+        <div class="form-group">
+          <label for="reply-message">Message</label>
+          <textarea id="reply-message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-paper-plane"></i> Send Reply
+        </button>
+      </form>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Handle form submission
+  modal.querySelector('#reply-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const replySubject = document.getElementById('reply-subject').value;
+    const replyMessage = document.getElementById('reply-message').value;
+    
+    // Create reply message
+    const replyData = {
+      id: `msg-${Date.now()}`,
+      from: 'Manager',
+      to: recipient,
+      subject: replySubject,
+      message: replyMessage,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    // Save to localStorage
+    let messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+    messages.push(replyData);
+    localStorage.setItem('workerManagerMessages', JSON.stringify(messages));
+    
+    // Close modals
+    document.querySelectorAll('.message-modal').forEach(m => m.remove());
+    
+    // Show success message
+    alert('Reply sent successfully!');
+    
+    // Refresh messages
+    loadMessages();
+  });
+  
+  // Close modal handlers
+  modal.querySelector('.close-message-modal').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+
+
+
+function markMessageAsRead(messageId) {
+  let messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  messages = messages.map(msg => {
+    if (msg.id === messageId) {
+      return {...msg, read: true};
+    }
+    return msg;
+  });
+  localStorage.setItem('workerManagerMessages', JSON.stringify(messages));
+  updateMessageCount();
+}
+
+function markAllMessagesAsRead() {
+  let messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+  messages = messages.map(msg => {
+    if (msg.to === 'Manager' && !msg.read) {
+      return {...msg, read: true};
+    }
+    return msg;
+  });
+  localStorage.setItem('workerManagerMessages', JSON.stringify(messages));
+  loadMessages();
+  updateMessageCount(0);
+}
+
+function updateMessageCount(count) {
+  // If count isn't provided, calculate it
+  if (count === undefined) {
+    const messages = JSON.parse(localStorage.getItem('workerManagerMessages') || '[]');
+    count = messages.filter(msg => msg.to === 'Manager' && !msg.read).length;
+  }
+  
+  const countElement = document.querySelector('.message-count');
+  countElement.textContent = count;
+  countElement.style.display = count > 0 ? 'flex' : 'none';
+  
+  // Add/remove pulse animation
+  const messageIcon = document.getElementById('message-icon');
+  if (count > 0) {
+    messageIcon.classList.add('has-messages');
+  } else {
+    messageIcon.classList.remove('has-messages');
+  }
+}
+
+
+
+
+
+
+// Initialize messaging system
+if (!localStorage.getItem('managerVetMessages')) {
+    localStorage.setItem('managerVetMessages', JSON.stringify([]));
+}
+
+// Function to open message composer to vet
+function openMessageToVet() {
+    const modal = document.createElement('div');
+    modal.className = 'message-modal';
+    modal.innerHTML = `
+        <div class="message-modal-content">
+            <span class="close-message-modal">&times;</span>
+            <h3><i class="fas fa-user-md"></i> Message to Vet</h3>
+            <form id="message-vet-form">
+                <div class="form-group">
+                    <label for="message-subject">Subject</label>
+                    <input type="text" id="message-subject" placeholder="Enter message subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message-content">Message</label>
+                    <textarea id="message-content" rows="5" placeholder="Type your message to the vet..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="message-priority">Priority</label>
+                    <select id="message-priority">
+                        <option value="normal">Normal</option>
+                        <option value="high">High Priority</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="message-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Handle form submission
+    modal.querySelector('#message-vet-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const subject = document.getElementById('message-subject').value;
+        const content = document.getElementById('message-content').value;
+        const priority = document.getElementById('message-priority').value;
+        
+        // Create message
+        const message = {
+            id: `msg-${Date.now()}`,
+            from: 'Manager',
+            to: 'Vet',
+            subject,
+            content,
+            priority,
+            timestamp: new Date().toISOString(),
+            read: false,
+            replies: []
+        };
+        
+        // Save to localStorage
+        let messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+        messages.push(message);
+        localStorage.setItem('managerVetMessages', JSON.stringify(messages));
+        
+        // Close modal
+        modal.remove();
+        
+        // Show success notification
+        showNewMessagePopup(message);
+        
+        // In a real app, you would notify the vet here (via email, push notification, etc.)
+    });
+    
+    // Close modal handlers
+    modal.querySelector('.close-message-modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+// Function to show new message notification popup
+function showNewMessagePopup(message) {
+    const popup = document.createElement('div');
+    popup.className = 'new-message-popup';
+    popup.innerHTML = `
+        <i class="fas fa-paper-plane"></i>
+        <div class="new-message-popup-content">
+            <h4>Message Sent to Vet</h4>
+            <p>${message.subject}</p>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        popup.remove();
+    }, 5000);
+    
+    // Click to view message
+    popup.addEventListener('click', () => {
+        viewMessageThread(message.id);
+        popup.remove();
+    });
+}
+
+// Function to view a message thread
+function viewMessageThread(messageId) {
+    const messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    const message = messages.find(m => m.id === messageId);
+    
+    if (!message) return;
+    
+    const modal = document.createElement('div');
+    modal.className = 'message-modal';
+    modal.innerHTML = `
+        <div class="message-modal-content">
+            <span class="close-message-modal">&times;</span>
+            <h3>${message.subject}</h3>
+            <div class="message-meta">
+                <div><strong>From:</strong> ${message.from}</div>
+                <div><strong>To:</strong> ${message.to}</div>
+                <div><strong>Date:</strong> ${new Date(message.timestamp).toLocaleString()}</div>
+                <div><strong>Priority:</strong> ${message.priority}</div>
+            </div>
+            <div class="message-body">
+                ${message.content}
+            </div>
+            <div class="vet-message-display" id="message-thread">
+                ${message.replies.map(reply => `
+                    <div class="message-bubble ${reply.from === 'Manager' ? 'message-outgoing' : 'message-incoming'}">
+                        ${reply.content}
+                        <span class="message-time">${new Date(reply.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="vet-message-input">
+                <textarea id="reply-content" placeholder="Type your reply..."></textarea>
+                <div class="vet-message-actions">
+                    <button id="send-reply-btn" class="vet-send-btn">
+                        <i class="fas fa-paper-plane"></i> Send Reply
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Handle reply submission
+    modal.querySelector('#send-reply-btn').addEventListener('click', function() {
+        const replyContent = modal.querySelector('#reply-content').value.trim();
+        if (!replyContent) return;
+        
+        // Create reply
+        const reply = {
+            id: `reply-${Date.now()}`,
+            from: 'Manager',
+            to: 'Vet',
+            content: replyContent,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Add reply to message
+        message.replies.push(reply);
+        
+        // Update in localStorage
+        const updatedMessages = messages.map(m => 
+            m.id === message.id ? message : m
+        );
+        localStorage.setItem('managerVetMessages', JSON.stringify(updatedMessages));
+        
+        // Add reply to thread display
+        const thread = modal.querySelector('#message-thread');
+        const replyElement = document.createElement('div');
+        replyElement.className = `message-bubble message-outgoing`;
+        replyElement.innerHTML = `
+            ${reply.content}
+            <span class="message-time">${new Date(reply.timestamp).toLocaleTimeString()}</span>
+        `;
+        thread.appendChild(replyElement);
+        
+        // Clear reply input
+        modal.querySelector('#reply-content').value = '';
+        
+        // Scroll to bottom
+        thread.scrollTop = thread.scrollHeight;
+        
+        // In a real app, you would notify the vet here
+    });
+    
+    // Close modal handlers
+    modal.querySelector('.close-message-modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+    
+    // Scroll to bottom of thread
+    const thread = modal.querySelector('#message-thread');
+    thread.scrollTop = thread.scrollHeight;
+}
+
+// Update your existing "Message Vet" button to use this new function
+document.getElementById('send-message-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    openMessageToVet();
+});
+
+// Check for new replies from vet periodically
+setInterval(checkForVetReplies, 30000);
+
+function checkForVetReplies() {
+    const messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    const unreadReplies = messages.filter(message => 
+        message.to === 'Manager' && 
+        message.replies.some(reply => !reply.read)
+    );
+    
+    if (unreadReplies.length > 0) {
+        showNewReplyNotification(unreadReplies[0]);
+    }
+}
+
+function showNewReplyNotification(message) {
+    const latestReply = message.replies[message.replies.length - 1];
+    
+    const popup = document.createElement('div');
+    popup.className = 'new-message-popup';
+    popup.innerHTML = `
+        <i class="fas fa-user-md"></i>
+        <div class="new-message-popup-content">
+            <h4>New Reply from Vet</h4>
+            <p>${latestReply.content.substring(0, 50)}${latestReply.content.length > 50 ? '...' : ''}</p>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        popup.remove();
+    }, 5000);
+    
+    // Click to view message
+    popup.addEventListener('click', () => {
+        viewMessageThread(message.id);
+        popup.remove();
+        
+        // Mark as read
+        markRepliesAsRead(message.id);
+    });
+}
+
+function markRepliesAsRead(messageId) {
+    let messages = JSON.parse(localStorage.getItem('managerVetMessages') || []);
+    messages = messages.map(message => {
+        if (message.id === messageId) {
+            const updatedReplies = message.replies.map(reply => ({
+                ...reply,
+                read: true
+            }));
+            return {...message, replies: updatedReplies};
+        }
+        return message;
+    });
+    localStorage.setItem('managerVetMessages', JSON.stringify(messages));
+}
+
+
+
+
+// Health Records Notification System
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize health records icon
+    const healthRecordsIcon = document.getElementById('health-records-icon');
+    const healthRecordsDropdown = document.querySelector('.health-records-dropdown');
+    
+    // Toggle dropdown
+    healthRecordsIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        healthRecordsDropdown.classList.toggle('show');
+        updateHealthRecordsCount(0); // Reset count when opened
+        loadHealthRecords();
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', function() {
+        healthRecordsDropdown.classList.remove('show');
+    });
+    
+    // Mark all as read
+    document.querySelector('.mark-all-read')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        markAllHealthRecordsAsRead();
+    });
+    
+    // Check for new health records every 30 seconds
+    setInterval(checkForNewHealthRecords, 30000);
+    checkForNewHealthRecords(); // Also check on page load
+});
+
+function checkForNewHealthRecords() {
+    const managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    const healthRecords = managerNotifications.filter(notif => 
+        notif.type === 'health-record' && notif.status === 'unread'
+    );
+    
+    if (healthRecords.length > 0) {
+        updateHealthRecordsCount(healthRecords.length);
+    }
+}
+
+function loadHealthRecords() {
+    const healthRecordsList = document.getElementById('health-records-list');
+    const managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    const healthRecords = managerNotifications.filter(notif => 
+        notif.type === 'health-record' && (notif.status === 'unread' || notif.status === 'read')
+    );
+    
+    // Clear existing records
+    healthRecordsList.innerHTML = '';
+    
+    if (healthRecords.length === 0) {
+        healthRecordsList.innerHTML = `
+            <div class="health-record-item empty">
+                <i class="fas fa-file-medical"></i>
+                <p>No health records</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort by timestamp (newest first)
+    healthRecords.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    // Add each record to the list
+    healthRecords.forEach(record => {
+        const recordItem = document.createElement('div');
+        recordItem.className = `health-record-item ${record.status === 'unread' ? 'unread' : ''}`;
+        
+        // Determine status color
+        let statusColor;
+        switch(record.healthStatus) {
+            case 'Healthy': statusColor = '#4CAF50'; break;
+            case 'Recovering': statusColor = '#FFC107'; break;
+            case 'Sick': statusColor = '#FF9800'; break;
+            case 'Critical': statusColor = '#F44336'; break;
+            default: statusColor = '#9E9E9E';
+        }
+        
+        recordItem.innerHTML = `
+            <div class="record-header">
+                <div class="record-cow">Cow ${record.cowId}</div>
+                <div class="record-status" style="background-color: ${statusColor}">
+                    ${record.healthStatus}
+                </div>
+            </div>
+            <div class="record-meta">
+                ${new Date(record.timestamp).toLocaleString()}
+            </div>
+            <div class="record-purpose">
+                <strong>Purpose:</strong> ${record.purpose}
+            </div>
+            <div class="record-notes">
+                <strong>Notes:</strong> ${record.notes.substring(0, 50)}${record.notes.length > 50 ? '...' : ''}
+            </div>
+        `;
+        
+        // Add click handler to view full record and mark as read
+        recordItem.addEventListener('click', function() {
+            viewFullHealthRecord(record);
+            markHealthRecordAsRead(record.id);
+            this.classList.remove('unread');
+            updateHealthRecordsCount();
+        });
+        
+        healthRecordsList.appendChild(recordItem);
+    });
+}
+
+function viewFullHealthRecord(record) {
+    // Determine status color
+    let statusColor;
+    switch(record.healthStatus) {
+        case 'Healthy': statusColor = '#4CAF50'; break;
+        case 'Recovering': statusColor = '#FFC107'; break;
+        case 'Sick': statusColor = '#FF9800'; break;
+        case 'Critical': statusColor = '#F44336'; break;
+        default: statusColor = '#9E9E9E';
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'health-record-modal';
+    modal.innerHTML = `
+        <div class="health-record-modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Health Record Details</h3>
+            <div class="record-meta">
+                <div><strong>Date:</strong> ${new Date(record.timestamp).toLocaleString()}</div>
+                <div><strong>Vet:</strong> Dr. Vet</div>
+            </div>
+            
+            <div class="record-header">
+                <div class="record-cow">
+                    <i class="fas fa-cow"></i>
+                    <h4>Cow ID: ${record.cowId}</h4>
+                </div>
+                <div class="record-status" style="background-color: ${statusColor}">
+                    ${record.healthStatus}
+                </div>
+            </div>
+            
+            <div class="record-details">
+                <div class="detail-row">
+                    <strong>Purpose:</strong> ${record.purpose}
+                </div>
+                <div class="detail-row">
+                    <strong>Medication:</strong> ${record.medication}
+                </div>
+                <div class="detail-row">
+                    <strong>Notes:</strong> 
+                    <div class="record-notes">${record.notes}</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close modal handlers
+    modal.querySelector('.close-modal').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+function markHealthRecordAsRead(recordId) {
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    managerNotifications = managerNotifications.map(notif => {
+        if (notif.id === recordId) {
+            return {...notif, status: 'read'};
+        }
+        return notif;
+    });
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+    updateHealthRecordsCount();
+}
+
+function markAllHealthRecordsAsRead() {
+    let managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+    managerNotifications = managerNotifications.map(notif => {
+        if (notif.type === 'health-record' && notif.status === 'unread') {
+            return {...notif, status: 'read'};
+        }
+        return notif;
+    });
+    localStorage.setItem('managerNotifications', JSON.stringify(managerNotifications));
+    loadHealthRecords();
+    updateHealthRecordsCount(0);
+}
+
+function updateHealthRecordsCount(count) {
+    // If count isn't provided, calculate it
+    if (count === undefined) {
+        const managerNotifications = JSON.parse(localStorage.getItem('managerNotifications') || []);
+        count = managerNotifications.filter(notif => 
+            notif.type === 'health-record' && notif.status === 'unread'
+        ).length;
+    }
+    
+    const countElement = document.querySelector('.health-records-count');
+    countElement.textContent = count;
+    countElement.style.display = count > 0 ? 'flex' : 'none';
+    
+    // Add/remove pulse animation
+    const healthRecordsIcon = document.getElementById('health-records-icon');
+    if (count > 0) {
+        healthRecordsIcon.classList.add('has-records');
+    } else {
+        healthRecordsIcon.classList.remove('has-records');
+    }
+}
+
+
+// Task Status Chart
+let taskStatusChart;
+
+function initializeTaskStatusChart() {
+    const ctx = document.getElementById('taskStatusChart').getContext('2d');
+    
+    taskStatusChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Completed', 'Not Done', 'Assigned'],
+            datasets: [{
+                data: [0, 0, 0], // Initial empty data
+                backgroundColor: [
+                    '#1dd1a1', // Completed - green
+                    '#ff6b6b', // Not Done - red
+                    '#feca57'  // Assigned - yellow
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Initial data load
+    updateTaskStatusChart();
+}
+
+
+function updateTaskStatusChart() {
+    try {
+        // Get tasks from localStorage (shared with tasks.html)
+        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        
+        // Count tasks by status
+        const counts = {
+            completed: tasks.filter(task => task.status === 'completed').length,
+            notDone: tasks.filter(task => task.status.toLowerCase() === 'notdone').length, // Case-insensitive check
+            assigned: tasks.filter(task => task.status === 'assigned' || task.status === 'pending').length
+        };
+        
+        // Update chart data
+        if (taskStatusChart) {
+            taskStatusChart.data.datasets[0].data = [
+                counts.completed,
+                counts.notDone,
+                counts.assigned
+            ];
+            taskStatusChart.update();
+        }
+        
+        // Update the stat numbers
+        const completedEl = document.getElementById('completed-count');
+        const notDoneEl = document.getElementById('notdone-count'); // Fixed ID to match HTML
+        const assignedEl = document.getElementById('assigned-count');
+        
+        if (completedEl) completedEl.textContent = counts.completed;
+        if (notDoneEl) notDoneEl.textContent = counts.notDone;
+        if (assignedEl) assignedEl.textContent = counts.assigned;
+        
+    } catch (error) {
+        console.error('Error updating task status chart:', error);
+    }
+}
+
+
+// Initialize the chart when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTaskStatusChart();
+    
+    // Update the chart every 5 seconds to catch changes from other tabs
+    setInterval(updateTaskStatusChart, 5000);
+});
+
+// Also update the chart when tasks might have changed
+window.addEventListener('storage', function(event) {
+    if (event.key === 'tasks') {
+        updateTaskStatusChart();
+    }
+});
+
+
+
+
+
+
+    </script>
+</body>
+</html>

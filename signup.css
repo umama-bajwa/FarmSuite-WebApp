@@ -124,3 +124,62 @@ input {
     height: 100%;
     object-fit: cover;
 }
+
+
+
+/* Add these styles to your signup.css or in this style tag */
+.info-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    color: #666;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.info-icon:hover {
+    color: #333;
+    transform: scale(1.1);
+}
+
+.instructions {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 250px;
+    z-index: 10;
+}
+
+.instructions h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.instructions ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.instructions li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.signup-box {
+    position: relative;
+}

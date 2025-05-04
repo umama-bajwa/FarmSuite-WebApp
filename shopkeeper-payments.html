@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="payment.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <i class="fas fa-store"></i>
+      <span>Shopkeeper Dashboard</span>
+    </div>
+    <div class="navbar-links">
+      <a href="shopkeeper-dashboard.html"><i class="fas fa-box-open"></i> Products</a>
+      <a href="shopkeeper-cart.html"><i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)</a>
+      <a href="shopkeeper-payments.html" class="active"><i class="fas fa-credit-card"></i> Payments</a>
+      <a href="shopkeeper-invoices.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+      <a href="#" onclick="confirmLogout()" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </div>
+    <div class="mobile-menu-btn">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu">
+    <a href="shopkeeper-dashboard.html"><i class="fas fa-box-open"></i> Products</a>
+    <a href="shopkeeper-cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+    <a href="shopkeeper-payments.html" class="active"><i class="fas fa-credit-card"></i> Payments</a>
+    <a href="shopkeeper-invoices.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+    <a href="#" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <!-- Checkout Process Steps -->
+  <div class="checkout-steps">
+    <div class="step active" data-step="1">
+      <div class="step-number">1</div>
+      <div class="step-title">User Details</div>
+    </div>
+    <div class="step" data-step="2">
+      <div class="step-number">2</div>
+      <div class="step-title">Payment</div>
+    </div>
+    <div class="step" data-step="3">
+      <div class="step-number">3</div>
+      <div class="step-title">Confirmation</div>
+    </div>
+  </div>
+
+  <!-- Payment Section -->
+  <div class="dashboard">
+    <section id="payment" class="section">
+      <h2><i class="fas fa-credit-card"></i> Payment</h2>
+      
+      <!-- Order Summary -->
+<div class="order-summary">
+  <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+  <div class="summary-content">
+    <div class="summary-items">
+      <div class="summary-header">
+        <span>Item</span>
+        <span>Price</span>
+      </div>
+      <!-- Cart items will be dynamically added here -->
+    </div>
+    <div class="summary-total">
+      <span>Total</span>
+      <span>PKR 0.00</span>
+    </div>
+  </div>
+</div>
+
+      <div class="checkout-container">
+        <!-- Simplified User Details Form -->
+        <div id="invoice-address-form" class="checkout-section">
+          <h3><i class="fas fa-user"></i> User Details</h3>
+          <form id="address-form">
+            <div class="form-group">
+              <label for="user-name">Full Name</label>
+              <input type="text" id="user-name" placeholder="John Smith" required />
+              <div class="error-message" id="name-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="user-email">Email</label>
+              <input type="email" id="user-email" placeholder="john.smith@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="user-phone">Phone Number</label>
+              <input type="tel" id="user-phone" placeholder="+1 (555) 123-4567" required />
+            </div>
+            <div class="form-group">
+              <label for="delivery-address">Delivery Address</label>
+              <textarea id="delivery-address" rows="3" placeholder="4490 Oak Drive, Albany, NY 12210" required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="save-address-button" class="btn-primary">
+                Continue to Payment <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Form (Hidden by Default) -->
+        <div id="payment-form-section" class="checkout-section" style="display: none;">
+          <div class="payment-methods">
+            <div class="payment-method-tabs">
+              <button class="payment-tab active" data-method="card">
+                <i class="fas fa-credit-card"></i> Credit/Debit Card
+              </button>
+              <button class="payment-tab" data-method="paypal">
+                <i class="fab fa-paypal"></i> PayPal
+              </button>
+              <button class="payment-tab" data-method="bank">
+                <i class="fas fa-university"></i> Bank Transfer
+              </button>
+            </div>
+            
+            <div class="payment-method-content">
+              <!-- Credit Card Payment -->
+              <div id="card-payment" class="payment-content active">
+                <div class="credit-card-form-container">
+                  <!-- Credit Card (Left Side) -->
+                  <div class="credit-card-container">
+                    <div class="credit-card">
+                      <div class="card-front">
+                        <div class="card-logo">
+                          <div class="visa-logo">
+                            <div class="visa-blue"></div>
+                            <div class="visa-gold"></div>
+                            <div class="visa-white">VISA</div>
+                          </div>
+                        </div>
+                        <div class="card-chip">
+                          <div class="chip-line"></div>
+                          <div class="chip-line"></div>
+                          <div class="chip-line"></div>
+                          <div class="chip-line"></div>
+                        </div>
+                        <div class="card-number" id="card-number-display">•••• •••• •••• ••••</div>
+                        <div class="card-details">
+                          <div class="card-holder">
+                            <span>Card Holder</span>
+                            <span id="card-holder-display">John Doe</span>
+                          </div>
+                          <div class="card-expiry">
+                            <span>Expires</span>
+                            <span id="card-expiry-display">MM/YY</span>
+                          </div>
+                        </div>
+                        <div class="card-wave">
+                          <div class="wave"></div>
+                          <div class="wave"></div>
+                          <div class="wave"></div>
+                        </div>
+                      </div>
+                      <div class="card-back">
+                        <div class="card-strip"></div>
+                        <div class="card-cvv">
+                          <span>CVV</span>
+                          <div id="card-cvv-display">•••</div>
+                        </div>
+                        <div class="card-signature">
+                          <span>Authorized Signature</span>
+                          <div class="signature-line"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Credit Card Form (Right Side) -->
+  <!-- Credit Card Form (Right Side) -->
+  <div class="credit-card-form">
+    <h3>Enter Credit Card Details</h3>
+    <form id="payment-form">
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required />
+        <div class="card-icons">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-amex"></i>
+          <i class="fab fa-cc-discover"></i>
+        </div>
+        <div class="error-message" id="card-number-error"></div>
+      </div>
+      <div class="form-group">
+        <label for="card-holder">Card Holder Name</label>
+        <input type="text" id="card-holder" placeholder="John Doe" required />
+        <div class="error-message" id="card-holder-error"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiry-date">Expiry Date</label>
+          <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" required />
+          <div class="error-message" id="expiry-error"></div>
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <div class="cvv-container">
+            <input type="text" id="cvv" placeholder="123" maxlength="3" required />
+            <i class="fas fa-question-circle" title="3-digit security code on back of card"></i>
+          </div>
+          <div class="error-message" id="cvv-error"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="back-to-details" class="btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back to Details
+        </button>
+        <button type="submit" id="pay-button" class="btn-primary">
+          <i class="fas fa-lock"></i> Pay Now
+        </button>
+      </div>
+    </form>
+  </div>
+                </div>
+              </div>
+              
+              <!-- PayPal Payment -->
+              <div id="paypal-payment" class="payment-content">
+                <div class="alternative-payment">
+                  <div class="payment-logo">
+                    <i class="fab fa-paypal"></i>
+                  </div>
+                  <p>You will be redirected to PayPal to complete your payment securely.</p>
+                  <button class="btn-primary paypal-btn">
+                    <i class="fab fa-paypal"></i> Continue with PayPal
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Bank Transfer Payment -->
+              <div id="bank-payment" class="payment-content">
+                <div class="alternative-payment">
+                  <div class="payment-logo">
+                    <i class="fas fa-university"></i>
+                  </div>
+                  <p>Make a direct bank transfer using the details below:</p>
+                  <div class="bank-details">
+                    <div class="bank-detail">
+                      <span>Account Name:</span>
+                      <span>Shopkeeper Inc.</span>
+                    </div>
+                    <div class="bank-detail">
+                      <span>Account Number:</span>
+                      <span>1234567890</span>
+                    </div>
+                    <div class="bank-detail">
+                      <span>Bank Name:</span>
+                      <span>International Bank</span>
+                    </div>
+                    <div class="bank-detail">
+                      <span>SWIFT/BIC:</span>
+                      <span>INTLUS33</span>
+                    </div>
+                  </div>
+                  <p class="note">Please include your order number as payment reference.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Payment Processing Modal -->
+  <div class="modal-overlay" id="processing-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="processing-animation">
+        <div class="spinner"></div>
+        <div class="card-animation">
+          <div class="card-slide">
+            <div class="card-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>Processing Payment</h3>
+      <p>Please wait while we process your payment. Do not refresh the page.</p>
+    </div>
+  </div>
+
+  <!-- Payment Success Modal -->
+  <div class="modal-overlay" id="success-modal" style="display: none;">
+    <div class="modal-content success">
+      <div class="success-animation">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      <h3>Payment Successful!</h3>
+      <p>Your order has been processed successfully. An invoice has been sent to your email.</p>
+      <button class="btn-primary" id="view-invoice-btn">
+        <i class="fas fa-file-invoice"></i> View Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu toggle
+      const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      
+      mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('active');
+      });
+    
+      // Load cart items from localStorage
+      const checkoutCart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
+      const orderSummaryItems = document.querySelector('.summary-items');
+      
+      // Clear existing items
+      orderSummaryItems.innerHTML = `
+        <div class="summary-header">
+          <span>Item</span>
+          <span>Price</span>
+        </div>
+      `;
+      
+      // Add cart items to order summary
+      checkoutCart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'summary-item';
+        itemElement.innerHTML = `
+          <span>${item.productName} (${item.quantity || 1})</span>
+          <span>PKR ${(item.price * (item.quantity || 1)).toFixed(2)}</span>
+        `;
+        orderSummaryItems.appendChild(itemElement);
+      });
+      
+      // Calculate and display total
+      const totalAmount = checkoutCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      document.querySelector('.summary-total span:last-child').textContent = `PKR ${totalAmount.toFixed(2)}`;
+    
+      // Form validation and navigation
+      const addressForm = document.getElementById('address-form');
+      const paymentFormSection = document.getElementById('payment-form-section');
+      const paymentForm = document.getElementById('payment-form');
+      const backToDetailsBtn = document.getElementById('back-to-details');
+      
+      // Save address and show payment form
+      addressForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        if (validateAddressForm()) {
+          // Update step indicator
+          updateStepIndicator(2);
+          
+          // Hide address form and show payment form
+          document.getElementById('invoice-address-form').style.display = 'none';
+          paymentFormSection.style.display = 'block';
+          
+          // Scroll to payment section
+          paymentFormSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      
+      // Back to details button
+      backToDetailsBtn.addEventListener('click', function() {
+        // Update step indicator
+        updateStepIndicator(1);
+        
+        // Show address form and hide payment form
+        document.getElementById('invoice-address-form').style.display = 'block';
+        paymentFormSection.style.display = 'none';
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    
+      // Payment method tabs
+      const paymentTabs = document.querySelectorAll('.payment-tab');
+      const paymentContents = document.querySelectorAll('.payment-content');
+      
+      paymentTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const method = this.dataset.method;
+          
+          // Update active tab
+          paymentTabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Show corresponding content
+          paymentContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(`${method}-payment`).classList.add('active');
+        });
+      });
+    
+      // Credit card input formatting and validation
+      const cardNumberInput = document.getElementById('card-number');
+      const cardHolderInput = document.getElementById('card-holder');
+      const expiryDateInput = document.getElementById('expiry-date');
+      const cvvInput = document.getElementById('cvv');
+      const cardNumberDisplay = document.getElementById('card-number-display');
+      const cardHolderDisplay = document.getElementById('card-holder-display');
+      const cardExpiryDisplay = document.getElementById('card-expiry-display');
+      const cardCvvDisplay = document.getElementById('card-cvv-display');
+      
+      // Format card number (add spaces every 4 digits)
+      cardNumberInput.addEventListener('input', function(e) {
+        let value = this.value.replace(/\s+/g, ''); // Remove all spaces
+        if (value.length > 16) value = value.substring(0, 16); // Limit to 16 digits
+        
+        // Add space every 4 digits
+        value = value.replace(/(\d{4})/g, '$1 ').trim();
+        this.value = value;
+        
+        // Update card display
+        cardNumberDisplay.textContent = value || '•••• •••• •••• ••••';
+        
+        // Detect card type and update styling
+        detectCardType(value.replace(/\s/g, ''));
+      });
+      
+      // Format expiry date (MM/YY)
+      expiryDateInput.addEventListener('input', function(e) {
+        let value = this.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length > 4) value = value.substring(0, 4); // Limit to 4 digits
+        
+        // Add slash after 2 digits
+        if (value.length > 2) {
+          value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        
+        this.value = value;
+        cardExpiryDisplay.textContent = value || 'MM/YY';
+      });
+      
+      // Update card holder name in real-time
+      cardHolderInput.addEventListener('input', function() {
+        cardHolderDisplay.textContent = this.value || 'John Doe';
+      });
+      
+      // Update CVV display
+      cvvInput.addEventListener('input', function() {
+        cardCvvDisplay.textContent = this.value.replace(/./g, '•') || '•••';
+        
+        // Show back of card when entering CVV
+        const card = document.querySelector('.credit-card');
+        if (this.value.length > 0) {
+          card.classList.add('flipped');
+        } else {
+          card.classList.remove('flipped');
+        }
+      });
+      
+      // Focus on CVV field flips the card
+      cvvInput.addEventListener('focus', function() {
+        document.querySelector('.credit-card').classList.add('flipped');
+      });
+      
+      // Blur from CVV field flips card back if empty
+      cvvInput.addEventListener('blur', function() {
+        if (this.value.length === 0) {
+          document.querySelector('.credit-card').classList.remove('flipped');
+        }
+      });
+    
+ // Process payment form
+ paymentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (validatePaymentForm()) {
+          // Show processing modal
+          document.getElementById('processing-modal').style.display = 'flex';
+          
+          // Simulate payment processing (3 seconds)
+          setTimeout(function() {
+            // Hide processing modal
+            document.getElementById('processing-modal').style.display = 'none';
+            
+            // Show success modal
+            document.getElementById('success-modal').style.display = 'flex';
+            
+            // Update step indicator
+            updateStepIndicator(3);
+            
+            // Save all data to localStorage for the invoice page
+            const userDetails = {
+              userName: document.getElementById('user-name').value,
+              email: document.getElementById('user-email').value,
+              phone: document.getElementById('user-phone').value,
+              deliveryAddress: document.getElementById('delivery-address').value
+            };
+            
+            const paymentDetails = {
+              paymentMethod: document.querySelector('.payment-tab.active').dataset.method,
+              cardNumber: cardNumberInput.value.replace(/\s/g, '').slice(-4), // Save only last 4 digits
+              cardType: document.querySelector('.credit-card').classList.contains('visa') ? 'Visa' : 
+                        document.querySelector('.credit-card').classList.contains('mastercard') ? 'Mastercard' :
+                        document.querySelector('.credit-card').classList.contains('amex') ? 'Amex' : 'Discover'
+            };
+            
+            const invoiceDetails = {
+              invoiceNumber: 'INV-' + Math.floor(1000 + Math.random() * 9000),
+              invoiceDate: new Date().toLocaleDateString(),
+              poNumber: 'PO-' + Math.floor(1000 + Math.random() * 9000),
+              dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toLocaleDateString() // 15 days from now
+            };
+            
+            // Get cart items
+            const checkoutCart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
+            
+            // Save all data to localStorage
+            localStorage.setItem('userDetails', JSON.stringify(userDetails));
+            localStorage.setItem('paymentDetails', JSON.stringify(paymentDetails));
+            localStorage.setItem('invoiceDetails', JSON.stringify(invoiceDetails));
+            localStorage.setItem('invoiceCart', JSON.stringify(checkoutCart));
+            
+            // Calculate totals
+            const subtotal = checkoutCart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+            const tax = subtotal * 0.05;
+            const total = subtotal + tax;
+            
+            localStorage.setItem('invoiceTotals', JSON.stringify({
+              subtotal: subtotal.toFixed(2),
+              tax: tax.toFixed(2),
+              total: total.toFixed(2)
+            }));
+          }, 3000);
+        }
+      });
+
+      // Enhanced credit card number validation - prevent non-digits
+      cardNumberInput.addEventListener('keydown', function(e) {
+        // Allow: backspace, delete, tab, escape, enter, arrows
+        if ([46, 8, 9, 27, 13, 110].includes(e.keyCode) || 
+            (e.keyCode === 65 && e.ctrlKey === true) || // Ctrl+A
+            (e.keyCode >= 35 && e.keyCode <= 39)) { // Home, End, Left, Right
+          return;
+        }
+        
+        // Prevent if not a number
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+          e.preventDefault();
+          showError(this, document.getElementById('card-number-error'), 'Only numbers are allowed');
+        } else {
+          hideError(this, 'card-number-error');
+        }
+      });
+
+      // Enhanced card holder name validation
+      cardHolderInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        const errorElement = document.getElementById('card-holder-error');
+        
+        // Check for at least first and last name
+        const nameParts = value.split(/\s+/).filter(part => part.length > 0);
+        
+        if (nameParts.length < 2) {
+          showError(this, errorElement, 'Please enter both first and last name');
+          return;
+        }
+        
+        // Check each name part
+        for (let i = 0; i < nameParts.length; i++) {
+          // Check for special characters or numbers
+          if (/[^a-zA-Z-' ]/.test(nameParts[i])) {
+            showError(this, errorElement, 'Name should only contain letters and hyphens');
+            return;
+          }
+          
+          // Check first letter is capital
+          if (nameParts[i][0] !== nameParts[i][0].toUpperCase()) {
+            showError(this, errorElement, 'First letter of each name should be capital');
+            return;
+          }
+        }
+        
+        // If all validations pass
+        hideError(this, 'card-holder-error');
+        cardHolderDisplay.textContent = value || 'John Doe';
+      });
+
+      
+      // View invoice button
+      document.getElementById('view-invoice-btn').addEventListener('click', function() {
+        // In a real app, this would redirect to the invoice page
+        window.location.href = 'shopkeeper-invoices.html';
+      });
+    
+
+
+      function validateAddressForm() {
+  let isValid = true;
+  
+  // Clear previous errors
+  document.querySelectorAll('.error-message').forEach(el => {
+    el.style.display = 'none';
+    el.previousElementSibling.classList.remove('input-error');
+  });
+
+  // Name validation
+  const nameInput = document.getElementById('user-name');
+  const nameError = document.getElementById('name-error') || createErrorElement(nameInput, 'name-error');
+  const name = nameInput.value.trim();
+  
+  if (!name) {
+    showError(nameInput, nameError, 'Full name is required');
+    isValid = false;
+  } else {
+    const nameParts = name.split(/\s+/).filter(part => part.length > 0);
+    
+    // Check for at least first and last name
+    if (nameParts.length < 2) {
+      showError(nameInput, nameError, 'Please enter both first and last name');
+      isValid = false;
+    } 
+    // Check each name part
+    else {
+      for (let i = 0; i < nameParts.length; i++) {
+        // Check for special characters or numbers
+        if (/[^a-zA-Z-' ]/.test(nameParts[i])) {
+          showError(nameInput, nameError, 'Name should only contain letters and hyphens');
+          isValid = false;
+          break;
+        }
+        
+        // Check first letter is capital
+        if (nameParts[i][0] !== nameParts[i][0].toUpperCase()) {
+          showError(nameInput, nameError, 'First letter of each name should be capital');
+          isValid = false;
+          break;
+        }
+      }
+    }
+  }
+
+  // Email validation
+  const emailInput = document.getElementById('user-email');
+  const emailError = document.getElementById('email-error') || createErrorElement(emailInput, 'email-error');
+  const email = emailInput.value.trim();
+  
+  if (!email) {
+    showError(emailInput, emailError, 'Email is required');
+    isValid = false;
+  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    showError(emailInput, emailError, 'Please enter a valid email (e.g. name@example.com)');
+    isValid = false;
+  } else if (!email.endsWith('.com') && !email.endsWith('.net') && !email.endsWith('.org')) {
+    showError(emailInput, emailError, 'Email should end with .com, .net or .org');
+    isValid = false;
+  }
+
+  // Phone validation
+  const phoneInput = document.getElementById('user-phone');
+  const phoneError = document.getElementById('phone-error') || createErrorElement(phoneInput, 'phone-error');
+  const phone = phoneInput.value.trim();
+  
+  if (!phone) {
+    showError(phoneInput, phoneError, 'Phone number is required');
+    isValid = false;
+  } else if (/[^0-9+]/.test(phone)) {
+    showError(phoneInput, phoneError, 'Phone number should only contain numbers and +');
+    isValid = false;
+  } else if (phone.length < 11) {
+    showError(phoneInput, phoneError, 'Phone number should be 11 digits');
+    isValid = false;
+  }
+
+  // Address validation
+  const addressInput = document.getElementById('delivery-address');
+  const addressError = document.getElementById('address-error') || createErrorElement(addressInput, 'address-error');
+  const address = addressInput.value.trim();
+  
+  if (!address) {
+    showError(addressInput, addressError, 'Delivery address is required');
+    isValid = false;
+  } else if (address.length < 10) {
+    showError(addressInput, addressError, 'Address should be at least 10 characters');
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+// Helper functions for error handling
+function createErrorElement(inputElement, id) {
+  const errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.id = id;
+  inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+  return errorElement;
+}
+
+function showError(inputElement, errorElement, message) {
+  inputElement.classList.add('input-error');
+  errorElement.textContent = message;
+  errorElement.style.display = 'block';
+}
+
+// Add real-time validation for better UX
+document.getElementById('user-name').addEventListener('input', function() {
+  const errorElement = document.getElementById('name-error');
+  if (errorElement.style.display === 'block') {
+    validateAddressForm();
+  }
+});
+
+document.getElementById('user-email').addEventListener('input', function() {
+  const errorElement = document.getElementById('email-error');
+  if (errorElement.style.display === 'block') {
+    validateAddressForm();
+  }
+});
+
+document.getElementById('user-phone').addEventListener('input', function() {
+  const errorElement = document.getElementById('phone-error');
+  if (errorElement.style.display === 'block') {
+    validateAddressForm();
+  }
+});
+
+document.getElementById('delivery-address').addEventListener('input', function() {
+  const errorElement = document.getElementById('address-error');
+  if (errorElement.style.display === 'block') {
+    validateAddressForm();
+  }
+});
+
+
+function validatePaymentForm() {
+        let isValid = true;
+        
+        // Clear previous errors
+        document.querySelectorAll('#payment-form .error-message').forEach(el => {
+          el.style.display = 'none';
+          el.previousElementSibling.classList.remove('input-error');
+        });
+
+        // Get active payment method
+        const activeMethod = document.querySelector('.payment-tab.active').dataset.method;
+        
+        if (activeMethod === 'card') {
+          // Validate credit card form
+          const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+          const cardHolder = cardHolderInput.value.trim();
+          const expiry = expiryDateInput.value;
+          const cvv = cvvInput.value.trim();
+          
+          // Card number validation
+          if (!cardNumber) {
+            showError(cardNumberInput, document.getElementById('card-number-error'), 'Card number is required');
+            isValid = false;
+          } else if (cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+            showError(cardNumberInput, document.getElementById('card-number-error'), 'Please enter a valid 16-digit card number');
+            isValid = false;
+          }
+          
+          // Card holder validation
+          if (!cardHolder) {
+            showError(cardHolderInput, document.getElementById('card-holder-error'), 'Card holder name is required');
+            isValid = false;
+          } else {
+            const nameParts = cardHolder.split(/\s+/).filter(part => part.length > 0);
+            if (nameParts.length < 2) {
+              showError(cardHolderInput, document.getElementById('card-holder-error'), 'Please enter both first and last name');
+              isValid = false;
+            }
+          }
+          
+          // Expiry date validation
+          if (!expiry) {
+            showError(expiryDateInput, document.getElementById('expiry-error'), 'Expiry date is required');
+            isValid = false;
+          } else if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+            showError(expiryDateInput, document.getElementById('expiry-error'), 'Please enter a valid expiry date (MM/YY)');
+            isValid = false;
+          } else {
+            // Check if card is expired
+            const [month, year] = expiry.split('/');
+            const currentYear = new Date().getFullYear() % 100;
+            const currentMonth = new Date().getMonth() + 1;
+            
+            if (parseInt(year) < currentYear || 
+                (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
+              showError(expiryDateInput, document.getElementById('expiry-error'), 'This card has expired');
+              isValid = false;
+            }
+          }
+          
+          // CVV validation
+          if (!cvv) {
+            showError(cvvInput, document.getElementById('cvv-error'), 'CVV is required');
+            isValid = false;
+          } else if (!/^\d{3,4}$/.test(cvv)) {
+            showError(cvvInput, document.getElementById('cvv-error'), 'Please enter a valid CVV (3 or 4 digits)');
+            isValid = false;
+          }
+        }
+        
+        return isValid;
+      }
+
+      function showError(inputElement, errorElement, message) {
+        if (!errorElement) {
+          errorElement = document.createElement('div');
+          errorElement.className = 'error-message';
+          errorElement.id = inputElement.id + '-error';
+          inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+        }
+        
+        inputElement.classList.add('input-error');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+
+      function hideError(inputElement, errorId) {
+        const errorElement = document.getElementById(errorId);
+        if (errorElement) {
+          inputElement.classList.remove('input-error');
+          errorElement.style.display = 'none';
+        }
+      }
+
+
+      
+      function detectCardType(cardNumber) {
+        const card = document.querySelector('.credit-card');
+        
+        // Reset all card type classes
+        card.classList.remove('visa', 'mastercard', 'amex', 'discover');
+        
+        // Visa: starts with 4
+        if (/^4/.test(cardNumber)) {
+          card.classList.add('visa');
+        }
+        // Mastercard: starts with 51-55 or 2221-2720
+        else if (/^5[1-5]/.test(cardNumber) || /^2[2-7]/.test(cardNumber)) {
+          card.classList.add('mastercard');
+        }
+        // Amex: starts with 34 or 37
+        else if (/^3[47]/.test(cardNumber)) {
+          card.classList.add('amex');
+        }
+        // Discover: starts with 6011, 644-649, or 65
+        else if (/^6011/.test(cardNumber) || /^64[4-9]/.test(cardNumber) || /^65/.test(cardNumber)) {
+          card.classList.add('discover');
+        }
+      }
+      
+      function updateStepIndicator(activeStep) {
+        const steps = document.querySelectorAll('.checkout-steps .step');
+        
+        steps.forEach(step => {
+          step.classList.remove('active', 'completed');
+          
+          const stepNumber = parseInt(step.dataset.step);
+          if (stepNumber < activeStep) {
+            step.classList.add('completed');
+          } else if (stepNumber === activeStep) {
+            step.classList.add('active');
+          }
+        });
+      }
+    });
+    
+    // Logout confirmation
+    function confirmLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        // In a real app, this would redirect to logout page
+        alert('Logging out...');
+        // window.location.href = 'logout.html';
+      }
+    }
+    </script>
+</body>
+</html>
